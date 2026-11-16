@@ -13,7 +13,7 @@ function shuffle(values) {
  * Returns an internal Map of giver ID to recipient ID.
  * Call on a trusted server. Release individual assignments only.
  */
-export function createDraw(participants, { excludedPairs = [] } = {}) {
+export function createDraw(participants, { excludedPairs = [], previousPairs = [] } = {}) {
   if (participants.length < 2) {
     throw new Error('At least two participants are required.');
   }
@@ -27,7 +27,14 @@ export function createDraw(participants, { excludedPairs = [] } = {}) {
   }
 
   const excluded = new Map(ids.map(id => [id, new Set()]));
-  for (const { giver, recipient } of excludedPairs) {
+  const exclusions = [
+    ...excludedPairs,
+    ...previousPairs.flatMap(({ giver, recipient }) => [
+      { giver, recipient },
+      { giver: recipient, recipient: giver },
+    ]),
+  ];
+  for (const { giver, recipient } of exclusions) {
     if (!idSet.has(giver) || !idSet.has(recipient)) {
       throw new Error('An exclusion references an unknown participant.');
     }

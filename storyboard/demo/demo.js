@@ -9,18 +9,58 @@ const pin = get('.pin');
 const spin = get('#spin');
 let frame = 0;
 let audio;
+let musicTimer;
+let musicStep = 0;
+const theme = get('#theme');
+const systemDark = matchMedia('(prefers-color-scheme: dark)');
+function applyTheme(mode) {
+  document.documentElement.dataset.theme = mode;
+  theme.textContent = mode === 'dark' ? 'Light mode' : 'Dark mode';
+}
+applyTheme(localStorage.getItem('njithi-theme') || (systemDark.matches ? 'dark' : 'light'));
+theme.onclick = () => {
+  const mode = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  applyTheme(mode);
+  localStorage.setItem('njithi-theme', mode);
+};
+get('#open').onclick = () => { sound(420); show('entry'); };
+
+function music() {
+  const notes = [220, 329.63, 440, 392, 196, 293.66, 392, 329.63];
+  sound(notes[musicStep++ % notes.length], 1.4, 0.012, 'sine');
+}
+
+function drumroll() {
+  show('suspense');
+  const duration = 1180;
+  const start = performance.now();
+  let beat = 0;
+  function roll(now) {
+    const elapsed = now - start;
+    if (elapsed >= duration) { reveal(); return; }
+    const nextBeat = Math.floor(7 * (elapsed / duration) + 15 * (elapsed / duration) ** 2);
+    if (nextBeat > beat) {
+      sound(100 + nextBeat * 2, 0.065, 0.063, 'triangle', 39);
+      beat = nextBeat;
+    }
+    frame = requestAnimationFrame(roll);
+  }
+  frame = requestAnimationFrame(roll);
+}
 
 function show(id) {
   for (const panel of panels) panel.hidden = panel.id !== id;
   get('#' + id + ' h1').focus();
 }
 
-function sound(frequency, length = 0.045, volume = 0.045) {
+function sound(frequency, length = 0.045, volume = 0.045, wave = 'sine', endFrequency = frequency) {
   if (!audio || audio.state !== 'running' || get('#sound').ariaPressed !== 'true') return;
   const voice = audio.createOscillator();
   const gain = audio.createGain();
   const start = audio.currentTime;
-  voice.frequency.value = frequency;
+  voice.type = wave;
+  voice.frequency.setValueAtTime(frequency, start);
+  voice.frequency.exponentialRampToValueAtTime(endFrequency, start + length);
   gain.gain.setValueAtTime(volume, start);
   gain.gain.exponentialRampToValueAtTime(0.001, start + length);
   voice.connect(gain).connect(audio.destination);
@@ -33,6 +73,7 @@ get('#sound').onclick = async (event) => {
   if (toggle.ariaPressed === 'true') {
     toggle.ariaPressed = 'false';
     toggle.textContent = 'Sound off';
+    clearInterval(musicTimer);
     return;
   }
   const Audio = window.AudioContext || window.webkitAudioContext;
@@ -42,6 +83,8 @@ get('#sound').onclick = async (event) => {
   toggle.ariaPressed = 'true';
   toggle.textContent = 'Sound on';
   sound(520);
+  music();
+  musicTimer = setInterval(music, 650);
 };
 
 function draw(angle = 0) {
@@ -108,7 +151,7 @@ function spinWheel() {
     }
     pin.style.transform = 'rotate(' + (-16 * Math.abs(Math.sin(angle * 8))) + 'deg)';
     if (progress < 1) frame = requestAnimationFrame(update);
-    else reveal();
+    else drumroll();
   }
   frame = requestAnimationFrame(update);
 }
