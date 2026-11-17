@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Njithi Cousins Secret Santa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#2e1431">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Instrument+Serif&family=Yellowtail&display=swap">
+<style>
+/* Layout: one phone-sized stage that holds the whole experience; review notes sit beside it on desktop and under it on a phone. */
+:root{
+  --page:#f3e2c4; --surface:#fff7e6; --ink:#2e1431; --muted:#735670; --line:#2e143126;
+  --accent:#ff6a3d; --on-accent:#2e1431; --plum:#4a2150; --lilac:#c9a3c4; --field:#fffdf6;
+  --ok:#1f7a4d; --card-a:#ffb48a; --card-b:#ff7a4d; --card-ink:#2e1431; --splash:#2e1431; --splash-ink:#fff1d6;
+  --script:'Yellowtail','Segoe Script','Brush Script MT',cursive;
+  --serif:'Instrument Serif','Iowan Old Style',Georgia,serif;
+  --sans:'Geist',ui-sans-serif,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#1c0b1f; --surface:#321638; --ink:#fff1d6; --muted:#cfb2cb; --line:#fff1d62b;
+  --accent:#ff7a4d; --on-accent:#2e1431; --plum:#f3c9ea; --lilac:#c9a3c4; --field:#23102a;
+  --ok:#7fe0a8; --splash:#1c0b1f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --page:#1c0b1f; --surface:#321638; --ink:#fff1d6; --muted:#cfb2cb; --line:#fff1d62b;
+  --accent:#ff7a4d; --on-accent:#2e1431; --plum:#f3c9ea; --lilac:#c9a3c4; --field:#23102a;
+  --ok:#7fe0a8; --splash:#1c0b1f; color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{background:var(--page);color:var(--ink);font:17px/1.5 var(--sans);-webkit-tap-highlight-color:transparent}
+.shell{max-width:1120px;margin:0 auto;padding-block:16px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:40px}
+@media(min-width:900px){.shell{grid-template-columns:400px minmax(0,1fr);align-items:start;padding-block:28px 64px}.app{position:sticky;top:28px}}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- the app ---------- */
+.app{background:var(--surface);border-radius:32px;border:1px solid var(--line);min-height:min(88svh,780px);display:flex;flex-direction:column;overflow:hidden;position:relative;container-type:inline-size}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px 0 20px;min-height:54px;position:relative;z-index:6}
+.mark{font:28px/1 var(--script);color:var(--accent);padding:4px 6px 4px 0}
+.bar div{display:flex;gap:4px}
+.icon{width:44px;height:44px;border-radius:50%;border:0;background:transparent;display:grid;place-items:center;cursor:pointer}
+.icon:hover{background:var(--line)}
+.icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.app.splashing .icon{color:var(--splash-ink)}
+.screen{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:8px 22px 26px;min-width:0}
+.screen h2{font:400 clamp(46px,14cqw,58px)/.95 var(--serif);letter-spacing:-.015em;margin:6px 0 0;text-wrap:balance}
+.screen h2:focus{outline:0}
+.screen p{margin:0;color:var(--muted);max-width:30ch;text-wrap:balance}
+.btn{min-height:56px;width:100%;border:0;border-radius:18px;background:var(--accent);color:var(--on-accent);font-weight:700;font-size:19px;cursor:pointer;transition:transform .12s ease-out}
+.btn:active{transform:scale(.97)}
+.link{background:none;border:0;min-height:44px;padding:0 12px;color:var(--muted);text-decoration:underline;text-underline-offset:4px;cursor:pointer;font-size:15px}
+
+/* splash: the only place the big signature appears */
+#splash{position:absolute;inset:0;z-index:5;background:var(--splash);color:var(--splash-ink);display:grid;place-items:center;border:0;width:100%;cursor:pointer;transition:opacity .45s ease-out}
+#splash.gone{opacity:0;pointer-events:none}
+.signature{font:400 min(27cqw,112px)/.82 var(--script);margin:0;transform:rotate(-5deg);position:relative;padding:0 .1em .14em;white-space:nowrap;text-align:left}
+.signature span{display:block}
+.signature .l2{color:var(--accent);margin-left:.42em}
+.signature i{font-style:normal;display:inline-block;animation:write .3s ease-out both;animation-delay:calc(var(--i)*.14s + .25s)}
+@keyframes write{from{clip-path:inset(-.5em calc(100% + .5em) -.5em -.5em)}to{clip-path:inset(-.5em -.6em -.5em -.5em)}}
+.swash{position:absolute;left:6%;bottom:-.1em;width:88%;height:.22em;overflow:visible}
+.swash path{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:swash .6s 2.15s ease-out forwards}
+@keyframes swash{to{stroke-dashoffset:0}}
+
+/* entry */
+form{width:100%;display:grid;gap:10px;margin-top:8px}
+label{font-weight:600;text-align:left;font-size:15px}
+#code{width:100%;min-height:64px;border-radius:18px;border:2px solid var(--ink);background:var(--field);padding:0 16px;font-size:24px;font-weight:600;text-align:center}
+#code::placeholder{color:var(--muted);opacity:.6;font-weight:400}
+#err{color:var(--ink);background:color-mix(in srgb,var(--accent) 22%,transparent);border-radius:12px;padding:8px 12px;font-size:15px;max-width:none}
+.help{font-size:14px}
+.shake{animation:shake .32s}
+@keyframes shake{25%{transform:translateX(-7px)}60%{transform:translateX(6px)}85%{transform:translateX(-3px)}}
+.demo{margin-top:auto;padding-top:10px;width:100%;border-top:1px dashed var(--line);display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;font-size:13px;color:var(--muted)}
+.demo span{flex-basis:100%}
+.chip{border:1px solid var(--line);background:transparent;border-radius:99px;min-height:44px;padding:0 14px;font-size:14px;font-weight:600;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+
+/* wheel: wider than the stage on purpose, so it feels too big for the phone */
+#s-wheel{padding-bottom:0;gap:6px}
+.wheelzone{flex:1;width:100%;display:grid;place-items:center;min-height:0}
+.wheelbtn{width:calc(100% + 52px);max-width:460px;margin-inline:-26px;aspect-ratio:1;border-radius:50%;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none;box-shadow:0 26px 40px -18px #1c0b1fa6}
+.wheelbtn canvas{width:100%;height:100%;display:block}
+#status{font-weight:600;color:var(--ink);min-height:1.5em}
+
+/* card */
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4}
+.tilt{perspective:900px;width:100%;padding:4px 6px;touch-action:none}
+.card{--rx:0deg;--ry:0deg;--g:-30%;--go:0;position:relative;overflow:hidden;border-radius:28px;padding:20px 18px 22px;color:var(--card-ink);
+  background:radial-gradient(120% 90% at 20% 0%,var(--card-a),var(--card-b) 70%);
+  transform:rotateX(var(--rx)) rotateY(var(--ry));transition:transform .18s ease-out;will-change:transform;
+  box-shadow:0 2px 0 #fff6 inset,0 22px 40px -14px #1c0b1f8c;display:grid;justify-items:center;gap:4px}
+.card.live{transition:none}
+.card::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;background:repeating-linear-gradient(118deg,#fff0 0 14px,#fff3 14px 15px)}
+.card::after{content:"";position:absolute;inset:-20%;pointer-events:none;opacity:var(--go);mix-blend-mode:soft-light;
+  background:linear-gradient(112deg,#fff0 calc(var(--g) - 22%),#fffc calc(var(--g) - 3%),#fff var(--g),#fffc calc(var(--g) + 3%),#fff0 calc(var(--g) + 22%))}
+.card>*{position:relative}
+.card.deal{animation:deal .8s cubic-bezier(.2,1.4,.3,1) both}
+@keyframes deal{from{opacity:0;transform:translateY(80px) rotateX(-40deg) rotateZ(-9deg) scale(.3)}}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.card h2{font:400 min(21cqw,84px)/.9 var(--script);letter-spacing:0;margin:-8px 0 2px;transform:rotate(-3deg)}
+.card .quip{color:var(--card-ink);font-weight:500;font-size:16px;max-width:26ch}
+.card .foot{display:flex;justify-content:space-between;width:100%;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;opacity:.85}
+.avatar{width:min(74%,250px);display:block}
+.avatar *{transform-box:view-box}
+.avatar .es{opacity:0}
+.alive .avatar{animation:pop .7s .15s cubic-bezier(.16,1,.3,1) both}
+.alive .eo{animation:eo 3s 1.1s 4}.alive .es{animation:es 3s 1.1s 4}
+.alive .hand{transform-origin:244px 262px;animation:wave .32s .9s 10 alternate ease-in-out}
+.alive .smile{transform-origin:150px 180px;animation:grin .5s .5s both}
+@keyframes pop{from{transform:translateY(26px) scale(.7);opacity:0}}
+@keyframes eo{0%,14%,100%{opacity:1}3%,11%{opacity:0}}
+@keyframes es{0%,14%,100%{opacity:0}3%,11%{opacity:1}}
+@keyframes wave{from{transform:rotate(-8deg)}to{transform:rotate(12deg)}}
+@keyframes grin{from{transform:scale(.5,.2)}}
+.actions{width:100%;display:grid;gap:2px;margin-top:auto}
+
+/* host */
+.tally{font:400 56px/1 var(--serif);font-variant-numeric:tabular-nums}
+.meter{width:100%;height:10px;border-radius:9px;background:var(--line);overflow:hidden}
+.meter b{display:block;height:100%;background:var(--accent);border-radius:9px}
+.roster{list-style:none;margin:0;padding:0;width:100%;text-align:left;display:grid}
+.roster li{display:flex;align-items:center;gap:10px;min-height:52px;border-bottom:1px solid var(--line);font-weight:600}
+.roster li span{margin-left:auto;font-size:14px;color:var(--muted)}
+.roster li.in span{color:var(--ok)}
+.dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--muted);flex:none}
+.in .dot{background:var(--ok);border-color:var(--ok)}
+.roster .chip{margin-left:auto}.roster li.fail{flex-wrap:wrap;padding-block:6px}
+.roster li textarea{flex-basis:100%;min-height:92px;border-radius:12px;border:1px solid var(--line);background:var(--field);padding:8px;font-size:14px}
+
+/* ---------- review notes ---------- */
+.notes{min-width:0;display:grid;gap:30px;max-width:66ch}
+.notes h1{font:400 clamp(40px,6vw,60px)/.98 var(--serif);letter-spacing:-.015em;margin:0;text-wrap:balance}
+.notes h3{font:700 20px/1.2 var(--sans);margin:0 0 10px;letter-spacing:-.01em}
+.notes p{margin:0 0 10px}
+.notes ul,.notes ol{margin:0;padding-left:20px;display:grid;gap:8px}
+.notes .lede{color:var(--muted);font-size:19px}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;padding:1px 7px;margin-right:6px;background:var(--line)}
+.tag.fix{background:color-mix(in srgb,var(--ok) 22%,transparent)}
+.tag.ask{background:color-mix(in srgb,var(--accent) 32%,transparent)}
+.ask-box{border:2px solid var(--accent);border-radius:20px;padding:18px 20px}
+.builder{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:18px;display:grid;gap:14px}
+@media(min-width:620px){.builder{grid-template-columns:220px minmax(0,1fr);align-items:start}}
+.bprev{display:grid;justify-items:center;gap:8px;position:sticky;top:12px}
+.bprev .avatar{width:100%;max-width:220px}
+.bprev code{font:500 12px/1.4 ui-monospace,monospace;color:var(--muted);text-align:center;overflow-wrap:anywhere}
+.opts{display:grid;gap:10px;min-width:0}
+.opt{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.opt b{flex-basis:100%;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.opt .chip{min-height:38px;padding:0 12px}
+.sw{width:38px;height:38px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0}
+.sw[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.swash path{stroke-dashoffset:0}}
+</style>
+
+<div class="shell">
+<section class="app splashing" id="app" aria-label="Secret Santa demo">
+  <button id="splash" type="button" aria-label="Njithi Cousins. Tap to continue"><span class="signature" id="sig"></span></button>
+  <header class="bar">
+    <span class="mark" id="mark">Njithi Cousins</span>
+    <div>
+      <button class="icon" id="snd" type="button" aria-pressed="true" aria-label="Sound"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path id="sndon" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path id="sndoff" d="M17 9l5 6M22 9l-5 6" hidden/></svg></button>
+      <button class="icon" id="thm" type="button" aria-label="Switch light or dark"><svg viewBox="0 0 24 24"><path id="moon" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path id="sun" hidden d="M12 8a4 4 0 1 0 0 8a4 4 0 0 0 0-8zM12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg></button>
+    </div>
+  </header>
+
+  <div class="screen" id="s-entry">
+    <h2 tabindex="-1">Hiii Cousins</h2>
+    <p>Type the code from your WhatsApp.</p>
+    <form id="form" novalidate>
+      <label for="code">Your code</label>
+      <input id="code" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="go" maxlength="40" placeholder="Mango Lantern 47">
+      <p id="err" role="alert" hidden></p>
+      <button class="btn">Let me in</button>
+    </form>
+    <p class="help">Lost your code? Message Ishmael or Jeff.</p>
+    <div class="demo"><span>Demo with made-up cousins. Tap a code to try it.</span>
+      <button class="chip" type="button" data-code="Mango Lantern 47">Mango Lantern 47</button>
+      <button class="chip" type="button" data-code="Chai Thunder 12">Chai Thunder 12</button>
+      <button class="chip" type="button" id="tohost">Host view (demo)</button>
+    </div>
+  </div>
+
+  <div class="screen" id="s-wheel" hidden>
+    <h2 tabindex="-1" id="hello">Hello!</h2>
+    <p id="status" aria-live="polite">Touch the wheel to spin it.</p>
+    <div class="wheelzone"><div class="wheelbtn" id="wheel" role="button" tabindex="0" aria-label="Spin the wheel"><canvas id="cv"></canvas></div></div>
+  </div>
+
+  <div class="screen" id="s-card" hidden>
+    <p id="again" hidden>Welcome back. Same cousin as before.</p>
+    <div class="tilt" id="tilt">
+      <article class="card" id="card">
+        <span class="eyebrow">You’re buying for</span>
+        <div id="portrait"></div>
+        <h2 tabindex="-1" id="who"></h2>
+        <p class="quip" id="quip"></p>
+        <div class="foot"><span id="giftday"></span><span>Shh ✦ secret</span></div>
+      </article>
+    </div>
+    <div class="actions">
+      <button class="btn" type="button" id="hide">Done. Close my card</button>
+      <button class="link" type="button" id="replay">Watch the spin again</button>
+    </div>
+  </div>
+
+  <div class="screen" id="s-host" hidden>
+    <h2 tabindex="-1">Who’s in</h2>
+    <div class="tally" id="tally"></div>
+    <div class="meter"><b id="meter"></b></div>
+    <p>Hosts see who has opened their card. Never who got who.</p>
+    <ul class="roster" id="roster"></ul>
+    <div class="actions"><button class="link" type="button" id="back">Back to the invite</button></div>
+  </div>
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <label hidden><input type="checkbox" switch id="hx"></label>
+</section>
+
+<aside class="notes">
+  <div>
+    <h1>Second pass, built from your notes</h1>
+    <p class="lede">Play it on the left with sound on, on a phone if you can. Nothing has been pushed. Everything in the demo is made up except the name Ishmael.</p>
+  </div>
+
+  <div>
+    <h3>What changed after your feedback</h3>
+    <ul>
+      <li><strong>No names on the wheel.</strong> Every wedge is a question mark, so nothing shows before the card.</li>
+      <li><strong>The wheel is heavy and huge.</strong> It is wider than the phone stage and centred. It winds back, builds up slowly, rumbles, and takes about nine seconds to give up.</li>
+      <li><strong>You cannot skip the spin.</strong> The skip link is gone.</li>
+      <li><strong>Long drumroll, then fireworks.</strong> The roll starts while the wheel is still crawling, builds for about four seconds, then fireworks go off and the card pops up through them.</li>
+      <li><strong>The big cursive only lives on the opening page.</strong> It writes itself when the link opens, then hands over to Hiii Cousins at the top. The small logo you liked stays in the corner on every page after that.</li>
+      <li><strong>The letters are whole now.</strong> The first build was cutting the dots off the i’s and j as it wrote. Fixed.</li>
+      <li><strong>Portraits redrawn from scratch.</strong> Shaded skin, real eyes with a proper wink, lips, lashes, hands with fingers, and clothes. Try the builder below.</li>
+      <li><strong>Font.</strong> Geist Serif is not on the font service this page is allowed to load, and it is not in the Geist package either. I used Geist for text and Instrument Serif for headings. Send me the Geist Serif file and I will swap it in.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h3>Portrait builder</h3>
+    <p>Each cousin is one short line of traits. Change anything and the portrait redraws. No photo is ever uploaded.</p>
+    <div class="builder">
+      <div class="bprev"><div id="bprev" class="alive"></div><code id="btraits"></code><button class="chip" type="button" id="brand">Surprise me</button></div>
+      <div class="opts" id="opts"></div>
+    </div>
+  </div>
+
+  <div class="ask-box">
+    <h3>Five answers I need before launch</h3>
+    <ol>
+      <li><strong>Who is in?</strong> The sheet’s title says 19 cousins in 7 branches. The rows list 24 in 8. I tested the draw with all 24 and it works.</li>
+      <li><strong>Code shape.</strong> The handoff says two words and two digits but shows “Mango 47”. I built two words plus two digits, like “Mango Lantern 47”. One word would be guessable in minutes.</li>
+      <li><strong>Who runs the draw service?</strong> Whoever holds the hosting account can technically reach the data. Pick one person, ideally not playing.</li>
+      <li><strong>Quips.</strong> The Quips column in the sheet is empty. The card shows one line per cousin. Fill the column or tell me to drop the line.</li>
+      <li><strong>Portrait traits.</strong> If you like the builder, I need one trait line per cousin. Ishmael and Jeff can fill them in with the builder in ten minutes.</li>
+    </ol>
+  </div>
+
+  <div>
+    <h3>Other calls I made</h3>
+    <ul>
+      <li><strong>Sound starts on.</strong> It begins with the first tap and one tap mutes it. All sound is made in the browser, so there are no audio files and no licences to clear.</li>
+      <li><strong>Coming back shows the card, not the wheel.</strong> A second visit with the same code goes straight to the same cousin, with “Watch the spin again” for the show.</li>
+      <li><strong>Sealed envelopes on the server (proposed, not built yet).</strong> Each match is locked with that cousin’s own code. Hosts get a list of who has opened and a nudge message to paste into WhatsApp. There is no screen, for anyone, that lists matches.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h3>What the sheet told me</h3>
+    <ul>
+      <li>The draw rules can all be met with 24 people. 500 test draws, 500 valid. The most restricted cousin still has 15 possible matches.</li>
+      <li>Four past-giver names are spelled differently from the roster names. I matched them by hand and list them in my message, not here, so the names stay out of the repository.</li>
+      <li>Three cousins list two past givers, so more than one year is already mixed into the column. Three cousins never appear as a past giver, so at least one year is incomplete. The draw is still safe: missing history only means fewer blocks.</li>
+      <li>Five past pairs were inside the same branch. This year’s rule blocks those anyway.</li>
+    </ul>
+  </div>
+
+  <div id="pitfalls">
+    <h3>Pitfalls pass by the Haiku reviewer</h3>
+    <p>A separate, cheaper model read the whole build and the screenshots cold and listed 12 problems. The fixes are in. One of its points, the wheel giving the match away early, is now moot because the wheel has no names.</p>
+    <ul>
+      <li><span class="tag fix">Fixed</span>Closing the card left the name and portrait sitting in the page. It is now wiped on close and when the tab is put away.</li>
+      <li><span class="tag fix">Fixed</span>The host nudge said “open the link” and had no link. It now carries the address, and shows the text to copy by hand if copying is blocked.</li>
+      <li><span class="tag fix">Fixed</span>A slow drag always spun clockwise. It now follows your finger.</li>
+      <li><span class="tag fix">Fixed</span>Music kept playing with the phone locked or the tab hidden. It now pauses.</li>
+      <li><span class="tag fix">Fixed</span>Small buttons raised to a full finger size. The theme button now shows a sun or a moon. A cousin who lost their code is told who to message. The gift date is one setting, not typed into the card.</li>
+      <li><span class="tag ask">Your call</span>Sound on from the first tap. The reviewer wants it off by default because of drumrolls in quiet rooms. I still think on is right for this crowd.</li>
+      <li><span class="tag ask">Your call</span>Shared phones. A returning code skips the wheel and shows the card straight away. Fine if codes stay private. Say so if siblings share a phone and I will always ask for a spin.</li>
+      <li><span class="tag ask">Before launch</span>The host view is open to anyone in this demo. The live one needs a host-only code checked by the server.</li>
+    </ul>
+    <p>Not tested by anyone yet: a real iPhone or Android keyboard over the code field, very large system text, and how smooth the wheel is on an older phone.</p>
+  </div>
+
+  <div>
+    <h3>What I could not do here</h3>
+    <ul>
+      <li>The Design Knowledge Base and HyperFrames skill files are on your E: drive, which this cloud session cannot reach. I did not use them and have not credited them.</li>
+      <li>Phone vibration could not be felt from here. Android should buzz on each peg. iPhones do not allow web pages to vibrate; I added a known Safari workaround that may or may not fire.</li>
+      <li>No previous exchange video or portrait references yet.</li>
+    </ul>
+  </div>
+</aside>
+</div>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s), TAU = Math.PI * 2;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+const store = { get(k){ try { return localStorage.getItem(k) } catch { return null } }, set(k,v){ try { localStorage.setItem(k,v) } catch {} } };
+const app = $('#app');
+
+/* ---------- demo data: fictional. The live site gets this from the draw service after a valid code. ---------- */
+const C = (name, quip, t) => ({ name, quip, t });
+const COUSINS = [
+  C('Amani','Will act surprised. Has already guessed.',{body:'f',skin:3,hair:'braids',hc:'black',glasses:'none',beard:'none',ear:'hoops',top:'hoodie',tc:'#4a2150'}),
+  C('Baraka','Owes everyone a playlist.',{body:'m',skin:4,hair:'fade',hc:'black',glasses:'square',beard:'full',ear:'none',top:'shirt',tc:'#1f7a6d'}),
+  C('Zawadi','Wraps gifts better than you.',{body:'f',skin:2,hair:'afro',hc:'brown',glasses:'none',beard:'none',ear:'studs',top:'tee',tc:'#fff1d6'}),
+  C('Imani','First on the dance floor.',{body:'f',skin:3,hair:'bun',hc:'black',glasses:'round',beard:'none',ear:'studs',top:'shirt',tc:'#c9a3c4'}),
+  C('Jabali','Always asks for seconds.',{body:'m',skin:4,hair:'bald',hc:'black',glasses:'none',beard:'full',ear:'none',top:'tee',tc:'#fff1d6'}),
+  C('Neema','Has the family group chat on mute.',{body:'f',skin:1,hair:'wrap',hc:'honey',glasses:'none',beard:'none',ear:'hoops',top:'tee',tc:'#4a2150'}),
+  C('Tumaini','Still hiding last year’s receipt.',{body:'m',skin:2,hair:'locs',hc:'brown',glasses:'none',beard:'stubble',ear:'none',top:'hoodie',tc:'#1f7a6d'}),
+  C('Makena','Laughs before the joke lands.',{body:'f',skin:3,hair:'puffs',hc:'black',glasses:'none',beard:'none',ear:'studs',top:'hoodie',tc:'#c9a3c4'}),
+  C('Kito','Shows up exactly when the food does.',{body:'m',skin:4,hair:'curls',hc:'black',glasses:'none',beard:'none',ear:'none',top:'tee',tc:'#ffd166'}),
+  C('Sanaa','Takes all the photos. Is in none.',{body:'f',skin:2,hair:'braids',hc:'auburn',glasses:'round',beard:'none',ear:'none',top:'shirt',tc:'#1f7a6d'}),
+  C('Wema','Brings the good snacks.',{body:'f',skin:1,hair:'bun',hc:'brown',glasses:'none',beard:'none',ear:'hoops',top:'tee',tc:'#4a2150'}),
+  C('Ishmael','Organised all of this.',{body:'m',skin:3,hair:'fade',hc:'black',glasses:'none',beard:'stubble',ear:'none',top:'hoodie',tc:'#c9a3c4'}),
+];
+const CODES = { mangolantern47:{me:'Ishmael',to:'Amani'}, chaithunder12:{me:'Zawadi',to:'Baraka'} };
+const GIFT_DAY = '25 Dec';
+const OPENED = new Set(['Ishmael','Amani','Imani','Kito','Sanaa','Neema','Baraka']);
+
+/* ---------- sound: everything is synthesised, no files ---------- */
+let ac, master, musicGain, rumbleGain, noiseBuf, soundOn = store.get('nj-sound') !== 'off', musicTimer, step = 0;
+function wake(){
+  if (!soundOn) return;
+  const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+  if (!ac){
+    ac = new AC(); master = ac.createGain(); master.gain.value = .9; master.connect(ac.destination);
+    musicGain = ac.createGain(); musicGain.gain.value = 1; musicGain.connect(master);
+    noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
+    const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = ac.createBufferSource(), lp = ac.createBiquadFilter(); src.buffer = noiseBuf; src.loop = true; lp.type = 'lowpass'; lp.frequency.value = 170;
+    rumbleGain = ac.createGain(); rumbleGain.gain.value = 0; src.connect(lp).connect(rumbleGain).connect(master); src.start();
+  }
+  if (ac.state !== 'running') ac.resume().catch(() => {});
+  if (!musicTimer){ music(); musicTimer = setInterval(music, 640); }
+}
+const live = () => soundOn && ac && ac.state === 'running';
+function tone(f, dur, vol, type = 'sine', f2 = f, when = 0, out = master, attack = .004){
+  if (!live()) return;
+  const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + when;
+  o.type = type; o.frequency.setValueAtTime(f, t); if (f2 !== f) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(vol, t + attack); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g).connect(out); o.start(t); o.stop(t + dur + .02);
+}
+function hiss(dur, vol, freq, q = 1, when = 0, type = 'bandpass'){
+  if (!live()) return;
+  const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(), t = ac.currentTime + when;
+  s.buffer = noiseBuf; f.type = type; f.frequency.value = freq; f.Q.value = q;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  s.connect(f).connect(g).connect(master); s.start(t, Math.random() * .5, dur + .02);
+}
+const sfx = {
+  key(){ hiss(.03, .09, 2600 + Math.random() * 900, 2); tone(300 + Math.random() * 60, .04, .05, 'triangle', 190) },
+  click(){ tone(520, .07, .09, 'triangle', 780) },
+  bad(){ tone(210, .2, .1, 'triangle', 140) },
+  tick(speed){ hiss(.03, .26, 1100 + speed * 700, 4); tone(330 + speed * 160, .05, .16, 'triangle', 170) },
+  drum(v){ hiss(.06, .22 * v, 1900, .8); tone(190, .07, .12 * v, 'triangle', 120) },
+  boom(when = 0){ tone(120, .7, .3, 'sine', 38, when); hiss(.5, .2, 500, .5, when, 'lowpass'); for (let i = 0; i < 9; i++) hiss(.04, .1, 5200, 3, when + .22 + Math.random() * .7) },
+  reveal(){
+    hiss(1.6, .16, 6500, .6, 0, 'highpass'); tone(98, .6, .3, 'sine', 50);
+    [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => { tone(f, 1.6, .1, 'triangle', f, i * .075); tone(f * 2, .7, .03, 'sine', f * 2, i * .075) });
+  },
+};
+const CHORDS = [[174.61,220,261.63,329.63],[220,261.63,329.63,392],[146.83,220,261.63,349.23],[130.81,196,246.94,329.63]];
+function music(){
+  if (!live()) return;
+  const chord = CHORDS[(step >> 3) % 4];
+  if (step % 8 === 0) chord.forEach(f => { tone(f, 5.6, .022, 'sine', f, 0, musicGain, 1.6); tone(f * 1.003, 5.6, .014, 'triangle', f * 1.003, 0, musicGain, 1.8) });
+  if (step % 2 === 0 || Math.random() < .3){ const f = chord[(Math.random() * 4) | 0] * 2; tone(f, 1.1, .035, 'sine', f, 0, musicGain, .006); tone(f * 3, .25, .008, 'sine', f * 3, 0, musicGain, .004) }
+  step++;
+}
+function duck(v){ if (live()) musicGain.gain.setTargetAtTime(v, ac.currentTime, .15) }
+function rumble(v){ if (live()) rumbleGain.gain.setTargetAtTime(v, ac.currentTime, .06) }
+function buzz(p){ try { navigator.vibrate && navigator.vibrate(p) } catch {} try { $('#hx').parentNode.click() } catch {} }
+document.addEventListener('visibilitychange', () => { if (!ac) return; if (document.hidden) ac.suspend(); else if (soundOn) ac.resume().catch(() => {}) });
+addEventListener('pointerdown', wake, { passive: true }); addEventListener('keydown', wake);
+function paintSound(){ $('#snd').setAttribute('aria-pressed', soundOn); $('#sndon').toggleAttribute('hidden', !soundOn); $('#sndoff').toggleAttribute('hidden', soundOn) }
+$('#snd').onclick = () => { soundOn = !soundOn; store.set('nj-sound', soundOn ? 'on' : 'off'); paintSound(); if (soundOn){ wake(); sfx.click() } else if (ac) ac.suspend() };
+paintSound();
+
+/* ---------- theme ---------- */
+const root = document.documentElement;
+const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+function paintTheme(){ const d = isDark(); $('#sun').toggleAttribute('hidden', !d); $('#moon').toggleAttribute('hidden', d); $('#thm').setAttribute('aria-label', d ? 'Switch to light mode' : 'Switch to dark mode') }
+$('#thm').onclick = () => { root.dataset.theme = isDark() ? 'light' : 'dark'; store.set('nj-theme', root.dataset.theme); paintTheme(); sfx.click() };
+if (store.get('nj-theme')) root.dataset.theme = store.get('nj-theme');
+paintTheme(); matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paintTheme);
+
+/* ---------- screens ---------- */
+let session = null, raf = 0, timers = [];
+function show(id){
+  cancelAnimationFrame(raf); timers.forEach(clearTimeout); timers = []; rumble(0);
+  for (const s of document.querySelectorAll('.screen')) s.hidden = s.id !== id;
+  const h = $('#' + id + ' h2'); h && h.focus({ preventScroll: true });
+}
+
+/* ---------- splash: the signature writes itself, then hands over ---------- */
+const sig = $('#sig'), splash = $('#splash'); let n = 0;
+sig.innerHTML = ['Njithi', 'Cousins'].map((w, k) => `<span aria-hidden="true" class="${k ? 'l2' : ''}">${[...w].map(ch => `<i style="--i:${n++}">${ch}</i>`).join('')}</span>`).join('') +
+  '<svg class="swash" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 12 C50 2 120 2 198 9 C150 10 110 13 80 18"/></svg>';
+function endSplash(){ if (splash.classList.contains('gone')) return; splash.classList.add('gone'); app.classList.remove('splashing'); $('#mark').hidden = false; setTimeout(() => { splash.hidden = true }, 500) }
+$('#mark').hidden = true;
+splash.onclick = endSplash; setTimeout(endSplash, reduced.matches ? 1400 : 3900);
+
+/* ---------- entry ---------- */
+const code = $('#code'), err = $('#err');
+code.addEventListener('input', () => { err.hidden = true; sfx.key() });
+function enter(raw){
+  const key = raw.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const hit = CODES[key];
+  if (!key || !hit){
+    err.textContent = key ? 'That code didn’t match. Check your WhatsApp message and try again.' : 'Type your code first. It looks like Mango Lantern 47.';
+    err.hidden = false; sfx.bad(); buzz([30, 40, 30]);
+    code.classList.remove('shake'); void code.offsetWidth; code.classList.add('shake'); code.focus(); return;
+  }
+  sfx.click(); code.blur();
+  session = { key, me: hit.me, to: COUSINS.find(c => c.name === hit.to) };
+  if (store.get('nj-seen-' + key)) return reveal(true);
+  openWheel();
+}
+$('#form').onsubmit = e => { e.preventDefault(); wake(); enter(code.value) };
+for (const b of document.querySelectorAll('[data-code]')) b.onclick = () => { code.value = b.dataset.code; enter(code.value) };
+
+/* ---------- wheel: no names, just weight ---------- */
+const cv = $('#cv'), ctx = cv.getContext('2d'), wheel = $('#wheel'), statusEl = $('#status');
+const N = 12, SG = TAU / N, WEDGE = [['#ff6a3d','#2e1431'],['#fff1d6','#2e1431'],['#c9a3c4','#2e1431'],['#3d1b43','#fff1d6']];
+let angle = 0, pin = 0, spinning = false, flash = 0, lastK = 0, chase = 0;
+const kAt = a => Math.floor((-Math.PI / 2 - a) / SG);
+function fit(){ const s = Math.round(wheel.clientWidth * Math.min(devicePixelRatio || 1, 2)); if (s && cv.width !== s) cv.width = cv.height = s }
+function draw(){
+  fit(); const r = cv.width / 2, R = r * .8;
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.translate(r, r);
+  let g = ctx.createLinearGradient(-r, -r, r, r); g.addColorStop(0, '#6a3372'); g.addColorStop(.5, '#3d1b43'); g.addColorStop(1, '#210c26');
+  ctx.beginPath(); ctx.arc(0, 0, r * .985, 0, TAU); ctx.fillStyle = g; ctx.fill();
+  ctx.beginPath(); ctx.arc(0, 0, r * .975, 0, TAU); ctx.lineWidth = r * .012; ctx.strokeStyle = '#ff6a3d'; ctx.stroke();
+  for (let i = 0; i < 24; i++){
+    const a = i * TAU / 24 + TAU / 48, x = Math.cos(a) * r * .895, y = Math.sin(a) * r * .895, on = flash ? flash > .5 : (i + chase) % 3 === 0;
+    if (on){ ctx.beginPath(); ctx.arc(x, y, r * .05, 0, TAU); ctx.fillStyle = 'rgba(255,220,130,.28)'; ctx.fill() }
+    ctx.beginPath(); ctx.arc(x, y, r * .026, 0, TAU); ctx.fillStyle = on ? '#fff3c4' : '#8a5a8c'; ctx.fill();
+  }
+  ctx.save(); ctx.rotate(angle); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (let i = 0; i < N; i++){
+    const [bg, fg] = WEDGE[i % 4];
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, i * SG, (i + 1) * SG); ctx.closePath(); ctx.fillStyle = bg; ctx.fill();
+    ctx.lineWidth = r * .008; ctx.strokeStyle = '#2e1431'; ctx.stroke();
+    ctx.save(); ctx.rotate((i + .5) * SG); ctx.translate(R * .68, 0); ctx.rotate(Math.PI / 2); ctx.fillStyle = fg;
+    if (i % 2){ ctx.font = `${r * .13}px system-ui`; ctx.fillText('✦', 0, 0) } else { ctx.font = `${r * .3}px Yellowtail,cursive`; ctx.fillText('?', 0, 0) }
+    ctx.restore();
+  }
+  if (flash){ ctx.beginPath(); ctx.arc(0, 0, R, 0, TAU); ctx.fillStyle = `rgba(255,255,255,${flash * .3})`; ctx.fill() }
+  for (let i = 0; i < N; i++){ const a = i * SG; ctx.beginPath(); ctx.arc(Math.cos(a) * R * .965, Math.sin(a) * R * .965, r * .024, 0, TAU); ctx.fillStyle = '#ffd166'; ctx.fill(); ctx.lineWidth = r * .006; ctx.strokeStyle = '#2e1431'; ctx.stroke() }
+  ctx.restore();
+  g = ctx.createRadialGradient(-R * .45, -R * .5, R * .05, 0, 0, R); g.addColorStop(0, 'rgba(255,255,255,.3)'); g.addColorStop(.45, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(28,11,31,.3)');
+  ctx.beginPath(); ctx.arc(0, 0, R, 0, TAU); ctx.fillStyle = g; ctx.fill();
+  g = ctx.createRadialGradient(-r * .08, -r * .1, r * .02, 0, 0, r * .25); g.addColorStop(0, '#ffb48a'); g.addColorStop(1, '#e8501f');
+  ctx.beginPath(); ctx.arc(0, 0, r * .25, 0, TAU); ctx.fillStyle = g; ctx.fill(); ctx.lineWidth = r * .03; ctx.strokeStyle = '#fff1d6'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, 0, r * .27, 0, TAU); ctx.lineWidth = r * .012; ctx.strokeStyle = '#2e1431'; ctx.stroke();
+  ctx.fillStyle = '#2e1431'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  if (spinning){ ctx.font = `${r * .22}px system-ui`; ctx.fillText('✦', 0, r * .01) } else { ctx.font = `${r * .2}px Yellowtail,cursive`; ctx.fillText('Spin', 0, r * .012) }
+  ctx.save(); ctx.translate(0, -r * .97); ctx.rotate(pin);
+  ctx.beginPath(); ctx.moveTo(-r * .085, 0); ctx.quadraticCurveTo(0, -r * .07, r * .085, 0); ctx.lineTo(0, r * .24); ctx.closePath();
+  ctx.fillStyle = '#fff1d6'; ctx.fill(); ctx.lineWidth = r * .02; ctx.strokeStyle = '#2e1431'; ctx.lineJoin = 'round'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, r * .03, r * .028, 0, TAU); ctx.fillStyle = '#ff6a3d'; ctx.fill(); ctx.restore();
+}
+function pegs(dir, speed){ const k = kAt(angle); if (k !== lastK){ lastK = k; chase++; pin = -dir * .6; sfx.tick(Math.min(1, speed)); buzz(8) } }
+function idle(now){ if (spinning || $('#s-wheel').hidden) return; const c = Math.floor(now / 420); if (c !== chase){ chase = c; draw() } raf = requestAnimationFrame(idle) }
+function openWheel(){
+  show('s-wheel'); $('#hello').textContent = `Hello, ${session.me}!`;
+  statusEl.textContent = 'Touch the wheel to spin it.';
+  spinning = false; flash = 0; pin = 0; angle = Math.random() * TAU; lastK = kAt(angle);
+  wheel.setAttribute('aria-disabled', 'false'); draw(); raf = requestAnimationFrame(idle);
+}
+/* a heavy wheel: slow to get going, very slow to stop. Position is the running total of this speed curve. */
+const CURVE = (() => { const a = [0]; for (let i = 1; i <= 800; i++){ const u = i / 800; a.push(a[i - 1] + Math.min(1, u / .13) ** 2 * (1 - u) ** 3.6) } return a.map(v => v / a[800]) })();
+const ease = u => { const x = u * 800, i = Math.min(799, x | 0); return CURVE[i] + (CURVE[i + 1] - CURVE[i]) * (x - i) };
+let roll = 0;
+function drumAt(now, level){ if (!roll) roll = now; let hit = false; while (now >= roll){ roll += 1000 / (12 + level * 20); hit = true } if (hit) sfx.drum(.25 + level * .75) }
+function spin(v0){
+  if (spinning || !session) return; spinning = true; cancelAnimationFrame(raf); wheel.setAttribute('aria-disabled', 'true');
+  statusEl.textContent = 'Round and round…'; buzz(20); roll = 0;
+  if (reduced.matches) return drumroll();
+  const dir = v0 < 0 ? -1 : 1, WIND = 420, T = 8600;
+  const turns = Math.max(5, Math.min(9, Math.abs(v0) * 5200 / TAU));
+  const want = -Math.PI / 2 - (((Math.random() * N) | 0) + (dir > 0 ? .12 : .88)) * SG;
+  const back = angle - dir * .16; let end = back + dir * turns * TAU; end += dir * ((((want - end) * dir) % TAU + TAU) % TAU);
+  const from = angle, t0 = performance.now(); let prev = from, prevT = t0;
+  (function frame(now){
+    const t = now - t0;
+    if (t < WIND){ const w = t / WIND; angle = from + (back - from) * (1 - (1 - w) ** 2) }
+    else { const u = Math.min(1, (t - WIND) / T); angle = back + (end - back) * ease(u);
+      if (u > .7){ if (u < .72) statusEl.textContent = 'Almost…'; duck(.2); drumAt(now, (u - .7) / .3 * .35) }
+      if (u >= 1){ pin = 0; rumble(0); draw(); return drumroll() } }
+    const speed = Math.abs(angle - prev) / Math.max(1, now - prevT) * 50; prev = angle; prevT = now;
+    rumble(Math.min(.5, speed * .45)); pegs(dir, speed); pin *= .8; draw();
+    raf = requestAnimationFrame(frame);
+  })(t0);
+}
+function drumroll(){
+  statusEl.textContent = 'Drumroll…'; duck(.12);
+  const total = reduced.matches ? 900 : 2700, t0 = performance.now();
+  (function f(now){
+    const u = Math.min(1, (now - t0) / total);
+    drumAt(now, .35 + u * .65); if (!reduced.matches){ flash = .5 + .5 * Math.sin(u * u * 60); chase = (now / 60) | 0; draw() }
+    if (u < 1) return raf = requestAnimationFrame(f);
+    sfx.drum(1.4); buzz([30, 60, 120]); timers.push(setTimeout(() => reveal(false), 260));
+  })(t0);
+}
+let drag = null;
+const pointerAngle = e => { const b = wheel.getBoundingClientRect(); return Math.atan2(e.clientY - b.top - b.height / 2, e.clientX - b.left - b.width / 2) };
+wheel.addEventListener('pointerdown', e => { if (spinning) return; wake(); wheel.setPointerCapture(e.pointerId); drag = { a: pointerAngle(e), t: e.timeStamp, v: 0, moved: 0, dir: 1 } });
+wheel.addEventListener('pointermove', e => {
+  if (!drag || spinning) return;
+  let a = pointerAngle(e), d = a - drag.a; if (d > Math.PI) d -= TAU; if (d < -Math.PI) d += TAU;
+  const dt = Math.max(1, e.timeStamp - drag.t); drag.v = drag.v * .6 + (d / dt) * .4; drag.a = a; drag.t = e.timeStamp; drag.moved += Math.abs(d);
+  if (d) drag.dir = Math.sign(d); angle += d; pegs(drag.dir, .2); pin *= .7; draw();
+});
+wheel.addEventListener('pointerup', e => { if (!drag) return; const d = drag; drag = null; spin(d.moved < .06 ? .008 : e.timeStamp - d.t > 120 || !d.v ? .008 * d.dir : d.v) });
+wheel.addEventListener('pointercancel', () => { drag = null });
+wheel.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); spin(.008) } });
+addEventListener('pagehide', () => { if (session) home() });
+addEventListener('resize', () => { if (!$('#s-wheel').hidden) draw() });
+document.fonts && document.fonts.ready.then(() => { if (!$('#s-wheel').hidden) draw() });
+
+/* ---------- portraits: built from a short list of traits, so no photo is ever stored ---------- */
+const SKIN = [['#f8d5b0','#e9b78b','#c98f62'],['#e8b386','#d19462','#a96b3f'],['#cb8d5d','#b07041','#864d28'],['#a66a42','#885232','#63381c'],['#7a4a2b','#613a20','#412511']];
+const HAIR = { black:['#17100f','#4a3a3c'], brown:['#3b2114','#75482e'], auburn:['#6e2c1c','#b0553a'], honey:['#8a5a22','#d09a4a'], grey:['#8d8790','#d5d0d8'] };
+let uid = 0;
+function portrait(t, name){
+  const u = 'p' + (++uid), [hi, sk, sh] = SKIN[t.skin], [H, HS] = HAIR[t.hc], f = t.body === 'f', ink = '#1a0f0d', tc = t.tc;
+  const face = f ? 'M96 128Q94 64 150 62Q206 64 204 128Q203 164 184 189Q166 209 150 209Q134 209 116 189Q97 164 96 128Z' : 'M94 128Q92 62 150 60Q208 62 206 128Q206 168 189 189Q171 207 150 207Q129 207 111 189Q94 168 94 128Z';
+  const torso = f ? 'M50 312Q54 242 120 224H180Q246 242 250 312Z' : 'M30 312Q32 236 116 220H184Q268 236 270 312Z';
+  const cap = 'M94 132Q86 50 150 48Q214 50 206 132Q204 104 190 92Q172 80 150 80Q128 80 110 92Q96 104 94 132Z';
+  const shine = `<path d="M116 68Q140 56 170 62" stroke="${HS}" stroke-width="5" stroke-linecap="round" fill="none" opacity=".75"/>`;
+  const ring = (cx, cy, rad, n, br) => Array.from({ length: n }, (_, i) => `<circle cx="${(cx + Math.cos(i * TAU / n) * rad).toFixed(1)}" cy="${(cy + Math.sin(i * TAU / n) * rad).toFixed(1)}" r="${br}"/>`).join('');
+  const back = {
+    afro: `<g fill="${H}"><circle cx="150" cy="94" r="80"/>${ring(150, 94, 74, 14, 22)}</g><g fill="none" stroke="${HS}" stroke-width="4" stroke-linecap="round" opacity=".6"><path d="M96 46q10-10 22-10M150 22q12-2 22 6M204 52q10 10 12 22"/></g>`,
+    puffs: `<g fill="${H}"><circle cx="84" cy="66" r="36"/>${ring(84, 66, 32, 9, 13)}<circle cx="216" cy="66" r="36"/>${ring(216, 66, 32, 9, 13)}</g><g fill="none" stroke="${HS}" stroke-width="4" stroke-linecap="round" opacity=".6"><path d="M62 48q8-10 20-10M206 38q12 0 20 10"/></g>`,
+    braids: `<path d="M88 126Q76 38 150 36Q224 38 212 126L220 262Q206 276 192 262L194 140H106L108 262Q94 276 80 262Z" fill="${H}"/><g stroke="${HS}" stroke-width="2.5" opacity=".55" stroke-dasharray="7 6" fill="none"><path d="M87 140V262M100 142V264M200 142V264M213 140V262"/></g><g fill="#ffd166"><circle cx="87" cy="268" r="4.5"/><circle cx="101" cy="270" r="4.5"/><circle cx="199" cy="270" r="4.5"/><circle cx="213" cy="268" r="4.5"/></g>`,
+    locs: `<g stroke="${H}" stroke-width="15" stroke-linecap="round" fill="none"><path d="M100 80Q74 140 80 226M114 68Q90 150 98 238M200 80Q226 140 220 226M186 68Q210 150 202 238"/></g><g stroke="${HS}" stroke-width="2" opacity=".5" stroke-dasharray="3 9" fill="none"><path d="M100 80Q74 140 80 226M200 80Q226 140 220 226"/></g>`,
+  }[t.hair] || '';
+  const front = {
+    fade: `<path d="${cap}" fill="${H}"/><path d="M95 130Q94 104 106 92M205 130Q206 104 194 92" stroke="${sk}" stroke-width="5" opacity=".35" fill="none"/>${shine}`,
+    curls: `<path d="${cap}" fill="${H}"/><g fill="${H}"><circle cx="104" cy="80" r="19"/><circle cx="124" cy="62" r="20"/><circle cx="150" cy="54" r="21"/><circle cx="176" cy="62" r="20"/><circle cx="196" cy="80" r="19"/></g><g fill="none" stroke="${HS}" stroke-width="3.5" stroke-linecap="round" opacity=".65"><path d="M114 56q8-8 18-6M144 42q10-4 18 4M176 52q10-2 16 8"/></g>`,
+    afro: `<path d="${cap}" fill="${H}"/>`,
+    puffs: `<path d="${cap}" fill="${H}"/><path d="M150 50V80" stroke="${HS}" stroke-width="3" opacity=".7"/>${shine}`,
+    braids: `<path d="M94 134Q88 52 150 48Q212 52 206 134Q198 96 150 74Q102 96 94 134Z" fill="${H}"/><path d="M150 50V74" stroke="${HS}" stroke-width="3" opacity=".7"/><g stroke="${HS}" stroke-width="2.5" opacity=".45" fill="none"><path d="M138 58Q108 78 100 112M162 58Q192 78 200 112"/></g>`,
+    locs: `<path d="${cap}" fill="${H}"/><g stroke="${H}" stroke-width="13" stroke-linecap="round" fill="none"><path d="M122 58Q104 78 103 108M178 58Q196 78 197 108M150 52V78"/></g>${shine}`,
+    bun: `<circle cx="150" cy="36" r="27" fill="${H}"/><path d="M134 26q14-12 30-2" stroke="${HS}" stroke-width="4" stroke-linecap="round" fill="none" opacity=".7"/><path d="${cap}" fill="${H}"/>${shine}`,
+    bald: `<path d="M112 84Q134 64 164 70" stroke="#fff" stroke-opacity=".4" stroke-width="7" stroke-linecap="round" fill="none"/>`,
+    wrap: `<path d="M90 128Q80 38 150 34Q220 38 210 128Q150 82 90 128Z" fill="${HS}"/><path d="M90 128Q80 38 150 34Q220 38 210 128Q150 82 90 128Z" fill="none" stroke="${ink}" stroke-opacity=".2" stroke-width="2"/><g stroke="${ink}" stroke-opacity=".22" stroke-width="3" fill="none"><path d="M100 96Q150 50 200 96M110 74Q150 40 190 74"/></g><path d="M186 56Q214 18 232 44Q222 58 198 66Z" fill="${HS}" stroke="${ink}" stroke-opacity=".22" stroke-width="2"/><circle cx="192" cy="58" r="15" fill="${HS}" stroke="${ink}" stroke-opacity=".25" stroke-width="2.5"/>`,
+  }[t.hair];
+  const brow = ['bald', 'wrap'].includes(t.hair) || t.hc === 'grey' ? '#2a1710' : H, bw = f ? 4.2 : 6.5;
+  const lash = (x, s) => f ? `<path d="M${x + 13 * s} 128l${6 * s}-5M${x + 9 * s} 124l${4 * s}-6" stroke="${ink}" stroke-width="2.6" stroke-linecap="round"/>` : '';
+  const eye = (x, s) => `<ellipse cx="${x}" cy="136" rx="14" ry="13" fill="#fff"/><circle cx="${x + 1}" cy="137" r="8.2" fill="url(#${u}i)"/><circle cx="${x + 1}" cy="137" r="4" fill="#120a08"/><circle cx="${x + 4.5}" cy="133" r="3" fill="#fff"/><circle cx="${x - 2.5}" cy="141" r="1.4" fill="#fff" opacity=".7"/><path d="M${x - 15} 133Q${x} 118 ${x + 15} 133" stroke="${ink}" stroke-width="3.6" stroke-linecap="round" fill="none"/>${lash(x, s)}`;
+  const jaw = 'M95 140Q96 170 112 189Q130 207 150 207Q170 207 188 189Q204 170 205 140Q198 172 176 167Q150 158 124 167Q102 172 95 140Z';
+  const beard = t.beard === 'full' ? `<path d="${jaw}" fill="${H}"/><path d="M120 171Q136 159 150 166Q164 159 180 171Q164 167 150 171Q136 167 120 171Z" fill="${H}"/>` : t.beard === 'stubble' ? `<path d="${jaw}" fill="${H}" opacity=".24"/>` : '';
+  const glasses = t.glasses === 'round' ? `<g fill="#fff" fill-opacity=".14" stroke="#1d1016" stroke-width="4"><circle cx="124" cy="136" r="20"/><circle cx="176" cy="136" r="20"/></g><path d="M144 134Q150 128 156 134M104 132L94 128M196 132L206 128" stroke="#1d1016" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M112 126l8-6M164 126l8-6" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>`
+    : t.glasses === 'square' ? `<g fill="#fff" fill-opacity=".14" stroke="#1d1016" stroke-width="4.5"><rect x="104" y="120" width="40" height="32" rx="9"/><rect x="156" y="120" width="40" height="32" rx="9"/></g><path d="M144 134H156M104 132L94 128M196 132L206 128" stroke="#1d1016" stroke-width="4.5" stroke-linecap="round"/><path d="M112 128l8-5M164 128l8-5" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>` : '';
+  const ear = t.ear === 'hoops' ? `<g fill="none" stroke="#ffd166" stroke-width="3.5"><circle cx="91" cy="162" r="10"/><circle cx="209" cy="162" r="10"/></g>` : t.ear === 'studs' ? `<g fill="#ffd166" stroke="#b8862b"><circle cx="91" cy="153" r="4.5"/><circle cx="209" cy="153" r="4.5"/></g>` : '';
+  const lip = f ? '#b23a48' : sh;
+  const top = {
+    tee: `<path d="M118 221Q150 250 182 221Z" fill="${sk}"/><path d="M116 221Q150 254 184 221" fill="none" stroke="${ink}" stroke-opacity=".28" stroke-width="7" stroke-linecap="round"/>`,
+    hoodie: `<path d="M126 222Q150 252 174 222Z" fill="${sk}"/><path d="M110 218Q150 268 190 218" fill="none" stroke="${ink}" stroke-opacity=".28" stroke-width="9" stroke-linecap="round"/><g stroke="#fff1d6" stroke-width="4" stroke-linecap="round"><path d="M136 246V278M164 246V278"/></g><g fill="#ffd166"><circle cx="136" cy="281" r="3.5"/><circle cx="164" cy="281" r="3.5"/></g>`,
+    shirt: `<path d="M128 220L150 258L172 220Z" fill="${sk}"/><g fill="#fff" fill-opacity=".35" stroke="${ink}" stroke-opacity=".3" stroke-width="2" stroke-linejoin="round"><path d="M118 216L150 258L126 266Z"/><path d="M182 216L150 258L174 266Z"/></g><g fill="${ink}" fill-opacity=".4"><circle cx="150" cy="274" r="2.6"/><circle cx="150" cy="290" r="2.6"/></g>`,
+  }[t.top];
+  const finger = (i, a) => `<rect x="-5.8" y="-40" width="11.6" height="36" rx="5.8" transform="translate(${233 + i * 9.6} 160) rotate(${a})"/>`;
+  return `<svg class="avatar" viewBox="0 0 300 300" role="img" aria-label="${name || 'Portrait'}, smiling, winking and waving">
+  <defs><radialGradient id="${u}s" cx="36%" cy="28%" r="85%"><stop stop-color="${hi}"/><stop offset=".6" stop-color="${sk}"/><stop offset="1" stop-color="${sh}"/></radialGradient>
+  <radialGradient id="${u}i" cx="40%" cy="35%"><stop stop-color="#6b3d22"/><stop offset="1" stop-color="#2a1710"/></radialGradient>
+  <radialGradient id="${u}b" cx="50%" cy="35%" r="70%"><stop stop-color="#fffaf0"/><stop offset="1" stop-color="#ffd9b8"/></radialGradient>
+  <linearGradient id="${u}t"><stop stop-color="#000" stop-opacity=".22"/><stop offset=".3" stop-color="#000" stop-opacity="0"/><stop offset=".7" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+  <clipPath id="${u}c"><circle cx="150" cy="150" r="146"/></clipPath></defs>
+  <circle cx="150" cy="150" r="146" fill="url(#${u}b)"/><circle cx="150" cy="150" r="146" fill="none" stroke="#2e1431" stroke-opacity=".18" stroke-width="2.5"/>
+  <g clip-path="url(#${u}c)">${back}
+  ${t.top === 'hoodie' ? `<path d="M100 232Q96 190 124 184H176Q204 190 200 232Q150 262 100 232Z" fill="${tc}"/><path d="M100 232Q96 190 124 184H176Q204 190 200 232Q150 262 100 232Z" fill="#000" fill-opacity=".2"/>` : ''}
+  <path d="M${f ? 130 : 127} 176V228Q150 246 ${f ? 170 : 173} 228V176Z" fill="${sh}"/>
+  <path d="${torso}" fill="${tc}"/><path d="${torso}" fill="url(#${u}t)"/><path d="${torso}" fill="none" stroke="${ink}" stroke-opacity=".3" stroke-width="2.5"/>${top}</g>
+  <g fill="${sk}" stroke="${sh}" stroke-width="2"><ellipse cx="92" cy="138" rx="10" ry="15"/><ellipse cx="208" cy="138" rx="10" ry="15"/></g>
+  <path d="M90 131q6 5 2 13M210 131q-6 5-2 13" stroke="${sh}" stroke-width="2" fill="none" stroke-linecap="round"/>${ear}
+  <path d="${face}" fill="url(#${u}s)" stroke="${sh}" stroke-width="2"/>
+  <ellipse cx="106" cy="160" rx="12" ry="7.5" fill="#ff4d4d" opacity=".17"/><ellipse cx="194" cy="160" rx="12" ry="7.5" fill="#ff4d4d" opacity=".17"/>
+  ${beard}${front}
+  <path d="M107 114Q123 ${f ? 101 : 104} 140 111M160 111Q177 ${f ? 99 : 102} 193 112" stroke="${brow}" stroke-width="${bw}" stroke-linecap="round" fill="none"/>
+  ${eye(124, -1)}<g class="eo">${eye(176, 1)}</g><g class="es"><path d="M161 139Q176 128 191 139" stroke="${ink}" stroke-width="4.2" stroke-linecap="round" fill="none"/>${f ? `<path d="M189 137l6-3M185 133l5-5" stroke="${ink}" stroke-width="2.6" stroke-linecap="round"/>` : ''}</g>
+  <path d="M150 142Q142 161 147 165Q152 169 159 164" stroke="${sh}" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+  <g class="smile"><path d="M120 173Q150 219 180 173Q150 182 120 173Z" fill="#4a1420" stroke="${lip}" stroke-width="${f ? 4.5 : 2.5}" stroke-linejoin="round"/><path d="M127 177Q150 185 173 177Q167 188 150 189Q133 188 127 177Z" fill="#fff"/><path d="M137 194Q150 187 163 194Q150 201 137 194Z" fill="#e8637a"/></g>
+  <path d="M113 168q-4 5 0 10M187 168q4 5 0 10" stroke="${sh}" stroke-width="2.4" stroke-linecap="round" fill="none"/>${glasses}
+  <g class="hand"><path d="M236 304L241 236" stroke="${tc}" stroke-width="36" stroke-linecap="round"/><path d="M236 304L241 236" stroke="#000" stroke-opacity=".14" stroke-width="36" stroke-linecap="round"/>
+  <path d="M229 232H254" stroke="${ink}" stroke-opacity=".3" stroke-width="5" stroke-linecap="round"/>
+  <path d="M242 226L246 190" stroke="${sh}" stroke-width="25" stroke-linecap="round"/><path d="M242 226L246 190" stroke="${sk}" stroke-width="21" stroke-linecap="round"/>
+  <g fill="${sk}" stroke="${sh}" stroke-width="2">${finger(0, -14)}${finger(1, -4)}${finger(2, 5)}${finger(3, 15)}<rect x="-6.2" y="-28" width="12.4" height="30" rx="6.2" transform="translate(232 178) rotate(-58)"/>
+  <rect x="228" y="148" width="38" height="40" rx="16"/></g><path d="M238 173Q248 180 258 170" stroke="${sh}" stroke-width="2" fill="none" stroke-linecap="round"/></g></svg>`;
+}
+
+/* ---------- fireworks ---------- */
+const fx = $('#fx'), fxc = fx.getContext('2d');
+function fireworks(ms){
+  const d = Math.min(devicePixelRatio || 1, 2), w = fx.width = fx.clientWidth * d, h = fx.height = fx.clientHeight * d, cols = ['#ff6a3d', '#ffd166', '#c9a3c4', '#fff1d6', '#ff9ecf', '#7fe0a8'];
+  let P = [], bursts = 0; const t0 = performance.now(), every = 330;
+  function burst(){
+    const x = w * (.15 + Math.random() * .7), y = h * (.12 + Math.random() * .45), c = cols[(Math.random() * cols.length) | 0], c2 = cols[(Math.random() * cols.length) | 0], n = 54;
+    for (let i = 0; i < n; i++){ const a = i / n * TAU + Math.random() * .1, s = (2.2 + Math.random() * 4.6) * d; P.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1, k: .011 + Math.random() * .009, c: i % 3 ? c : c2 }) }
+    sfx.boom(); buzz(18);
+  }
+  (function f(now){
+    const t = now - t0; while (t < ms - 900 && bursts * every <= t){ burst(); bursts++ }
+    fxc.clearRect(0, 0, w, h); fxc.lineCap = 'round';
+    for (const p of P){ p.vx *= .972; p.vy = p.vy * .972 + .055 * d; p.x += p.vx; p.y += p.vy; p.life -= p.k;
+      fxc.globalAlpha = Math.max(0, p.life); fxc.strokeStyle = p.c; fxc.lineWidth = (1.4 + p.life * 2.2) * d; fxc.beginPath(); fxc.moveTo(p.x - p.vx * 3.2, p.y - p.vy * 3.2); fxc.lineTo(p.x, p.y); fxc.stroke() }
+    P = P.filter(p => p.life > 0); fxc.globalAlpha = 1;
+    if (t < ms || P.length) requestAnimationFrame(f); else fxc.clearRect(0, 0, w, h);
+  })(t0);
+}
+
+/* ---------- reveal card ---------- */
+const card = $('#card'), tilt = $('#tilt'), holder = $('#portrait'); let sweep = 0;
+function reveal(returning){
+  const c = session.to; store.set('nj-seen-' + session.key, '1');
+  holder.innerHTML = portrait(c.t, c.name); holder.className = 'alive'; $('#who').textContent = c.name; $('#quip').textContent = c.quip; $('#again').hidden = !returning; $('#giftday').textContent = 'Gift day · ' + GIFT_DAY;
+  show('s-card'); duck(1);
+  card.classList.remove('deal', 'live'); card.style.cssText = ''; void card.offsetWidth; card.classList.add('deal');
+  sfx.reveal(); buzz([20, 50, 40, 50, 90]);
+  if (reduced.matches) return;
+  if (!returning) fireworks(3600);
+  timers.push(setTimeout(glareSweep, 800));
+}
+function glareSweep(){
+  const t0 = performance.now();
+  (function f(now){ const u = Math.min(1, (now - t0) / 1100); card.style.setProperty('--g', -30 + 160 * u + '%'); card.style.setProperty('--go', Math.sin(u * Math.PI) * .9); if (u < 1) sweep = requestAnimationFrame(f) })(t0);
+}
+function onTilt(e){
+  if (reduced.matches) return; cancelAnimationFrame(sweep);
+  const b = card.getBoundingClientRect(), x = Math.max(0, Math.min(1, (e.clientX - b.left) / b.width)), y = Math.max(0, Math.min(1, (e.clientY - b.top) / b.height));
+  card.classList.add('live'); card.classList.remove('deal');
+  card.style.setProperty('--rx', (.5 - y) * 22 + 'deg'); card.style.setProperty('--ry', (x - .5) * 26 + 'deg');
+  card.style.setProperty('--g', 10 + x * 55 + y * 30 + '%'); card.style.setProperty('--go', .95);
+}
+function offTilt(){ card.classList.remove('live'); for (const p of ['--rx', '--ry', '--go']) card.style.removeProperty(p) }
+tilt.addEventListener('pointerdown', onTilt); tilt.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || e.buttons) onTilt(e) });
+for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) tilt.addEventListener(ev, offTilt);
+function home(){ session = null; holder.innerHTML = ''; $('#who').textContent = ''; $('#quip').textContent = ''; code.value = ''; err.hidden = true; show('s-entry') }
+$('#hide').onclick = () => { sfx.click(); home() };
+$('#replay').onclick = () => { sfx.click(); openWheel() };
+
+/* ---------- host view: status only, never matches ---------- */
+$('#tohost').onclick = () => {
+  sfx.click(); show('s-host');
+  $('#tally').textContent = `${OPENED.size} of ${COUSINS.length}`; $('#meter').style.width = OPENED.size / COUSINS.length * 100 + '%';
+  $('#roster').innerHTML = [...COUSINS].sort((a, b) => OPENED.has(a.name) - OPENED.has(b.name) || a.name.localeCompare(b.name)).map(c => OPENED.has(c.name)
+    ? `<li class="in"><i class="dot"></i>${c.name}<span>Opened</span></li>`
+    : `<li><i class="dot"></i>${c.name}<button class="chip" type="button" data-nudge="${c.name}">Copy nudge</button></li>`).join('');
+};
+$('#roster').onclick = e => {
+  const b = e.target.closest('[data-nudge]'); if (!b) return; sfx.click();
+  const msg = `Hi ${b.dataset.nudge}! Your Njithi Cousins Secret Santa card is waiting. Open ${location.href.split('#')[0]} and type the code I sent you.`;
+  const done = () => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy nudge' }, 2500) };
+  const fail = () => { const li = b.closest('li'); if (li.querySelector('textarea')) return; li.classList.add('fail'); b.textContent = 'Copy it below'; const ta = document.createElement('textarea'); ta.readOnly = true; ta.value = msg; ta.setAttribute('aria-label', 'Nudge message'); li.append(ta); ta.focus(); ta.select() };
+  try { navigator.clipboard.writeText(msg).then(done, fail) } catch { fail() }
+};
+$('#back').onclick = () => { sfx.click(); home() };
+
+/* ---------- portrait builder (review tool) ---------- */
+const OPTS = [
+  ['body', 'Build', [['m', 'Man'], ['f', 'Woman']]],
+  ['skin', 'Skin', SKIN.map((s, i) => [i, s[1]])],
+  ['hair', 'Hair', ['fade', 'curls', 'afro', 'puffs', 'braids', 'locs', 'bun', 'bald', 'wrap'].map(h => [h, h[0].toUpperCase() + h.slice(1)])],
+  ['hc', 'Hair or wrap colour', Object.keys(HAIR).map(k => [k, HAIR[k][k === 'black' ? 0 : 1]])],
+  ['glasses', 'Glasses', [['none', 'None'], ['round', 'Round'], ['square', 'Square']]],
+  ['beard', 'Beard', [['none', 'None'], ['stubble', 'Stubble'], ['full', 'Full']]],
+  ['ear', 'Earrings', [['none', 'None'], ['studs', 'Studs'], ['hoops', 'Hoops']]],
+  ['top', 'Top', [['tee', 'T-shirt'], ['hoodie', 'Hoodie'], ['shirt', 'Shirt']]],
+  ['tc', 'Top colour', ['#4a2150', '#1f7a6d', '#c9a3c4', '#fff1d6', '#ffd166', '#ff6a3d', '#2b3a67'].map(c => [c, c])],
+];
+const SW = new Set(['skin', 'hc', 'tc']);
+let B = { body: 'm', skin: 3, hair: 'locs', hc: 'black', glasses: 'round', beard: 'stubble', ear: 'none', top: 'hoodie', tc: '#1f7a6d' };
+function paintBuilder(){
+  $('#bprev').innerHTML = portrait(B, 'Preview');
+  $('#btraits').textContent = [B.body === 'f' ? 'woman' : 'man', 'skin ' + (B.skin + 1), B.hair, B.hc, B.glasses !== 'none' && B.glasses + ' glasses', B.beard !== 'none' && B.beard + ' beard', B.ear !== 'none' && B.ear, B.top].filter(Boolean).join(' · ');
+  $('#opts').innerHTML = OPTS.map(([k, label, vals]) => `<div class="opt"><b>${label}</b>${vals.map(([v, text]) => SW.has(k)
+    ? `<button type="button" class="sw" data-k="${k}" data-v="${v}" aria-pressed="${String(B[k]) === String(v)}" aria-label="${label} ${v}" style="background:${text}"></button>`
+    : `<button type="button" class="chip" data-k="${k}" data-v="${v}" aria-pressed="${B[k] === v}">${text}</button>`).join('')}</div>`).join('');
+}
+$('#opts').onclick = e => { const b = e.target.closest('[data-k]'); if (!b) return; B[b.dataset.k] = b.dataset.k === 'skin' ? +b.dataset.v : b.dataset.v; paintBuilder(); sfx.click() };
+$('#brand').onclick = () => { for (const [k, , vals] of OPTS) B[k] = vals[(Math.random() * vals.length) | 0][0]; if (B.body === 'f') B.beard = 'none'; paintBuilder(); sfx.click() };
+paintBuilder();
+})();
+</script>
+
+</html>
