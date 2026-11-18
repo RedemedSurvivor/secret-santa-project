@@ -730,14 +730,14 @@
   <div class="screen" id="s-wheel" hidden>
     <div>
       <h2 id="hello">Hi cousin</h2>
-      <p id="status">Touch the wheel or shake phone to spin</p>
+      <p id="status">Touch or flick to spin · Grab anytime to stop</p>
     </div>
     <div class="wheelzone">
       <div class="wheelbtn" id="wheel" role="button" tabindex="0" aria-label="Spin the wheel">
         <canvas id="cv"></canvas>
       </div>
     </div>
-    <p style="font-size:13px;color:var(--muted);text-align:center;">✨ Dynamic 3D Wheel · Tilt or shake phone to move & spin</p>
+    <p style="font-size:13px;color:var(--muted);text-align:center;">✨ Drag forwards or backwards · Tap anytime to stop</p>
   </div>
 
   <!-- 3. RECIPIENT CARD SCREEN -->
@@ -1159,6 +1159,15 @@ let lastAccX = 0, lastAccY = 0, lastAccZ = 0, lastShakeTime = 0;
 let lastFrameTime = performance.now();
 let threeInited = false;
 
+// Dynamic interactive physics: drag, bidirectional velocity, tap-to-stop
+let angularVelocity = 0; // radians per second
+let isDraggingWheel = false;
+let dragStartAngle = 0;
+let dragPrevAngle = 0;
+let dragLastTime = 0;
+let dragMovedTotal = 0;
+let hasSpunInRun = false;
+
 function getWheelColors(){
   const pal = document.documentElement.dataset.palette;
   if (pal === 'triadic') {
@@ -1427,11 +1436,11 @@ function renderThree(now){
 
   // Pointer spring dynamics (harmonic damped snap-back)
   if (springActive && pointerPivot){
-    const force = -290 * pointerSpringAngle - 24 * pointerSpringVel;
+    const force = -320 * pointerSpringAngle - 26 * pointerSpringVel;
     pointerSpringVel += force * dt;
     pointerSpringAngle += pointerSpringVel * dt;
     pointerPivot.rotation.z = pointerSpringAngle;
-    if (Math.abs(pointerSpringAngle) < 0.004 && Math.abs(pointerSpringVel) < 0.04){
+    if (Math.abs(pointerSpringAngle) < 0.003 && Math.abs(pointerSpringVel) < 0.03){
       pointerSpringAngle = 0;
       pointerSpringVel = 0;
       springActive = false;
@@ -1439,38 +1448,48 @@ function renderThree(now){
     }
   }
 
-  // Wheel spinning animation
-  if (spinning){
-    const elapsed = now - spinStartTime;
-    const progress = Math.min(1, elapsed / spinDuration);
-    const ease = progress < 0.16
-      ? (progress ** 2) / 0.16
-      : 1 - Math.pow(1 - progress, 2.6);
-
-    wheelAngle = spinStartAngle + spinTotalAngle * ease;
-    if (wheelGroup) wheelGroup.rotation.z = -wheelAngle;
-
-    // Check peg crossing (8 pegs, strictly one click and haptic pulse per peg)
+  // Check peg crossings in either direction (clockwise or counter-clockwise)
+  function checkPegCrossing(angleDelta){
     const pegStep = (Math.PI * 2) / 8;
     const curPeg = Math.floor(wheelAngle / pegStep);
-    if (curPeg > lastPegIndex){
+    if (curPeg !== lastPegIndex){
+      const dir = angleDelta >= 0 ? 1 : -1;
       lastPegIndex = curPeg;
-      // Spring ratchet deflection
-      pointerSpringAngle = 0.36;
-      pointerSpringVel = -9.0;
+      // Spring ratchet deflection matching velocity direction
+      pointerSpringAngle = 0.36 * dir;
+      pointerSpringVel = -9.0 * dir;
       springActive = true;
       if (pointerPivot) pointerPivot.rotation.z = pointerSpringAngle;
 
       playMechanicalTick();
       triggerTickHaptic();
     }
+  }
 
-    if (progress >= 1){
+  // Wheel dynamic motion physics (interactive drag, reverse spin, inertial deceleration, stop-anytime)
+  if (isDraggingWheel){
+    // While user is holding and rotating the wheel directly
+    if (wheelGroup) wheelGroup.rotation.z = -wheelAngle;
+  } else if (spinning){
+    // Inertial physics simulation with friction damping
+    const deltaA = angularVelocity * dt;
+    wheelAngle += deltaA;
+    if (wheelGroup) wheelGroup.rotation.z = -wheelAngle;
+
+    checkPegCrossing(deltaA);
+
+    // Exponential friction decay (smooth deceleration)
+    const friction = Math.pow(0.58, dt); // gentle natural coasting
+    angularVelocity *= friction;
+
+    // Stop threshold: when wheel slows to a halt
+    if (Math.abs(angularVelocity) < 0.22){
       spinning = false;
+      angularVelocity = 0;
       finishSpin();
     }
   } else if (wheelGroup){
-    // Subtle idle gentle oscillation
+    // Subtle idle gentle oscillation when idle
     wheelGroup.rotation.z = -wheelAngle + Math.sin(now * 0.0015) * 0.02;
   }
 
@@ -1569,8 +1588,11 @@ function openWheel(){
   setMusicGain(1);
   playBackgroundMusic();
   $('#hello').textContent = 'Hi cousin';
-  statusEl.textContent = 'Touch the wheel or shake phone to spin';
+  statusEl.textContent = 'Touch or flick to spin · Grab anytime to stop';
   spinning = false;
+  isDraggingWheel = false;
+  angularVelocity = 0;
+  hasSpunInRun = false;
   wheelAngle = Math.random() * (Math.PI * 2);
   initThreeWheel();
   resizeThreeWheel();
@@ -1581,10 +1603,12 @@ function openWheel(){
   raf = requestAnimationFrame(renderThree);
 }
 
-function spin(){
-  if (spinning || !session) return;
+function startForwardSpin(boost = 1.0){
+  if (spinning && !isDraggingWheel) return;
   spinning = true;
-  randomizeRecipient(); // Randomize between Ishmael and Emmanuel on every spin!
+  isDraggingWheel = false;
+  hasSpunInRun = true;
+  randomizeRecipient();
   statusEl.textContent = 'Spinning for your Secret Santa…';
 
   getAudioCtx();
@@ -1595,27 +1619,161 @@ function spin(){
     return;
   }
 
-  // Ensure render loop is actively running
   cancelAnimationFrame(raf);
   lastFrameTime = performance.now();
   raf = requestAnimationFrame(renderThree);
 
-  spinStartTime = performance.now();
-  spinDuration = 5200;
-  spinStartAngle = wheelAngle;
-  spinTotalAngle = Math.PI * 2 * (3.0 + Math.random() * 1.5); // 3 to 4.5 full rotations
-  lastPegIndex = Math.floor(spinStartAngle / ((Math.PI * 2) / 8));
+  // Initial angular velocity (approx 22 to 28 rad/s, smooth decay)
+  angularVelocity = (22 + Math.random() * 6) * boost;
+  lastPegIndex = Math.floor(wheelAngle / ((Math.PI * 2) / 8));
 }
 
-wheel.addEventListener('click', () => {
+function spin(){
+  startForwardSpin(1.0);
+}
+
+// Interactive pointer drag / flick / tap-to-stop setup
+function getPointerAngle(clientX, clientY){
+  const rect = wheel.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  return Math.atan2(clientY - cy, clientX - cx);
+}
+
+let lastPointerX = 0, lastPointerY = 0;
+let dragAngleHistory = [];
+
+wheel.addEventListener('pointerdown', e => {
   if (window.requestMotionPermission) window.requestMotionPermission();
-  spin();
+  getAudioCtx();
+  wheel.setPointerCapture(e.pointerId);
+
+  // If already spinning fast, touching it immediately grabs / brakes it!
+  if (spinning && Math.abs(angularVelocity) > 1.2){
+    spinning = false;
+    angularVelocity = 0;
+    triggerTickHaptic();
+    statusEl.textContent = 'Stopped! Tap to reveal or flick again';
+    // If it was already spinning significantly and user stopped it, give them a chance to reveal or flick
+  }
+
+  isDraggingWheel = true;
+  dragStartAngle = getPointerAngle(e.clientX, e.clientY);
+  dragPrevAngle = dragStartAngle;
+  dragLastTime = performance.now();
+  dragMovedTotal = 0;
+  dragAngleHistory = [{ angle: dragStartAngle, time: dragLastTime }];
+  lastPointerX = e.clientX;
+  lastPointerY = e.clientY;
 });
+
+wheel.addEventListener('pointermove', e => {
+  if (!isDraggingWheel) return;
+  const now = performance.now();
+  const curA = getPointerAngle(e.clientX, e.clientY);
+  
+  // Angle difference handling -PI to +PI wrapping
+  let deltaA = curA - dragPrevAngle;
+  if (deltaA > Math.PI) deltaA -= Math.PI * 2;
+  else if (deltaA < -Math.PI) deltaA += Math.PI * 2;
+
+  wheelAngle += deltaA;
+  dragMovedTotal += Math.abs(deltaA);
+  dragPrevAngle = curA;
+
+  // Peg ticking while dragging
+  const pegStep = (Math.PI * 2) / 8;
+  const curPeg = Math.floor(wheelAngle / pegStep);
+  if (curPeg !== lastPegIndex){
+    const dir = deltaA >= 0 ? 1 : -1;
+    lastPegIndex = curPeg;
+    pointerSpringAngle = 0.30 * dir;
+    pointerSpringVel = -8.0 * dir;
+    springActive = true;
+    if (pointerPivot) pointerPivot.rotation.z = pointerSpringAngle;
+    playMechanicalTick();
+    triggerTickHaptic();
+  }
+
+  dragAngleHistory.push({ angle: curA, time: now, deltaA });
+  if (dragAngleHistory.length > 8) dragAngleHistory.shift();
+});
+
+function handlePointerEnd(e){
+  if (!isDraggingWheel) return;
+  isDraggingWheel = false;
+  try { wheel.releasePointerCapture(e.pointerId); } catch(err){}
+
+  const now = performance.now();
+  // Calculate flick velocity from the last few samples
+  let calcVelocity = 0;
+  if (dragAngleHistory.length >= 2){
+    const oldest = dragAngleHistory[0];
+    const newest = dragAngleHistory[dragAngleHistory.length - 1];
+    const dt = (newest.time - oldest.time) * 0.001;
+    if (dt > 0.015){
+      let netDelta = 0;
+      for (let i = 1; i < dragAngleHistory.length; i++){
+        let d = dragAngleHistory[i].angle - dragAngleHistory[i-1].angle;
+        if (d > Math.PI) d -= Math.PI * 2;
+        else if (d < -Math.PI) d += Math.PI * 2;
+        netDelta += d;
+      }
+      calcVelocity = netDelta / dt;
+    }
+  }
+
+  // If user made a tiny tap without dragging (dragMovedTotal < 0.15 rad)
+  if (dragMovedTotal < 0.15){
+    if (hasSpunInRun && !spinning){
+      // Tapped to finish / reveal
+      finishSpin();
+      return;
+    } else {
+      // Normal launch forward spin
+      startForwardSpin(1.0);
+      return;
+    }
+  }
+
+  // If flicked with substantial angular velocity (forward or backward)
+  if (Math.abs(calcVelocity) > 2.5){
+    spinning = true;
+    hasSpunInRun = true;
+    randomizeRecipient();
+    statusEl.textContent = calcVelocity < 0 ? 'Spinning backwards…' : 'Spinning for your Secret Santa…';
+    // Clamp max velocity for realistic feel (up to 32 rad/s)
+    const sign = calcVelocity >= 0 ? 1 : -1;
+    angularVelocity = sign * Math.min(34, Math.max(14, Math.abs(calcVelocity)));
+    cancelAnimationFrame(raf);
+    lastFrameTime = performance.now();
+    raf = requestAnimationFrame(renderThree);
+  } else if (dragMovedTotal > 0.8) {
+    // Moved wheel significantly and released gently: conclude spin after short settle
+    if (hasSpunInRun){
+      finishSpin();
+    } else {
+      hasSpunInRun = true;
+      randomizeRecipient();
+      finishSpin();
+    }
+  }
+}
+
+wheel.addEventListener('pointerup', handlePointerEnd);
+wheel.addEventListener('pointercancel', handlePointerEnd);
+
 wheel.addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ' '){
     e.preventDefault();
     if (window.requestMotionPermission) window.requestMotionPermission();
-    spin();
+    if (spinning){
+      spinning = false;
+      angularVelocity = 0;
+      finishSpin();
+    } else {
+      startForwardSpin(1.0);
+    }
   }
 });
 
