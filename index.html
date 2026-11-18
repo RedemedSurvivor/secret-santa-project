@@ -85,27 +85,14 @@
       padding:env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
     }
 
-    /* Shell: fills mobile screen completely, elegant centered frame on desktop */
     .shell{
       width:100%;
-      max-width:480px;
-      min-height:100vh;
+      min-height:100dvh;
       display:flex;
       flex-direction:column;
-      margin:0 auto;
       background:var(--surface);
       position:relative;
       overflow:hidden;
-      box-shadow:0 24px 64px -12px rgba(0,0,0,0.5);
-    }
-    @media (min-width: 520px) {
-      .shell {
-        min-height:860px;
-        height:auto;
-        border-radius:32px;
-        margin:24px auto;
-        border:1px solid var(--line);
-      }
     }
 
     button, input, select{font:inherit;color:inherit}
@@ -405,8 +392,7 @@
 
     :root[data-theme="light"]{--page:#f2e1cc;--surface:#fff8e9;--surface-card:#f5e9d7;--ink:#331c32;--muted:#624558;--line:#e1c9d5}
     :root[data-palette="editorial"][data-theme="dark"]{--page:#10162c;--surface:#192243;--surface-card:#263253;--ink:#f7efd9;--muted:#c1c9e1;--line:#4d5980;--accent:#aebdff;--on-accent:#10162c}
-    .shell{min-height:100svh;max-width:none}
-    .screen{flex:0 0 auto;justify-content:flex-start;gap:clamp(14px,2.5vh,26px);padding:clamp(16px,4vw,32px)}
+    .screen{flex:1 0 auto;justify-content:center;gap:clamp(14px,2.5vh,26px);padding:clamp(16px,4vw,32px)}
     .screen h2{font:400 clamp(48px,13vw,78px)/.96 var(--script)}
     #s-entry>div:not(.opening){max-width:520px;margin:0 auto!important}
     .opening{font:400 clamp(54px,14vw,104px)/1.05 var(--script);color:var(--accent);padding:.08em .16em .22em;white-space:nowrap}
@@ -419,24 +405,18 @@
     .card{max-width:760px;min-height:0;gap:14px;padding:clamp(20px,4vw,36px);background:linear-gradient(150deg,var(--card-a),var(--card-b));background-color:#692f56}
     .card::before{background:linear-gradient(#281020b8,#281020b8);opacity:1}
     #s-card .card-name,#s-card .card p{color:#fff7e9}
-    #s-card .card-name{font-size:clamp(58px,15vw,96px)}
-    .photo-card-wrap{width:clamp(172px,51vw,270px);height:auto;aspect-ratio:1;margin:0 auto}
+    .photo-card-wrap{width:clamp(188px,65vw,340px);max-width:100%;height:auto;aspect-ratio:1;margin:0 auto}
     .gift-note{margin:0 auto;max-width:35ch;opacity:.9}
     .card .foot{gap:10px;flex-wrap:wrap}
     @media(min-width:720px){
-      .shell{max-width:920px;min-height:0;margin:24px auto}
-      .screen{padding:30px 44px}
-      .card{display:grid;grid-template-columns:minmax(220px,1fr) 1fr;align-items:center;text-align:left}
-      .card .eyebrow,.card .foot{grid-column:1/-1}
-      .card .recipient-copy{text-align:left}
-      .card .recipient-copy p{margin-left:0}
+      #s-wheel .wheelbtn{width:min(48dvh,440px);height:auto}
+      .actions{max-width:540px}
     }
     @media(prefers-reduced-motion:reduce){
       .opening span,.card.deal{animation:none}
       .card{transform:none}
     }
 
-    .shell{max-width:430px}
     .bar{gap:8px}
     .bar-actions{flex-shrink:0}
     .mark{font-size:clamp(24px,7vw,32px)}
@@ -444,12 +424,8 @@
     .screen .card{display:flex;text-align:center;gap:10px;padding:16px}
     .screen .card .recipient-copy{text-align:center}
     .screen .card .recipient-copy p{margin-left:auto}
-    #s-card .card-name{font-size:clamp(58px,15vw,82px)}
-    .photo-card-wrap{width:clamp(130px,45vw,205px)}
-    .gift-bio{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;color:#fff4dc;font-size:12px}
-    .gift-bio span{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:#371725;border:1px solid #fbe1bb55;border-radius:999px}
-    .gift-bio img{width:17px;height:17px}
-    .gift-note{font:400 24px/1.05 var(--script);color:var(--muted)}
+    #s-card .card-name{font-size:clamp(64px,16vw,104px)}
+    .gift-note{font:600 clamp(17px,3vw,21px)/1.45 var(--sans);color:var(--muted);text-align:center}
     .premiere{position:fixed;inset:0;display:grid;place-items:center;z-index:40;background:radial-gradient(ellipse at 50% 45%,#512445,#170b1c 73%);color:#ffb68e;transition:opacity .4s ease}
     .premiere.dismiss{opacity:0;pointer-events:none}
     .title-ink{width:min(85vw,390px);overflow:visible}
@@ -464,13 +440,12 @@
     #fx{position:fixed;animation:sky-in .3s ease}
     @keyframes sky-in{from{opacity:.2}to{opacity:1}}
     @media(orientation:landscape) and (max-height:540px){
-      .shell{max-width:min(720px,100%);margin:0 auto}
-      #s-wheel .wheelbtn{max-width:220px}
+      #s-wheel .wheelbtn{width:min(58dvh,220px);height:auto}
       .screen .card{display:grid;grid-template-columns:1fr 1fr}
+      .card .eyebrow,.card .foot{grid-column:1/-1}
       .screen .card .recipient-copy{text-align:left}
       .screen .card .recipient-copy p{margin-inline:0}
-      .gift-bio{justify-content:flex-start}
-      .photo-card-wrap{width:150px}
+      .photo-card-wrap{width:clamp(160px,42dvh,220px)}
     }
   </style>
 </head>
@@ -522,7 +497,6 @@
       <button class="btn" id="show-saved-card-btn" type="button">Show my Secret Santa card </button>
       <p class="help">
         <button class="link-btn" id="re-spin-btn" type="button">Spin the wheel again</button> · 
-        <button class="link-btn" id="logout-btn" type="button">Switch profile</button>
       </p>
     </div>
 
@@ -532,7 +506,6 @@
       <h2 id="pers-hi">Hi Ishmael,</h2>
       <p id="pers-sub" style="margin:8px auto 20px;">Ready to see who you’re buying for this Christmas?</p>
       <button class="btn" id="start-draw-btn" type="button">Start the draw →</button>
-      <p class="help"><button class="link-btn" id="switch-name-btn" type="button">Not you? Switch cousin</button></p>
     </div>
 
     <!-- View C: Fallback cousin picker / code entry -->
@@ -614,7 +587,6 @@
         <div class="recipient-copy">
           <h2 class="card-name" id="who" tabindex="-1">Ishmael</h2>
           <p class="card-quip" id="quip"></p>
-          <div class="gift-bio"><span>Biomedical engineer</span><span><img src="assets/man-city.svg" alt="">Manchester City</span></div>
         </div>
         <div class="foot">
           <span id="giftday">Gift day · 25 Dec</span>
@@ -698,7 +670,7 @@ const COUSIN_DATA = [
 const COUSIN_MAP = {};
 COUSIN_DATA.forEach(c => { COUSIN_MAP[c.slug] = c; });
 
-/* Quiet background music for the wheel screen. */
+/* Start on the wheel and carry the same track through the reveal. */
 let soundOn = store.get('nj-sound') !== 'off';
 const backgroundMusic = new Audio('audio/water-background.m4a');
 backgroundMusic.preload = 'none';
@@ -706,10 +678,46 @@ backgroundMusic.loop = true;
 const tickAudio = new Audio('audio/tick.mp3');
 tickAudio.volume = .16;
 
+let wheelMusicActive = false;
+let musicContext, musicGain, fadeTimer;
+
 function playBackgroundMusic(){
-  if (soundOn && !document.hidden && !$('#s-wheel').hidden && backgroundMusic.paused){
-    backgroundMusic.play().catch(() => {});
+  if (!wheelMusicActive || !soundOn || document.hidden) return;
+  if (!musicContext && window.AudioContext){
+    musicContext = new AudioContext();
+    musicGain = musicContext.createGain();
+    musicContext.createMediaElementSource(backgroundMusic).connect(musicGain);
+    musicGain.connect(musicContext.destination);
   }
+  musicContext?.resume().catch(() => {});
+  if (backgroundMusic.paused) backgroundMusic.play().catch(() => {});
+}
+
+function setMusicGain(value, duration = 0){
+  if (!musicGain){
+    backgroundMusic.volume = value;
+    return;
+  }
+  const now = musicContext.currentTime;
+  musicGain.gain.cancelScheduledValues(now);
+  if (duration){
+    musicGain.gain.setValueAtTime(musicGain.gain.value, now);
+    musicGain.gain.linearRampToValueAtTime(value, now + duration / 1000);
+  } else {
+    musicGain.gain.setValueAtTime(value, now);
+  }
+}
+
+function stopWheelMusic(){
+  if (!wheelMusicActive) return;
+  wheelMusicActive = false;
+  tickAudio.pause();
+  const fadeMs = backgroundMusic.paused || reducedMotion.matches ? 0 : 480;
+  setMusicGain(0, fadeMs);
+  fadeTimer = setTimeout(() => {
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+  }, fadeMs);
 }
 
 function paintSound(){
@@ -776,11 +784,7 @@ paintTheme();
 let session = null, raf = 0, timers = [];
 let curtainSequence = 0;
 function show(id, keepCurtain = false){
-  if (id !== 's-wheel'){
-    backgroundMusic.pause();
-    backgroundMusic.currentTime = 0;
-    tickAudio.pause();
-  }
+  if (id !== 's-wheel' && id !== 's-card') stopWheelMusic();
   if (!keepCurtain){
     curtainSequence += 1;
     $('#curtains').hidden = true;
@@ -853,18 +857,8 @@ $('#re-spin-btn').onclick = () => {
   if (session) openWheel();
 };
 
-$('#logout-btn').onclick = () => {
-  store.remove('nj_device_user');
-  session = null;
-  showPicker();
-};
-
 $('#start-draw-btn').onclick = () => {
   if (session) openWheel();
-};
-
-$('#switch-name-btn').onclick = () => {
-  showPicker();
 };
 
 $('#pick-go-btn').onclick = () => {
@@ -924,6 +918,10 @@ function idle(now){
 
 function openWheel(){
   show('s-wheel');
+  clearTimeout(fadeTimer);
+  backgroundMusic.currentTime = 0;
+  wheelMusicActive = true;
+  setMusicGain(1);
   playBackgroundMusic();
   $('#hello').textContent = session?.slug === 'cousins' ? 'Hii cousins' : `Hello, ${session ? session.me : 'Cousin'}!`;
   statusEl.textContent = 'Touch the wheel to spin it.';
