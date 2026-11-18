@@ -698,17 +698,16 @@ const COUSIN_DATA = [
 const COUSIN_MAP = {};
 COUSIN_DATA.forEach(c => { COUSIN_MAP[c.slug] = c; });
 
-/* One quiet track from the first interaction through the reveal. */
+/* Quiet background music for the wheel screen. */
 let soundOn = store.get('nj-sound') !== 'off';
 const backgroundMusic = new Audio('audio/water-background.m4a');
 backgroundMusic.preload = 'none';
 backgroundMusic.loop = true;
 const tickAudio = new Audio('audio/tick.mp3');
 tickAudio.volume = .16;
-let musicRequested = false;
 
 function playBackgroundMusic(){
-  if (soundOn && !document.hidden && backgroundMusic.paused){
+  if (soundOn && !document.hidden && !$('#s-wheel').hidden && backgroundMusic.paused){
     backgroundMusic.play().catch(() => {});
   }
 }
@@ -724,21 +723,17 @@ $('#snd').onclick = () => {
   soundOn = !soundOn;
   store.set('nj-sound', soundOn ? 'on' : 'off');
   paintSound();
-  if (!soundOn){
+  if (soundOn) playBackgroundMusic();
+  else {
     backgroundMusic.pause();
     tickAudio.pause();
   }
 };
 paintSound();
 
-document.addEventListener('click', () => {
-  if (!soundOn) return;
-  musicRequested = true;
-  playBackgroundMusic();
-});
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) backgroundMusic.pause();
-  else if (musicRequested) playBackgroundMusic();
+  else playBackgroundMusic();
 });
 
 /* ---------- Palette Switcher (Holiday Velvet -> Triadic 120° Mint -> Editorial Linen) ---------- */
@@ -781,6 +776,11 @@ paintTheme();
 let session = null, raf = 0, timers = [];
 let curtainSequence = 0;
 function show(id, keepCurtain = false){
+  if (id !== 's-wheel'){
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+    tickAudio.pause();
+  }
   if (!keepCurtain){
     curtainSequence += 1;
     $('#curtains').hidden = true;
@@ -924,6 +924,7 @@ function idle(now){
 
 function openWheel(){
   show('s-wheel');
+  playBackgroundMusic();
   $('#hello').textContent = session?.slug === 'cousins' ? 'Hii cousins' : `Hello, ${session ? session.me : 'Cousin'}!`;
   statusEl.textContent = 'Touch the wheel to spin it.';
   spinning = false;
