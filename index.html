@@ -238,40 +238,8 @@
     .help{font-size:13px;color:var(--muted);margin-top:12px}
 
     /* THEATRICAL RED VELVET CURTAINS */
-    .curtains{
-      position:absolute;
-      inset:0;
-      z-index:20;
-      pointer-events:none;
-      display:flex;
-      overflow:hidden;
-    }
-    .curtain{
-      flex:1;
-      height:100%;
-      background-color:var(--curtain-mid);
-      position:relative;
-      transition:transform 0.75s cubic-bezier(0.25, 1, 0.5, 1);
-      box-shadow:inset 0 0 60px rgba(0,0,0,0.7);
-    }
-    .curtain-left{
-      transform:translateX(-100%);
-      border-right:4px solid var(--gold);
-      box-shadow:inset -14px 0 28px rgba(0,0,0,0.6), 4px 0 20px rgba(255,209,102,0.4);
-      background-image:
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 18px, rgba(0,0,0,0.3) 18px, rgba(0,0,0,0.3) 36px),
-        radial-gradient(ellipse at 50% 50%, var(--curtain-bright) 0%, var(--curtain-mid) 70%, var(--curtain-dark) 100%);
-    }
-    .curtain-right{
-      transform:translateX(100%);
-      border-left:4px solid var(--gold);
-      box-shadow:inset 14px 0 28px rgba(0,0,0,0.6), -4px 0 20px rgba(255,209,102,0.4);
-      background-image:
-        repeating-linear-gradient(90deg, rgba(0,0,0,0.3) 0px, rgba(0,0,0,0.3) 18px, rgba(255,255,255,0.06) 18px, rgba(255,255,255,0.06) 36px),
-        radial-gradient(ellipse at 50% 50%, var(--curtain-bright) 0%, var(--curtain-mid) 70%, var(--curtain-dark) 100%);
-    }
-    .curtains.closed .curtain-left{transform:translateX(0)}
-    .curtains.closed .curtain-right{transform:translateX(0)}
+    .curtains{position:fixed;inset:0;width:100%;height:100%;pointer-events:auto;z-index:30}
+
 
     /* Wheel Screen */
     #s-wheel{justify-content:space-between;padding-bottom:32px}
@@ -434,23 +402,95 @@
     .roster li.in{border:1px solid rgba(16,185,129,0.3);color:var(--ink)}
     .chip{padding:5px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;cursor:pointer;font-size:12px;font-weight:700}
     .chip:hover{border-color:var(--accent)}
+
+    :root[data-theme="light"]{--page:#f2e1cc;--surface:#fff8e9;--surface-card:#f5e9d7;--ink:#331c32;--muted:#624558;--line:#e1c9d5}
+    :root[data-palette="editorial"][data-theme="dark"]{--page:#10162c;--surface:#192243;--surface-card:#263253;--ink:#f7efd9;--muted:#c1c9e1;--line:#4d5980;--accent:#aebdff;--on-accent:#10162c}
+    .shell{min-height:100svh;max-width:none}
+    .screen{flex:0 0 auto;justify-content:flex-start;gap:clamp(14px,2.5vh,26px);padding:clamp(16px,4vw,32px)}
+    .screen h2{font:400 clamp(48px,13vw,78px)/.96 var(--script)}
+    #s-entry>div:not(.opening){max-width:520px;margin:0 auto!important}
+    .opening{font:400 clamp(54px,14vw,104px)/1.05 var(--script);color:var(--accent);padding:.08em .16em .22em;white-space:nowrap}
+    .opening span{display:inline-block;animation:ink-write .95s ease both}
+    .opening span+span{animation-delay:.42s}
+    @keyframes ink-write{from{clip-path:inset(-15% 100% -25% -15%);opacity:.25}to{clip-path:inset(-15% -15% -25% -15%);opacity:1}}
+    #s-card{gap:14px}
+    #s-card .tilt{width:100%;touch-action:pan-y;padding:0}
+    #s-card .actions{max-width:760px;margin:0}
+    .card{max-width:760px;min-height:0;gap:14px;padding:clamp(20px,4vw,36px);background:linear-gradient(150deg,var(--card-a),var(--card-b));background-color:#692f56}
+    .card::before{background:linear-gradient(#281020b8,#281020b8);opacity:1}
+    #s-card .card-name,#s-card .card p{color:#fff7e9}
+    #s-card .card-name{font-size:clamp(58px,15vw,96px)}
+    .photo-card-wrap{width:clamp(172px,51vw,270px);height:auto;aspect-ratio:1;margin:0 auto}
+    .gift-note{margin:0 auto;max-width:35ch;opacity:.9}
+    .card .foot{gap:10px;flex-wrap:wrap}
+    @media(min-width:720px){
+      .shell{max-width:920px;min-height:0;margin:24px auto}
+      .screen{padding:30px 44px}
+      .card{display:grid;grid-template-columns:minmax(220px,1fr) 1fr;align-items:center;text-align:left}
+      .card .eyebrow,.card .foot{grid-column:1/-1}
+      .card .recipient-copy{text-align:left}
+      .card .recipient-copy p{margin-left:0}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .opening span,.card.deal{animation:none}
+      .card{transform:none}
+    }
+
+    .shell{max-width:430px}
+    .bar{gap:8px}
+    .bar-actions{flex-shrink:0}
+    .mark{font-size:clamp(24px,7vw,32px)}
+    .screen{padding:clamp(14px,4vw,24px)}
+    .screen .card{display:flex;text-align:center;gap:10px;padding:16px}
+    .screen .card .recipient-copy{text-align:center}
+    .screen .card .recipient-copy p{margin-left:auto}
+    #s-card .card-name{font-size:clamp(58px,15vw,82px)}
+    .photo-card-wrap{width:clamp(130px,45vw,205px)}
+    .gift-bio{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;color:#fff4dc;font-size:12px}
+    .gift-bio span{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:#371725;border:1px solid #fbe1bb55;border-radius:999px}
+    .gift-bio img{width:17px;height:17px}
+    .gift-note{font:400 24px/1.05 var(--script);color:var(--muted)}
+    .premiere{position:fixed;inset:0;display:grid;place-items:center;z-index:40;background:radial-gradient(ellipse at 50% 45%,#512445,#170b1c 73%);color:#ffb68e;transition:opacity .4s ease}
+    .premiere.dismiss{opacity:0;pointer-events:none}
+    .title-ink{font:400 clamp(52px,15vw,115px)/1.14 var(--script);white-space:nowrap;position:relative;padding:0 .14em .2em}
+    .title-ink span{display:inline-block;opacity:0;animation:ink-letter .44s ease-out forwards;animation-delay:calc(var(--letter) * .13s)}
+    @keyframes ink-letter{from{opacity:0;clip-path:inset(-30% 100% -30% -30%)}to{opacity:1;clip-path:inset(-30% -30% -30% -30%)}}
+    .title-ink::before,.title-ink::after{content:"";position:absolute;left:4%;right:4%;bottom:4%;height:2px;background:currentColor;transform-origin:left;transform:scaleX(0);border-radius:50%;animation:ink-line .42s 1.88s ease forwards}
+    .title-ink::after{left:14%;right:10%;bottom:-2%;animation-delay:2.13s}
+    @keyframes ink-line{to{transform:scaleX(1)}}
+    .wheelbtn{position:relative}
+    .wheel-pointer{position:absolute;top:2px;left:50%;width:22px;height:34px;translate:-50% 0;transform-origin:center 0;background:linear-gradient(90deg,#a55c38,#ffe0a6 54%,#ab714e);clip-path:polygon(5% 1%,95% 1%,85% 45%,50% 100%,15% 45%);pointer-events:none}
+    .wheel-pointer{transition:opacity .22s ease}
+    .wheel-pointer.ratchet{animation:ratchet .14s ease-out}
+    @keyframes ratchet{40%{transform:rotate(-20deg)}}
+    #fx{position:fixed;animation:sky-in .3s ease}
+    @keyframes sky-in{from{opacity:.2}to{opacity:1}}
+    @media(orientation:landscape) and (max-height:540px){
+      .shell{max-width:min(720px,100%);margin:0 auto}
+      #s-wheel .wheelbtn{max-width:220px}
+      .screen .card{display:grid;grid-template-columns:1fr 1fr}
+      .screen .card .recipient-copy{text-align:left}
+      .screen .card .recipient-copy p{margin-inline:0}
+      .gift-bio{justify-content:flex-start}
+      .photo-card-wrap{width:150px}
+    }
   </style>
 </head>
 <body>
 
 <div class="shell">
   <!-- Theatrical Red Velvet Curtains -->
-  <div class="curtains" id="curtains" aria-hidden="true">
-    <div class="curtain curtain-left"></div>
-    <div class="curtain curtain-right"></div>
+  <div class="premiere" id="premiere" aria-hidden="true">
+    <div class="title-ink" id="title-ink"></div>
   </div>
+  <canvas class="curtains" id="curtains" aria-hidden="true" hidden></canvas>
 
   <!-- Header Bar: Cursive Logo clicks to Home -->
   <header class="bar">
     <a href="?" class="mark" id="logo-home" title="Go to Home">Njithi Cousins</a>
     <div class="bar-actions">
       <button class="palette-btn" id="palette-toggle" type="button" title="Switch Design Palette">
-        <span>🎨 Palette</span>
+        <span> Palette</span>
       </button>
       <button class="icon" id="snd" type="button" aria-pressed="true" aria-label="Sound">
         <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path id="sndon" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path id="sndoff" d="M17 9l5 6M22 9l-5 6" hidden/></svg>
@@ -467,8 +507,8 @@
     <div id="pers-returning" style="width:100%;margin:auto 0;" hidden>
       <div class="greeting-badge">✦ Secret Santa 2026 ✦</div>
       <h2 id="ret-hi">Welcome back, Ishmael!</h2>
-      <p style="margin:8px auto 20px;">Your Secret Santa recipient card is locked to this device and ready to view.</p>
-      <button class="btn" id="show-saved-card-btn" type="button">Show my Secret Santa card 🎁</button>
+      <p style="margin:8px auto 20px;">This browser remembers where you left off. Open your card whenever you need a reminder.</p>
+      <button class="btn" id="show-saved-card-btn" type="button">Show my Secret Santa card </button>
       <p class="help">
         <button class="link-btn" id="re-spin-btn" type="button">Spin the wheel again</button> · 
         <button class="link-btn" id="logout-btn" type="button">Switch profile</button>
@@ -548,10 +588,10 @@
     </div>
     <div class="wheelzone">
       <div class="wheelbtn" id="wheel" role="button" tabindex="0" aria-label="Spin the wheel">
-        <canvas id="cv"></canvas>
+        <canvas id="cv"></canvas><span class="wheel-pointer" aria-hidden="true"></span>
       </div>
     </div>
-    <p style="font-size:13px;color:var(--muted);">Hold tight while the wheel finds your match...</p>
+    <p style="font-size:13px;color:var(--muted);">Your match is set. Spin when you’re ready for the reveal.</p>
   </div>
 
   <!-- 3. RECIPIENT CARD SCREEN -->
@@ -560,14 +600,18 @@
       <article class="card" id="card">
         <span class="eyebrow">You’re buying for</span>
         <div id="portrait"></div>
-        <h2 class="card-name" id="who">Ishmael</h2>
-        <p class="card-quip" id="quip"></p>
+        <div class="recipient-copy">
+          <h2 class="card-name" id="who" tabindex="-1">Ishmael</h2>
+          <p class="card-quip" id="quip"></p>
+          <div class="gift-bio"><span>Biomedical engineer</span><span><img src="assets/man-city.svg" alt="">Manchester City</span></div>
+        </div>
         <div class="foot">
           <span id="giftday">Gift day · 25 Dec</span>
           <span>Shh ✦ Secret Santa</span>
         </div>
       </article>
     </div>
+    <p class="gift-note">Keep your name under wraps until gift day.</p>
     <div class="actions">
       <button class="btn" type="button" id="hide">Done. Close my card</button>
       <button class="link" type="button" id="replay">Watch the spin again</button>
@@ -590,6 +634,10 @@
   <canvas id="fx" aria-hidden="true"></canvas>
 </div>
 
+<script src="storyboard/film/assets/wheel-journey.js">})();
+</script>
+<script src="storyboard/film/assets/curtain-scene.js">})();
+</script>
 <script>
 (() => {
 const $ = s => document.querySelector(s), TAU = Math.PI * 2;
@@ -605,7 +653,7 @@ const C = (slug, name, branch, toName, quip, photo) => ({ slug, name, branch, to
 /* Notice: Every spin currently reveals Ishmael with his real photo & witty Man City engineer quip, as requested! */
 const ISHMAEL_RECIPIENT = {
   name: 'Ishmael',
-  quip: 'Civil engineer, die-hard Man City tactician... and honestly, the best Christmas gift you can get me is a wife.',
+  quip: '“Honestly, the best Christmas gift you could get me is a wife.”',
   photo: 'cousin_portraits/muriithi.jpg'
 };
 
@@ -642,20 +690,37 @@ COUSIN_DATA.forEach(c => { COUSIN_MAP[c.slug] = c; });
 /* ---------- Audio Engine: ONLY plays Tyla Water chorus on card reveal ---------- */
 let soundOn = store.get('nj-sound') !== 'off';
 let revealAudio = null;
+const celebration = new Audio('audio/reveal.mp3');
+celebration.preload = 'auto';
+const tickAudio = new Audio('audio/tick.mp3');
+tickAudio.volume = .16;
 let revealFadeTimer = null;
 
-function playRevealMusic(){
+function playWaitingMusic(){
   if (!soundOn) return;
   if (!revealAudio){
-    revealAudio = new Audio('audio/reveal.mp3');
+    revealAudio = new Audio('audio/water_tyla_sax.mp3');
   }
   if (revealFadeTimer){
     clearInterval(revealFadeTimer);
     revealFadeTimer = null;
   }
-  revealAudio.currentTime = 0;
-  revealAudio.volume = 0.9;
+  revealAudio.loop = true;
+  revealAudio.volume = 0.10;
   revealAudio.play().catch(e => console.log('Autoplay prevented:', e));
+}
+
+function playCelebration(){
+  stopRevealMusic(180);
+  if (!soundOn) return;
+  celebration.currentTime = 0;
+  celebration.volume = .60;
+  celebration.play().catch(() => {});
+}
+
+function stopCelebration(){
+  celebration.pause();
+  celebration.currentTime = 0;
 }
 
 function stopRevealMusic(fadeMs = 350){
@@ -683,7 +748,7 @@ function stopRevealMusic(fadeMs = 350){
 
 function paintSound(){
   $('#snd').setAttribute('aria-pressed', soundOn);
-  $('#snd').setAttribute('title', soundOn ? 'Sound on: Tyla – Water (Chorus Reveal)' : 'Sound muted');
+  $('#snd').setAttribute('title', soundOn ? 'Sound on: waiting music' : 'Sound muted');
   $('#sndon').toggleAttribute('hidden', !soundOn);
   $('#sndoff').toggleAttribute('hidden', soundOn);
 }
@@ -693,9 +758,10 @@ $('#snd').onclick = () => {
   store.set('nj-sound', soundOn ? 'on' : 'off');
   paintSound();
   if (soundOn){
-    if (!$('#s-card').hidden && session) playRevealMusic();
+    if (!$('#s-wheel').hidden && session) playWaitingMusic();
   } else {
     stopRevealMusic(0);
+    stopCelebration();
   }
 };
 paintSound();
@@ -704,8 +770,9 @@ document.addEventListener('visibilitychange', () => {
   if (!soundOn) return;
   if (document.hidden) {
     if (revealAudio && !revealAudio.paused) revealAudio.pause();
+    celebration.pause();
   } else {
-    if (!$('#s-card').hidden && revealAudio) revealAudio.play().catch(() => {});
+    if (!$('#s-wheel').hidden && revealAudio) revealAudio.play().catch(() => {});
   }
 });
 
@@ -726,7 +793,7 @@ $('#palette-toggle').onclick = () => {
   if (p === 'velvet') root.removeAttribute('data-palette');
   else root.dataset.palette = p;
   store.set('nj-palette', p);
-  const labels = { velvet: '🎨 Velvet', triadic: '🌿 Triadic 120°', editorial: '🏛 Linen' };
+  const labels = { velvet: 'Velvet', triadic: 'Evergreen', editorial: 'Linen' };
   $('#palette-toggle').innerHTML = `<span>${labels[p]}</span>`;
 };
 
@@ -747,7 +814,12 @@ paintTheme();
 
 /* ---------- Screen Navigation ---------- */
 let session = null, raf = 0, timers = [];
-function show(id){
+let curtainSequence = 0;
+function show(id, keepCurtain = false){
+  if (!keepCurtain){
+    curtainSequence += 1;
+    $('#curtains').hidden = true;
+  }
   cancelAnimationFrame(raf);
   timers.forEach(clearTimeout);
   timers = [];
@@ -870,48 +942,14 @@ function fit(){
   if (s && cv.width !== s) cv.width = cv.height = s;
 }
 
+let wheelProgress = 0;
 function drawWheel(){
   fit();
-  const r = cv.width / 2, R = r * 0.82;
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.clearRect(0, 0, cv.width, cv.height);
-  ctx.translate(r, r);
-
-  let g = ctx.createLinearGradient(-r, -r, r, r);
-  g.addColorStop(0, '#6a3372'); g.addColorStop(0.5, '#3d1b43'); g.addColorStop(1, '#210c26');
-  ctx.beginPath(); ctx.arc(0, 0, r * 0.985, 0, TAU); ctx.fillStyle = g; ctx.fill();
-  ctx.beginPath(); ctx.arc(0, 0, r * 0.975, 0, TAU); ctx.lineWidth = r * 0.015; ctx.strokeStyle = 'var(--accent)'; ctx.stroke();
-
-  for (let i = 0; i < 24; i++){
-    const a = i * TAU / 24 + TAU / 48, x = Math.cos(a) * r * 0.895, y = Math.sin(a) * r * 0.895;
-    ctx.beginPath(); ctx.arc(x, y, r * 0.026, 0, TAU);
-    ctx.fillStyle = (i + chase) % 3 === 0 ? '#fff3c4' : '#8a5a8c'; ctx.fill();
-  }
-
-  ctx.save();
-  ctx.rotate(angle);
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  for (let i = 0; i < N; i++){
-    const [bg, fg] = WEDGE[i % 4];
-    ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, i * SG, (i + 1) * SG); ctx.closePath();
-    ctx.fillStyle = bg; ctx.fill();
-    ctx.lineWidth = r * 0.008; ctx.strokeStyle = '#2e1431'; ctx.stroke();
-    ctx.save(); ctx.rotate((i + 0.5) * SG); ctx.translate(R * 0.68, 0); ctx.rotate(Math.PI / 2); ctx.fillStyle = fg;
-    if (i % 2){ ctx.font = `${r * 0.14}px system-ui`; ctx.fillText('✦', 0, 0); }
-    else { ctx.font = `${r * 0.3}px Yellowtail,cursive`; ctx.fillText('?', 0, 0); }
-    ctx.restore();
-  }
-  ctx.restore();
-
-  // Center hub
-  g = ctx.createRadialGradient(-r * 0.08, -r * 0.1, r * 0.02, 0, 0, r * 0.25);
-  g.addColorStop(0, '#ffb48a'); g.addColorStop(1, '#e8501f');
-  ctx.beginPath(); ctx.arc(0, 0, r * 0.25, 0, TAU); ctx.fillStyle = g; ctx.fill();
-  ctx.lineWidth = r * 0.025; ctx.strokeStyle = '#fff1d6'; ctx.stroke();
-
-  ctx.fillStyle = '#2e1431'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.font = `${r * 0.2}px Yellowtail,cursive`;
-  ctx.fillText(spinning ? '✦' : 'Spin', 0, r * 0.01);
+  const styles = getComputedStyle(document.documentElement);
+  wheelJourney(cv, wheelProgress, angle, [
+    styles.getPropertyValue('--card-b').trim(), '#f5ddaf',
+    styles.getPropertyValue('--curtain-mid').trim(), '#e9b297',
+  ]);
 }
 
 function idle(now){
@@ -922,10 +960,14 @@ function idle(now){
 }
 
 function openWheel(){
+  stopCelebration();
   show('s-wheel');
+  playWaitingMusic();
   $('#hello').textContent = `Hello, ${session ? session.me : 'Cousin'}!`;
   statusEl.textContent = 'Touch the wheel to spin it.';
   spinning = false;
+  wheelProgress = 0;
+  $(".wheel-pointer").style.opacity = "1";
   angle = Math.random() * TAU;
   drawWheel();
   raf = requestAnimationFrame(idle);
@@ -938,17 +980,36 @@ function spin(){
   statusEl.textContent = 'Spinning for your Secret Santa…';
 
   const t0 = performance.now();
-  const duration = 4200;
+  if (reducedMotion.matches){ finishSpin(); return; }
+  const duration = 5200;
   const startAngle = angle;
-  const totalRotations = (5 + Math.random() * 3) * TAU;
+  const totalRotations = TAU * 2.25;
+  const pointer = $('.wheel-pointer');
+  let tick = 0;
+  let releaseTick = 0;
 
   function frame(now){
     const elapsed = now - t0;
     const progress = Math.min(1, elapsed / duration);
-    // Smooth deceleration curve
-    const easeOut = 1 - Math.pow(1 - progress, 3.8);
+    wheelProgress = progress;
+    pointer.style.opacity = (progress > .28 && progress < .69) ? "0" : "1";
+    const easeOut = progress < .16
+      ? 4 * progress * progress
+      : .1024 + .8976 * (1 - (1 - (progress - .16) / .84) ** 2.2);
     angle = startAngle + totalRotations * easeOut;
     drawWheel();
+    const nextTick = Math.floor(easeOut * 18);
+    if (nextTick > tick && now - releaseTick > 115){
+      tick = nextTick;
+      releaseTick = now;
+      pointer.classList.remove('ratchet');
+      void pointer.offsetWidth;
+      pointer.classList.add('ratchet');
+      if (soundOn){
+        tickAudio.currentTime = 0;
+        tickAudio.play().catch(() => {});
+      }
+    }
 
     if (progress < 1){
       raf = requestAnimationFrame(frame);
@@ -963,42 +1024,77 @@ wheel.addEventListener('click', spin);
 wheel.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); spin(); } });
 
 /* ---------- Curtains Close & Theatrical Reveal ---------- */
-function finishSpin(){
-  statusEl.textContent = 'Hold tight…';
-  const curtains = $('#curtains');
-  // 1. Theatrical Red Velvet Curtains Close over the Wheel
-  curtains.classList.add('closed');
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const curtain = $('#curtains');
+const fabric = curtain.getContext('2d');
 
-  // 2. Brief theatrical anticipation pause (850ms)
-  timers.push(setTimeout(() => {
-    // 3. Red Curtains part open dramatically
-    curtains.classList.remove('closed');
-    // 4. Reveal the recipient card with Muriithi's photo & Tyla chorus!
-    reveal(false);
-  }, 950));
+function paintCurtains(closure, now = performance.now()){
+  const styles = getComputedStyle(document.documentElement);
+  paintVelvetCurtains(curtain, closure, now, {
+    dark: styles.getPropertyValue('--curtain-dark').trim(),
+    bright: styles.getPropertyValue('--curtain-bright').trim(),
+    gold: styles.getPropertyValue('--gold').trim(),
+  });
+}
+
+function moveCurtains(from, to, duration, sequence){
+  return new Promise(resolve => {
+    const start = performance.now();
+    function render(now){
+      if (sequence !== curtainSequence){ resolve(); return; }
+      const progress = Math.min(1,(now - start) / duration);
+      const eased = progress * progress * (3 - 2 * progress);
+      paintCurtains(from + (to - from) * eased, now);
+      if (progress < 1) requestAnimationFrame(render);
+      else resolve();
+    }
+    requestAnimationFrame(render);
+  });
+}
+
+async function finishSpin(){
+  statusEl.textContent = 'Hold tight…';
+  if (reducedMotion.matches || !fabric){ reveal(false); return; }
+  const sequence = ++curtainSequence;
+  curtain.hidden = false;
+  paintCurtains(0);
+  await moveCurtains(0, 1, 620, sequence);
+  if (sequence !== curtainSequence) return;
+  reveal(false, true);
+  await new Promise(resolve => setTimeout(resolve, 200));
+  if (sequence !== curtainSequence) return;
+  playCelebration();
+  await moveCurtains(1, 0, 780, sequence);
+  if (sequence !== curtainSequence) return;
+  curtain.hidden = true;
+  celebrateReveal(false);
 }
 
 /* ---------- Card Reveal Screen ---------- */
 const card = $('#card'), tilt = $('#tilt'), holder = $('#portrait');
 let sweep = 0;
 
-function reveal(returning){
+function reveal(returning, behindCurtain = false){
   const recipient = ISHMAEL_RECIPIENT;
   if (session && session.slug) store.set('nj-seen-' + session.slug, '1');
 
   $('#who').textContent = recipient.name;
   $('#quip').textContent = recipient.quip;
-  holder.innerHTML = `
+  if (!holder.firstElementChild) holder.innerHTML = `
     <div class="photo-card-wrap">
       <img src="${recipient.photo}" alt="${recipient.name}" class="cousin-face-img">
     </div>
   `;
 
-  show('s-card');
+  show('s-card', behindCurtain);
 
-  // Play the soothing muffled Tyla chorus on card reveal!
-  playRevealMusic();
+  if (!behindCurtain && !returning) playCelebration();
 
+  if (!behindCurtain) celebrateReveal(returning);
+}
+
+function celebrateReveal(returning){
+  if ($('#s-card').hidden || reducedMotion.matches) return;
   card.classList.remove('deal', 'live');
   void card.offsetWidth;
   card.classList.add('deal');
@@ -1040,6 +1136,7 @@ for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) tilt.addEventLi
 
 function home(){
   stopRevealMusic();
+  stopCelebration();
   if (fxc && fx) fxc.clearRect(0, 0, fx.width, fx.height);
   initDeviceAndUrl();
 }
@@ -1053,19 +1150,19 @@ function fireworks(ms){
   const d = Math.min(devicePixelRatio || 1, 2);
   const w = fx.width = fx.clientWidth * d, h = fx.height = fx.clientHeight * d;
   // High-saturation vibrant festival palette
-  const cols = ['#ff1744', '#ffd700', '#00e5ff', '#76ff03', '#ff007f', '#ff9100', '#d500f9', '#ffffff'];
+  const cols = ['#ff7443', '#ffd48e', '#fbc1b6', '#fff4dc'];
   let P = [], bursts = 0;
   const t0 = performance.now(), every = 280;
 
   function burst(){
-    const x = w * (0.15 + Math.random() * 0.7);
-    const y = h * (0.12 + Math.random() * 0.45);
+    const x = w * (bursts % 2 === 0 ? .18 : .82);
+    const y = h * (0.10 + Math.random() * 0.12);
     const c1 = cols[(Math.random() * cols.length) | 0];
     const c2 = cols[(Math.random() * cols.length) | 0];
     const n = 64;
     for (let i = 0; i < n; i++){
       const a = (i / n) * TAU + Math.random() * 0.15;
-      const s = (2.4 + Math.random() * 5.2) * d;
+      const s = (1.4 + Math.random() * 3.4) * d;
       P.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1, k: 0.012 + Math.random() * 0.01, c: i % 2 ? c1 : c2 });
     }
   }
@@ -1131,6 +1228,21 @@ $('#back').onclick = () => home();
 /* Initial Launch */
 initDeviceAndUrl();
 
+const premiere = $('#premiere');
+if (reducedMotion.matches) premiere.hidden = true;
+else {
+  const title = $('#title-ink');
+  Array.from('Njithi Cousins').forEach((letter, index) => {
+    const span = document.createElement('span');
+    span.style.setProperty('--letter', index);
+    span.textContent = letter === ' ' ? '\u00a0' : letter;
+    title.append(span);
+  });
+  setTimeout(() => {
+    premiere.classList.add('dismiss');
+    setTimeout(() => { premiere.hidden = true; }, 420);
+  }, 2660);
+}
 })();
 </script>
 </body>

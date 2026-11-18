@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Njithi Cousins · wheel and curtain study</title>
+<style>
+body{margin:0;background:#1c0b1f;color:#fff4dc}
+#film{position:relative;width:100%;height:100%;overflow:hidden;background:radial-gradient(ellipse,#4e294b,#1c0b1f 70%)}
+.clip{position:absolute;inset:0;display:grid;place-items:center}
+.scene{width:100%;height:100%;display:grid;place-items:center}
+canvas{display:block}
+#motion-wheel{width:85%;height:auto}
+#motion-curtain{position:absolute;inset:0;width:100%;height:100%}
+#film-title{font:italic 74px Georgia,serif;text-align:center;color:#ffc68e}
+</style>
+<body>
+<div id="film" data-composition-id="njithi-film" data-width="720" data-height="1280" data-duration="8.2">
+  <div class="clip" id="wheel-shot" data-start="0" data-duration="5.88" data-track-index="0"><div class="scene"><canvas id="motion-wheel" width="640" height="640"></canvas></div></div>
+  <div class="clip" id="card-shot" data-start="5.88" data-duration="2.32" data-track-index="1"><div class="scene" id="film-title">Njithi Cousins</div></div>
+  <div class="clip" id="curtain-shot" data-start="5.2" data-duration="1.6" data-track-index="2"><canvas id="motion-curtain"></canvas></div>
+</div>
+<script src="assets/gsap.min.js"></script>
+<script src="assets/wheel-journey.js"></script>
+<script src="assets/curtain-scene.js"></script>
+<script>
+const wheel = document.getElementById('motion-wheel');
+const curtain = document.getElementById('motion-curtain');
+const palette = {dark:'#3a0008',bright:'#b8001f',gold:'#ffd166'};
+const scene = {progress:0,closure:0};
+const timeline = gsap.timeline({paused:true});
+timeline.to(scene,{progress:1,duration:5.2,ease:'none',onUpdate(){
+  const p = scene.progress;
+  const rotation = p < .16 ? 4*p*p : .1024 + .8976*(1-(1-(p-.16)/.84)**2.2);
+  wheelJourney(wheel,p,rotation*Math.PI*4.5);
+}},0);
+timeline.to(scene,{closure:1,duration:.62,ease:'power2.inOut',onUpdate(){
+  paintVelvetCurtains(curtain,scene.closure,timeline.time()*1000,palette);
+}},5.2);
+timeline.to(scene,{closure:0,duration:.78,ease:'power2.inOut',onUpdate(){
+  paintVelvetCurtains(curtain,scene.closure,timeline.time()*1000,palette);
+}},6.02);
+timeline.from('#film-title',{opacity:0,duration:.55,ease:'power2.out'},6.12);
+timeline.to({}, {duration:1.4},6.8);
+wheelJourney(wheel);
+window.__timelines = {'njithi-film':timeline};
+</script>
+</body></html>
