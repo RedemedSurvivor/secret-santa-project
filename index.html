@@ -394,7 +394,31 @@
     :root[data-palette="editorial"][data-theme="dark"]{--page:#10162c;--surface:#192243;--surface-card:#263253;--ink:#f7efd9;--muted:#c1c9e1;--line:#4d5980;--accent:#aebdff;--on-accent:#10162c}
     .screen{flex:1 0 auto;justify-content:center;gap:clamp(14px,2.5vh,26px);padding:clamp(16px,4vw,32px)}
     .screen h2{font:400 clamp(48px,13vw,78px)/.96 var(--script)}
-    #s-entry>div:not(.opening){max-width:520px;margin:0 auto!important}
+    #s-entry>div:not(.opening){width:100%;max-width:620px;margin-inline:auto}
+    #s-entry .personal-entry:not([hidden]){
+      flex:1;
+      display:grid;
+      align-content:center;
+      justify-items:center;
+      gap:clamp(24px,6dvh,64px);
+    }
+    .entry-greeting{width:100%}
+    #s-entry .entry-greeting h2{
+      font-size:clamp(58px,15vw,112px);
+      margin:clamp(18px,3dvh,30px) 0 12px;
+    }
+    #s-entry .entry-greeting p{
+      max-width:32ch;
+      margin:0 auto;
+      font-size:clamp(16px,4.5vw,22px);
+    }
+    .entry-actions{width:100%;max-width:520px}
+    #s-entry .entry-actions .btn{min-height:62px}
+    #s-entry .entry-actions .help{margin:16px 0 0}
+    @media (max-height:520px){
+      #s-entry .personal-entry:not([hidden]){gap:20px}
+      #s-entry .entry-greeting h2{font-size:clamp(48px,10dvh,64px)}
+    }
     .opening{font:400 clamp(54px,14vw,104px)/1.05 var(--script);color:var(--accent);padding:.08em .16em .22em;white-space:nowrap}
     .opening span{display:inline-block;animation:ink-write .95s ease both}
     .opening span+span{animation-delay:.42s}
@@ -490,22 +514,28 @@
   <!-- 1. ENTRY SCREEN -->
   <div class="screen" id="s-entry">
     <!-- View A: Returning device user (automatically locked & ready) -->
-    <div id="pers-returning" style="width:100%;margin:auto 0;" hidden>
-      <div class="greeting-badge">✦ Secret Santa 2026 ✦</div>
-      <h2 id="ret-hi">Welcome back, Ishmael!</h2>
-      <p style="margin:8px auto 20px;">This browser remembers where you left off. Open your card whenever you need a reminder.</p>
-      <button class="btn" id="show-saved-card-btn" type="button">Show my Secret Santa card </button>
-      <p class="help">
-        <button class="link-btn" id="re-spin-btn" type="button">Spin the wheel again</button> · 
-      </p>
+    <div id="pers-returning" class="personal-entry" hidden>
+      <div class="entry-greeting">
+        <div class="greeting-badge">✦ Secret Santa 2026 ✦</div>
+        <h2 id="ret-hi">Welcome back, Ishmael!</h2>
+        <p>Open your card whenever you need a reminder of who you’re buying for.</p>
+      </div>
+      <div class="entry-actions">
+        <button class="btn" id="show-saved-card-btn" type="button">Show my Secret Santa card</button>
+        <p class="help"><button class="link-btn" id="re-spin-btn" type="button">Spin the wheel again</button></p>
+      </div>
     </div>
 
-    <!-- View B: First-time direct link invite (seamless immediate render) -->
-    <div id="pers-view" style="width:100%;margin:auto 0;" hidden>
-      <div class="greeting-badge">✦ Secret Santa 2026 ✦</div>
-      <h2 id="pers-hi">Hi Ishmael,</h2>
-      <p id="pers-sub" style="margin:8px auto 20px;">Ready to see who you’re buying for this Christmas?</p>
-      <button class="btn" id="start-draw-btn" type="button">Start the draw →</button>
+    <!-- View B: First-time direct link invite -->
+    <div id="pers-view" class="personal-entry" hidden>
+      <div class="entry-greeting">
+        <div class="greeting-badge">✦ Secret Santa 2026 ✦</div>
+        <h2 id="pers-hi">Hi Ishmael,</h2>
+        <p id="pers-sub">Ready to see who you’re buying for this Christmas?</p>
+      </div>
+      <div class="entry-actions">
+        <button class="btn" id="start-draw-btn" type="button">Start the draw →</button>
+      </div>
     </div>
 
     <!-- View C: Fallback cousin picker / code entry -->
