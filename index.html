@@ -806,8 +806,8 @@ function initDeviceAndUrl(){
   
   let slug = q ? q.toLowerCase().replace(/[^a-z0-9]/g, '') : store.get('nj_device_user');
   
-  if (slug && COUSIN_MAP[slug]){
-    const cousin = COUSIN_MAP[slug];
+  const cousin = slug === 'cousins' ? { slug, name: 'Cousins' } : COUSIN_MAP[slug];
+  if (cousin){
     // Remember this device belongs to this cousin
     store.set('nj_device_user', cousin.slug);
     session = {
@@ -825,7 +825,7 @@ function initDeviceAndUrl(){
       $('#picker-view').hidden = true;
     } else {
       // First time on link: show invite greeting
-      $('#pers-hi').textContent = `Hi ${cousin.name},`;
+      $('#pers-hi').textContent = cousin.slug === 'cousins' ? 'Hii cousins' : `Hi ${cousin.name},`;
       $('#pers-returning').hidden = true;
       $('#pers-view').hidden = false;
       $('#picker-view').hidden = true;
@@ -924,7 +924,7 @@ function idle(now){
 
 function openWheel(){
   show('s-wheel');
-  $('#hello').textContent = `Hello, ${session ? session.me : 'Cousin'}!`;
+  $('#hello').textContent = session?.slug === 'cousins' ? 'Hii cousins' : `Hello, ${session ? session.me : 'Cousin'}!`;
   statusEl.textContent = 'Touch the wheel to spin it.';
   spinning = false;
   angle = Math.random() * TAU;
