@@ -1,0 +1,6 @@
+audio/downloads/
+tiktok_frames/
+tiktok_frames_2/
+.vercel/
+*.pyc
+__pycache__/

@@ -326,8 +326,28 @@ const CODES = { mangolantern47:{me:'Ishmael',to:'Amani'}, chaithunder12:{me:'Zaw
 const GIFT_DAY = '25 Dec';
 const OPENED = new Set(['Ishmael','Amani','Imani','Kito','Sanaa','Neema','Baraka']);
 
-/* ---------- sound: everything is synthesised, no files ---------- */
+/* ---------- sound: chill sax & piano background instrumental with dynamic ducking ---------- */
 let ac, master, musicGain, rumbleGain, noiseBuf, soundOn = store.get('nj-sound') !== 'off', musicTimer, step = 0;
+const BGM_BASE_VOL = 0.28;
+let bgmAudio = null;
+let bgmVolTimer = null;
+
+function setBgmVolume(target, rampMs = 300) {
+  if (!bgmAudio) return;
+  const startVol = bgmAudio.volume;
+  const startTime = performance.now();
+  if (bgmVolTimer) clearInterval(bgmVolTimer);
+  bgmVolTimer = setInterval(() => {
+    const elapsed = performance.now() - startTime;
+    const progress = Math.min(1, elapsed / rampMs);
+    bgmAudio.volume = Math.max(0, Math.min(1, startVol + (target - startVol) * progress));
+    if (progress >= 1) {
+      clearInterval(bgmVolTimer);
+      bgmVolTimer = null;
+    }
+  }, 25);
+}
+
 function wake(){
   if (!soundOn) return;
   const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
@@ -340,7 +360,22 @@ function wake(){
     rumbleGain = ac.createGain(); rumbleGain.gain.value = 0; src.connect(lp).connect(rumbleGain).connect(master); src.start();
   }
   if (ac.state !== 'running') ac.resume().catch(() => {});
-  if (!musicTimer){ music(); musicTimer = setInterval(music, 640); }
+  
+  if (!bgmAudio) {
+    bgmAudio = new Audio('audio/bgm.mp3');
+    bgmAudio.loop = true;
+    bgmAudio.volume = 0;
+    bgmAudio.addEventListener('error', () => {
+      if (!musicTimer) { music(); musicTimer = setInterval(music, 640); }
+    });
+    bgmAudio.play().then(() => {
+      setBgmVolume(BGM_BASE_VOL, 800);
+    }).catch(() => {
+      if (!musicTimer) { music(); musicTimer = setInterval(music, 640); }
+    });
+  } else if (bgmAudio.paused && soundOn) {
+    bgmAudio.play().then(() => setBgmVolume(BGM_BASE_VOL, 600)).catch(() => {});
+  }
 }
 const live = () => soundOn && ac && ac.state === 'running';
 function tone(f, dur, vol, type = 'sine', f2 = f, when = 0, out = master, attack = .004){
@@ -371,19 +406,48 @@ const sfx = {
 };
 const CHORDS = [[174.61,220,261.63,329.63],[220,261.63,329.63,392],[146.83,220,261.63,349.23],[130.81,196,246.94,329.63]];
 function music(){
-  if (!live()) return;
+  if (!live() || (bgmAudio && !bgmAudio.paused && bgmAudio.currentTime > 0)) return;
   const chord = CHORDS[(step >> 3) % 4];
   if (step % 8 === 0) chord.forEach(f => { tone(f, 5.6, .022, 'sine', f, 0, musicGain, 1.6); tone(f * 1.003, 5.6, .014, 'triangle', f * 1.003, 0, musicGain, 1.8) });
   if (step % 2 === 0 || Math.random() < .3){ const f = chord[(Math.random() * 4) | 0] * 2; tone(f, 1.1, .035, 'sine', f, 0, musicGain, .006); tone(f * 3, .25, .008, 'sine', f * 3, 0, musicGain, .004) }
   step++;
 }
-function duck(v){ if (live()) musicGain.gain.setTargetAtTime(v, ac.currentTime, .15) }
+function duck(v){
+  if (live()) musicGain.gain.setTargetAtTime(v, ac.currentTime, .15);
+  if (bgmAudio && soundOn) setBgmVolume(v * BGM_BASE_VOL, 250);
+}
 function rumble(v){ if (live()) rumbleGain.gain.setTargetAtTime(v, ac.currentTime, .06) }
 function buzz(p){ try { navigator.vibrate && navigator.vibrate(p) } catch {} try { $('#hx').parentNode.click() } catch {} }
-document.addEventListener('visibilitychange', () => { if (!ac) return; if (document.hidden) ac.suspend(); else if (soundOn) ac.resume().catch(() => {}) });
+document.addEventListener('visibilitychange', () => {
+  if (!soundOn) return;
+  if (document.hidden) {
+    if (bgmAudio) bgmAudio.pause();
+    if (ac) ac.suspend();
+  } else {
+    if (bgmAudio) bgmAudio.play().catch(() => {});
+    if (ac) ac.resume().catch(() => {});
+  }
+});
 addEventListener('pointerdown', wake, { passive: true }); addEventListener('keydown', wake);
-function paintSound(){ $('#snd').setAttribute('aria-pressed', soundOn); $('#sndon').toggleAttribute('hidden', !soundOn); $('#sndoff').toggleAttribute('hidden', soundOn) }
-$('#snd').onclick = () => { soundOn = !soundOn; store.set('nj-sound', soundOn ? 'on' : 'off'); paintSound(); if (soundOn){ wake(); sfx.click() } else if (ac) ac.suspend() };
+function paintSound(){
+  $('#snd').setAttribute('aria-pressed', soundOn);
+  $('#snd').setAttribute('title', soundOn ? 'Sound on: Tyla – Water (Saxophone Instrumental)' : 'Sound muted');
+  $('#sndon').toggleAttribute('hidden', !soundOn);
+  $('#sndoff').toggleAttribute('hidden', soundOn);
+}
+$('#snd').onclick = () => {
+  soundOn = !soundOn;
+  store.set('nj-sound', soundOn ? 'on' : 'off');
+  paintSound();
+  if (soundOn){
+    wake();
+    sfx.click();
+    if (bgmAudio) bgmAudio.play().then(() => setBgmVolume(BGM_BASE_VOL, 400)).catch(() => {});
+  } else {
+    if (bgmAudio) bgmAudio.pause();
+    if (ac) ac.suspend();
+  }
+};
 paintSound();
 
 /* ---------- theme ---------- */
