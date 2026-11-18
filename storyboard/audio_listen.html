@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tyla - Water (Full Saxophone Instrumental Player & Timestamp Inspector)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0a14;
+      --card-bg: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.1);
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.35);
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% 20%, #25122b, var(--bg) 80%);
+      color: var(--text);
+      font-family: 'Figtree', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .player-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 620px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: var(--accent);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 38px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+    .time-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-shadow: 0 0 20px var(--accent-glow);
+    }
+    .progress-wrap {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+      border-radius: 6px;
+      transition: width 0.1s linear;
+    }
+    audio {
+      width: 100%;
+      margin-bottom: 24px;
+      filter: invert(1) hue-rotate(180deg);
+      border-radius: 12px;
+    }
+    .preset-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .preset-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .preset-btn:hover {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .tip-box {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 14px;
+      color: #d1d5db;
+      border-left: 3px solid var(--accent);
+      text-align: left;
+      line-height: 1.6;
+    }
+    .tip-box strong {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="player-card">
+    <div class="badge">Full Uncut Master (3:19)</div>
+    <h1>Tyla — Water (Saxophone)</h1>
+    <p class="subtitle">Listen to the natural, clean audio without muffling. Use the seeker or time display below to identify the exact timestamp or range you want for the coffee-shop background vibe.</p>
+
+    <div class="time-display" id="time">00:00 / 03:19</div>
+
+    <div class="progress-wrap" id="seek-bar">
+      <div class="progress-fill" id="fill"></div>
+    </div>
+
+    <audio id="audio" controls preload="auto">
+      <source src="../audio/water_tyla_sax.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+
+    <p style="font-size:12px; color:var(--muted); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em;">Quick Jump to Key Sections:</p>
+    <div class="preset-buttons">
+      <button class="preset-btn" onclick="jump(0)">0:00 — Intro Sax</button>
+      <button class="preset-btn" onclick="jump(48)">0:48 — Pre-Chorus</button>
+      <button class="preset-btn" onclick="jump(60)">1:00 — Chorus ("Higher")</button>
+      <button class="preset-btn" onclick="jump(100)">1:40 — Verse 2</button>
+      <button class="preset-btn" onclick="jump(132)">2:12 — Chorus 2</button>
+      <button class="preset-btn" onclick="jump(165)">2:45 — Outro Groove</button>
+    </div>
+
+    <div class="tip-box">
+      ☕ <strong>Coffee Shop Sound:</strong> Clean, crisp, unmuffled frequency response. When placed in the app, we set the playback volume low (e.g. <code>volume = 0.20</code> or <code>0.25</code>) with a soft fade-in so the rhythm and sax blend gently into the background without overpowering any dialogue or visual flow.
+    </div>
+  </div>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const timeDisplay = document.getElementById('time');
+    const fill = document.getElementById('fill');
+    const seekBar = document.getElementById('seek-bar');
+
+    function fmt(s) {
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    audio.addEventListener('timeupdate', () => {
+      const cur = audio.currentTime;
+      const dur = audio.duration || 199.7;
+      timeDisplay.textContent = `${fmt(cur)} / ${fmt(dur)}`;
+      fill.style.width = ((cur / dur) * 100) + '%';
+    });
+
+    seekBar.addEventListener('click', (e) => {
+      const rect = seekBar.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = pos * audio.duration;
+    });
+
+    function jump(seconds) {
+      audio.currentTime = seconds;
+      audio.play();
+    }
+  </script>
+</body>
+</html>
