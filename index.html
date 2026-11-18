@@ -814,9 +814,19 @@ const CANDIDATE_RECIPIENTS = [
 ];
 
 let selectedRecipient = CANDIDATE_RECIPIENTS[0];
+let spinCount = 0;
+
 function randomizeRecipient(){
-  const idx = Math.floor(Math.random() * CANDIDATE_RECIPIENTS.length);
-  selectedRecipient = CANDIDATE_RECIPIENTS[idx];
+  // On new devices / first spin, start with Ishmael!
+  if (spinCount === 0 && !store.get('nj-first-spin-done')){
+    selectedRecipient = CANDIDATE_RECIPIENTS[0]; // Guaranteed Ishmael first on new devices
+    store.set('nj-first-spin-done', '1');
+  } else {
+    // On subsequent spins / re-spins, randomize between Ishmael and Emmanuel
+    const idx = Math.floor(Math.random() * CANDIDATE_RECIPIENTS.length);
+    selectedRecipient = CANDIDATE_RECIPIENTS[idx];
+  }
+  spinCount++;
   return selectedRecipient;
 }
 
