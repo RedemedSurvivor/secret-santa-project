@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Njithi Cousins Secret Santa — Figma Design System & Storyboard Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Geist:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=MonteCarlo&family=Geist+Mono:wght@400;600&display=swap">
+  <style>
+    :root {
+      --figma-bg: #1e1e1e;
+      --figma-panel: #2c2c2c;
+      --figma-border: #383838;
+      --figma-text: #ffffff;
+      --figma-muted: #8c8c8c;
+      --figma-accent: #0d99ff;
+      
+      --sans: 'Figtree', 'Geist', sans-serif;
+      --serif: 'Instrument Serif', Georgia, serif;
+      --script: 'MonteCarlo', cursive;
+      --mono: 'Geist Mono', monospace;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      background: var(--figma-bg);
+      color: var(--figma-text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Figma Navigation Bar */
+    .figma-bar {
+      height: 52px;
+      background: var(--figma-panel);
+      border-bottom: 1px solid var(--figma-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .figma-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+    }
+    .figma-tag {
+      background: rgba(13, 153, 255, 0.2);
+      color: var(--figma-accent);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      font-family: var(--mono);
+    }
+    .figma-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--figma-muted);
+    }
+    .figma-btn {
+      background: #383838;
+      border: 1px solid #484848;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* Main Deck Stage */
+    .deck-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      display: grid;
+      gap: 60px;
+      width: 100%;
+    }
+
+    .slide {
+      background: #141414;
+      border: 1px solid #282828;
+      border-radius: 20px;
+      padding: 48px 40px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      position: relative;
+    }
+    .slide-badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--figma-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .slide h2 {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .slide-desc {
+      color: #a0a0a0;
+      font-size: 16px;
+      max-width: 70ch;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+
+    /* Palette Columns Grid */
+    .palettes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 28px;
+    }
+    .palette-card {
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      transition: transform 0.2s ease;
+    }
+    .palette-card:hover { transform: translateY(-4px); }
+    .pal-title {
+      font-size: 20px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pal-sub {
+      font-size: 13px;
+      color: #888;
+      font-family: var(--mono);
+    }
+    .chips-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .color-chip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* Screen Preview Frames */
+    .screens-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .mock-frame {
+      border-radius: 24px;
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-height: 480px;
+      justify-content: space-between;
+      position: relative;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    }
+    .mock-badge {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 99px;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .mock-heading {
+      font-family: var(--serif);
+      font-size: 32px;
+      margin: 4px 0 8px;
+    }
+    .mock-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
+      border: 0;
+      cursor: pointer;
+    }
+
+    /* Theatrical Curtain graphic */
+    .curtain-mock {
+      width: 100%;
+      height: 220px;
+      background-color: #700010;
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+      border: 3px solid #ffd166;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+      background-image: 
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 14px, rgba(0,0,0,0.3) 14px, rgba(0,0,0,0.3) 28px),
+        radial-gradient(ellipse at 50% 50%, #b8001f 0%, #700010 70%, #3a0008 100%);
+      display: grid;
+      place-items: center;
+      font-family: var(--serif);
+      font-size: 24px;
+      color: #ffd166;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+
+    /* Photo wrap preview */
+    .photo-preview {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      margin: 8px auto;
+    }
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Figma bar -->
+  <header class="figma-bar">
+    <div class="figma-title">
+      <svg width="24" height="24" viewBox="0 0 38 57" fill="none">
+        <path d="M19 28.5C19 23.2533 23.2533 19 28.5 19C33.7467 19 38 23.2533 38 28.5C38 33.7467 33.7467 38 28.5 38C23.2533 38 19 33.7467 19 28.5Z" fill="#1ABCFE"/>
+        <path d="M0 47.5C0 42.2533 4.25329 38 9.5 38H19V47.5C19 52.7467 14.7467 57 9.5 57C4.25329 57 0 52.7467 0 47.5Z" fill="#0ACF83"/>
+        <path d="M19 0V19H28.5C33.7467 19 38 14.7467 38 9.5C38 4.25329 33.7467 0 28.5 0H19Z" fill="#FF7262"/>
+        <path d="M0 9.5C0 14.7467 4.25329 19 9.5 19H19V0H9.5C4.25329 0 0 4.25329 0 9.5Z" fill="#F24E1E"/>
+        <path d="M0 28.5C0 33.7467 4.25329 38 9.5 38H19V19H9.5C4.25329 19 0 23.2533 0 28.5Z" fill="#A259FF"/>
+      </svg>
+      <span>Njithi Cousins Secret Santa 2026 — Design System & Storyboard Deck</span>
+      <span class="figma-tag">v2.4 Approved</span>
+    </div>
+    <div class="figma-controls">
+      <span>100% Zoom</span>
+      <a href="../index.html?c=ishmael" class="figma-btn" style="text-decoration:none;">Open Live App →</a>
+    </div>
+  </header>
+
+  <main class="deck-container">
+
+    <!-- SLIDE 1: Executive 2+1 Color Architecture -->
+    <section class="slide">
+      <span class="slide-badge">Slide 01 · Design Knowledge Base Invariant</span>
+      <h2>The 2+1 Color Hierarchy & Mood Architectures</h2>
+      <p class="slide-desc">
+        Derived from Niki Aroca and Dharu Designs (Design Knowledge Base reference 04): Interfaces fail when juggling too many competing hues. We enforce the <strong>60% Canvas / 30% Structural Surface / 10% Disruptive Accent</strong> rule, with an intentional 120° triadic color wheel turn to deliver electric personality without visual clutter.
+      </p>
+
+      <div class="palettes-grid">
+        <!-- Palette 1: Holiday Velvet & Gold -->
+        <article class="palette-card" style="background:#240f28;">
+          <div class="pal-title">
+            <span>1. Holiday Velvet & Gold</span>
+            <span style="font-size:18px;">👑</span>
+          </div>
+          <span class="pal-sub">60% Plum Deep · 30% Mulberry · 10% Tangerine / Gold</span>
+          <div class="chips-row">
+            <div class="color-chip" style="background:#1c0b1f;color:#fff;">
+              <span>60% Canvas Base</span>
+              <span>#1C0B1F</span>
+            </div>
+            <div class="color-chip" style="background:#3b1742;color:#fff;">
+              <span>30% Structural Surface</span>
+              <span>#3B1742</span>
+            </div>
+            <div class="color-chip" style="background:#ff6a3d;color:#2e1431;">
+              <span>10% Disruptive Accent</span>
+              <span>#FF6A3D (Tangerine)</span>
+            </div>
+            <div class="color-chip" style="background:#ffd166;color:#2e1431;">
+              <span>Secondary Detail Accent</span>
+              <span>#FFD166 (Gold Trim)</span>
+            </div>
+          </div>
+          <p style="font-size:13px;color:#cfb2cb;line-height:1.4;">
+            <strong>Mood:</strong> Deep holiday royalty, warm celebration, festive family prestige.
+          </p>
+        </article>
+
+        <!-- Palette 2: 120° Triadic Rotation -->
+        <article class="palette-card" style="background:#13261f;">
+          <div class="pal-title">
+            <span>2. Triadic 120° Accent Shift</span>
+            <span style="font-size:18px;">🌿</span>
+          </div>
+          <span class="pal-sub">120° Wheel Turn from #FF6A3D -> Cyber Mint #10B981</span>
+          <div class="chips-row">
+            <div class="color-chip" style="background:#0d1f18;color:#fff;">
+              <span>60% Pine Forest Base</span>
+              <span>#0D1F18</span>
+            </div>
+            <div class="color-chip" style="background:#1c3d31;color:#fff;">
+              <span>30% Structural Emerald</span>
+              <span>#1C3D31</span>
+            </div>
+            <div class="color-chip" style="background:#10b981;color:#052e16;">
+              <span>10% Triadic Accent (+120°)</span>
+              <span>#10B981 (Mint)</span>
+            </div>
+            <div class="color-chip" style="background:#34d399;color:#052e16;">
+              <span>Luminous Highlight</span>
+              <span>#34D399 (Cyber Pine)</span>
+            </div>
+          </div>
+          <p style="font-size:13px;color:#a7d9c2;line-height:1.4;">
+            <strong>Mood:</strong> Evergreen spruce, energetic modern tech clarity, fresh festive balance.
+          </p>
+        </article>
+
+        <!-- Palette 3: Minimalist Editorial Linen -->
+        <article class="palette-card" style="background:#22252a;">
+          <div class="pal-title">
+            <span>3. Minimalist Linen & Cobalt</span>
+            <span style="font-size:18px;">🏛</span>
+          </div>
+          <span class="pal-sub">60% Warm Paper · 30% Slate · 10% Electric Cobalt</span>
+          <div class="chips-row">
+            <div class="color-chip" style="background:#fbf9f5;color:#111;">
+              <span>60% Warm Linen Paper</span>
+              <span>#FBF9F5</span>
+            </div>
+            <div class="color-chip" style="background:#111827;color:#fff;">
+              <span>30% Obsidian Slate</span>
+              <span>#111827</span>
+            </div>
+            <div class="color-chip" style="background:#0038ff;color:#fff;">
+              <span>10% Offguard Accent</span>
+              <span>#0038FF (Cobalt)</span>
+            </div>
+            <div class="color-chip" style="background:#ffb703;color:#111;">
+              <span>Human Saffron Warmth</span>
+              <span>#FFB703 (Saffron)</span>
+            </div>
+          </div>
+          <p style="font-size:13px;color:#a0aec0;line-height:1.4;">
+            <strong>Mood:</strong> High-end fashion editorial, museum-grade layout, striking clarity.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: Typography Stack -->
+    <section class="slide">
+      <span class="slide-badge">Slide 02 · Modern Agency Typography</span>
+      <h2>Typography Hierarchy & Pairing Rationale</h2>
+      <p class="slide-desc">
+        Banning generic default Arial/Helvetica fonts in favor of geometric clarity and editorial serif prestige:
+      </p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:24px;">
+        <div style="background:#1e1e1e;padding:24px;border-radius:14px;border:1px solid #333;">
+          <span style="font-family:var(--mono);color:var(--figma-accent);font-size:12px;">PRIMARY INTERFACE & BIO</span>
+          <h3 style="font-family:'Figtree',sans-serif;font-weight:800;font-size:26px;margin:8px 0;">Figtree & Geist Sans</h3>
+          <p style="font-size:14px;color:#999;line-height:1.5;">Wide geometric counters, ultra-clear legibility on mobile viewports, warm friendly posture for cousin quips and button labels.</p>
+        </div>
+
+        <div style="background:#1e1e1e;padding:24px;border-radius:14px;border:1px solid #333;">
+          <span style="font-family:var(--mono);color:var(--figma-accent);font-size:12px;">EDITORIAL HEADINGS</span>
+          <h3 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:32px;margin:8px 0;">Instrument Serif</h3>
+          <p style="font-size:14px;color:#999;line-height:1.5;">Refined modern serif that evokes classic print cards, high-end stationery, and dramatic festive invitations.</p>
+        </div>
+
+        <div style="background:#1e1e1e;padding:24px;border-radius:14px;border:1px solid #333;">
+          <span style="font-family:var(--mono);color:var(--figma-accent);font-size:12px;">SIGNATURE BRANDING</span>
+          <h3 style="font-family:'MonteCarlo',cursive;font-weight:400;font-size:36px;color:#ff6a3d;margin:4px 0;">Njithi Cousins</h3>
+          <p style="font-size:14px;color:#999;line-height:1.5;">Hand-penned cursive wordmark at the header; acts as an instant clickable link back to home.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: The Theatrical Red Velvet Curtain Architecture -->
+    <section class="slide">
+      <span class="slide-badge">Slide 03 · Motion & Theatrical Staging</span>
+      <h2>The Theatrical Red Velvet Curtain Reveal</h2>
+      <p class="slide-desc">
+        A genuine theatrical velvet curtain transition. As the wheel decelerates, the crimson curtains draw together with heavy fabric physics and gold trim, pause in total suspense, then sweep wide as fireworks burst and Tyla’s *"Water"* chorus kicks in.
+      </p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;">
+        <div class="curtain-mock">
+          <span>✦ Act II · Red Velvet Theatrical Draw ✦</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;font-size:14px;color:#ccc;line-height:1.6;">
+          <div style="display:flex;gap:12px;">
+            <b style="color:#ffd166;font-family:var(--mono);">01</b>
+            <span><strong>Silent Wheel Spin:</strong> Clean mechanical rotation without frantic noise or fast drumrolls.</span>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <b style="color:#ffd166;font-family:var(--mono);">02</b>
+            <span><strong>Crimson Curtains Draw Closed:</strong> CSS-accelerated velvet drapes (`#b8001f` to `#3a0008`) cover the stage with vertical pleats and gold piping.</span>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <b style="color:#ffd166;font-family:var(--mono);">03</b>
+            <span><strong>Theatrical Parting & Boom:</strong> Curtains snap open wide, colorful multi-burst fireworks explode.</span>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <b style="color:#ffd166;font-family:var(--mono);">04</b>
+            <span><strong>Tyla Chorus Takes Center Stage:</strong> Muffled, soothing audio (`reveal.mp3`) starts playing only as the card pops into view.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: Screen Mockups -->
+    <section class="slide">
+      <span class="slide-badge">Slide 04 · Interactive UI Walkthrough</span>
+      <h2>Core Screen Archetypes & Device Retention</h2>
+      <p class="slide-desc">
+        All 4 primary application states, showing generous spacing, framed real photos, and device memory locking:
+      </p>
+
+      <div class="screens-row">
+        <!-- Mock 1: Landing (Device Locked) -->
+        <div class="mock-frame" style="background:#2b1230;color:#fff4dc;">
+          <div>
+            <span class="mock-badge" style="background:#ff6a3d;color:#2e1431;">✦ 2026 Invite ✦</span>
+            <h3 class="mock-heading">Welcome back, Ishmael!</h3>
+            <p style="font-size:13px;color:#cfb2cb;margin-top:6px;">Your Secret Santa match is locked to this device.</p>
+          </div>
+          <button class="mock-btn" style="background:#ff6a3d;color:#2e1431;margin-top:24px;">Show my Secret Santa card 🎁</button>
+          <span style="font-size:12px;color:#cfb2cb;text-decoration:underline;">Spin the wheel again</span>
+        </div>
+
+        <!-- Mock 2: The Wheel -->
+        <div class="mock-frame" style="background:#2b1230;color:#fff4dc;">
+          <div>
+            <h3 class="mock-heading">Hello, Ishmael!</h3>
+            <p style="font-size:13px;color:#cfb2cb;">Touch the wheel to spin it.</p>
+          </div>
+          <div style="width:140px;height:140px;border-radius:50%;background:conic-gradient(#ff6a3d 0 90deg, #fff1d6 90deg 180deg, #c9a3c4 180deg 270deg, #3d1b43 270deg 360deg);margin:20px auto;border:5px solid #2e1431;box-shadow:0 8px 24px rgba(0,0,0,0.5);"></div>
+          <button class="mock-btn" style="background:#ff6a3d;color:#2e1431;">Spinning…</button>
+        </div>
+
+        <!-- Mock 3: Recipient Card with Photo -->
+        <div class="mock-frame" style="background:radial-gradient(120% 90% at 20% 0%, #ff7a4d, #ff5226 75%);color:#ffffff;">
+          <span class="mock-badge" style="background:rgba(255,255,255,0.25);color:#fff;">YOU’RE BUYING FOR</span>
+          <div class="photo-preview">
+            <img src="../cousin_portraits/muriithi.jpg" alt="Ishmael">
+          </div>
+          <h3 style="font-weight:900;font-size:32px;letter-spacing:-0.02em;">Ishmael</h3>
+          <p style="font-size:13px;line-height:1.4;margin:4px 0 12px;opacity:0.95;">
+            "Civil engineer, die-hard Man City tactician... and honestly, the best Christmas gift you can get me is a wife."
+          </p>
+          <button class="mock-btn" style="background:#2e1431;color:#fff;">Done. Close my card</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>
