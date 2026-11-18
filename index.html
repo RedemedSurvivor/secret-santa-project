@@ -49,14 +49,31 @@ button,input{font:inherit;color:inherit}
 /* splash: the only place the big signature appears */
 #splash{position:absolute;inset:0;z-index:5;background:var(--splash);color:var(--splash-ink);display:grid;place-items:center;border:0;width:100%;cursor:pointer;transition:opacity .45s ease-out}
 #splash.gone{opacity:0;pointer-events:none}
-.signature{font:400 min(27cqw,112px)/.82 var(--script);margin:0;transform:rotate(-5deg);position:relative;padding:0 .1em .14em;white-space:nowrap;text-align:left}
-.signature span{display:block}
-.signature .l2{color:var(--accent);margin-left:.42em}
-.signature i{font-style:normal;display:inline-block;animation:write .3s ease-out both;animation-delay:calc(var(--i)*.14s + .25s)}
-@keyframes write{from{clip-path:inset(-.5em calc(100% + .5em) -.5em -.5em)}to{clip-path:inset(-.5em -.6em -.5em -.5em)}}
+.signature{font:400 min(26cqw,108px)/.88 var(--script);margin:0;transform:rotate(-5deg);position:relative;padding:0 .1em .2em;white-space:nowrap;text-align:left}
+.signature .sig-word{display:block;clip-path:inset(-.45em 100% -.45em -.45em);will-change:clip-path}
+.signature .sig-w1{animation:write-w1 .85s .25s cubic-bezier(.2,.8,.35,1) forwards}
+.signature .sig-w2{color:var(--accent);margin-left:.42em;animation:write-w2 .95s .95s cubic-bezier(.2,.8,.35,1) forwards}
+@keyframes write-w1{from{clip-path:inset(-.45em 100% -.45em -.45em)}to{clip-path:inset(-.45em -.55em -.45em -.45em)}}
+@keyframes write-w2{from{clip-path:inset(-.45em 100% -.45em -.45em)}to{clip-path:inset(-.45em -.55em -.45em -.45em)}}
 .swash{position:absolute;left:6%;bottom:-.1em;width:88%;height:.22em;overflow:visible}
-.swash path{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:swash .6s 2.15s ease-out forwards}
+.swash path{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:swash .6s 1.85s ease-out forwards}
 @keyframes swash{to{stroke-dashoffset:0}}
+
+/* Curtains for theatrical reveal */
+.curtains{position:absolute;inset:0;z-index:10;pointer-events:none;display:flex;overflow:hidden}
+.curtain{flex:1;height:100%;background:radial-gradient(ellipse at 50% 50%,#461b4d 0%,#220c25 100%);position:relative;transition:transform .65s cubic-bezier(.25,1,.5,1);box-shadow:inset 0 0 50px rgba(0,0,0,.6)}
+.curtain-left{transform:translateX(-100%);border-right:3px solid var(--accent);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0px,rgba(255,255,255,.04) 18px,rgba(0,0,0,.18) 18px,rgba(0,0,0,.18) 36px)}
+.curtain-right{transform:translateX(100%);border-left:3px solid var(--accent);background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.18) 0px,rgba(0,0,0,.18) 18px,rgba(255,255,255,.04) 18px,rgba(255,255,255,.04) 36px)}
+.curtains.closed .curtain-left{transform:translateX(0)}
+.curtains.closed .curtain-right{transform:translateX(0)}
+
+/* Compact, clean wheel styling */
+.wheelzone{flex:1;width:100%;display:grid;place-items:center;min-height:0;padding:8px 0}
+.wheelbtn{width:250px;height:250px;max-width:70vw;aspect-ratio:1;border-radius:50%;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none;box-shadow:0 16px 36px -8px #1c0b1fa6;margin:0 auto;position:relative}
+
+/* Photo framed in the card */
+.photo-card-wrap{width:min(72%,210px);aspect-ratio:1;border-radius:50%;padding:5px;background:radial-gradient(circle,#fff2d6 0%,#ffb48a 70%,#ff6a3d 100%);box-shadow:0 10px 24px -6px rgba(46,20,49,.4),0 0 0 3px rgba(255,255,255,.65);margin:8px auto 4px;overflow:hidden;display:grid;place-items:center}
+.cousin-face-img{width:100%;height:100%;object-fit:cover;object-position:center 22%;border-radius:50%;display:block}
 
 /* entry */
 form{width:100%;display:grid;gap:10px;margin-top:8px}
@@ -76,7 +93,7 @@ label{font-weight:600;text-align:left;font-size:15px}
 /* wheel: wider than the stage on purpose, so it feels too big for the phone */
 #s-wheel{padding-bottom:0;gap:6px}
 .wheelzone{flex:1;width:100%;display:grid;place-items:center;min-height:0}
-.wheelbtn{width:calc(100% + 52px);max-width:460px;margin-inline:-26px;aspect-ratio:1;border-radius:50%;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none;box-shadow:0 26px 40px -18px #1c0b1fa6}
+/* wheelbtn styled above */
 .wheelbtn canvas{width:100%;height:100%;display:block}
 #status{font-weight:600;color:var(--ink);min-height:1.5em}
 
@@ -155,7 +172,19 @@ label{font-weight:600;text-align:left;font-size:15px}
 
 <div class="shell">
 <section class="app splashing" id="app" aria-label="Secret Santa demo">
-  <button id="splash" type="button" aria-label="Njithi Cousins. Tap to continue"><span class="signature" id="sig"></span></button>
+  <button id="splash" type="button" aria-label="Njithi Cousins. Tap to continue">
+    <span class="signature" id="sig">
+      <span class="sig-word sig-w1">Njithi</span>
+      <span class="sig-word sig-w2">Cousins</span>
+      <svg class="swash" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true">
+        <path pathLength="1" d="M2 12 C50 2 120 2 198 9 C150 10 110 13 80 18"/>
+      </svg>
+    </span>
+  </button>
+  <div class="curtains" id="curtains" aria-hidden="true">
+    <div class="curtain curtain-left"></div>
+    <div class="curtain curtain-right"></div>
+  </div>
   <header class="bar">
     <span class="mark" id="mark">Njithi Cousins</span>
     <div>
@@ -441,23 +470,14 @@ const sfx = {
   key(){ hiss(.03, .09, 2600 + Math.random() * 900, 2); tone(300 + Math.random() * 60, .04, .05, 'triangle', 190) },
   click(){ tone(520, .07, .09, 'triangle', 780) },
   bad(){ tone(210, .2, .1, 'triangle', 140) },
-  tick(speed){ hiss(.03, .26, 1100 + speed * 700, 4); tone(330 + speed * 160, .05, .16, 'triangle', 170) },
+  tick(speed){ hiss(.015, .05, 800, 1.5); tone(250 + speed * 60, .035, .06, 'triangle', 140) },
   drum(v){ hiss(.06, .22 * v, 1900, .8); tone(190, .07, .12 * v, 'triangle', 120) },
   boom(when = 0){ tone(120, .7, .3, 'sine', 38, when); hiss(.5, .2, 500, .5, when, 'lowpass'); for (let i = 0; i < 9; i++) hiss(.04, .1, 5200, 3, when + .22 + Math.random() * .7) }
 };
 
 function playRevealMusic(){
-  if (!soundOn) return;
-  if (!revealAudio){
-    revealAudio = new Audio('audio/reveal.mp3');
-  }
-  if (revealFadeTimer){
-    clearInterval(revealFadeTimer);
-    revealFadeTimer = null;
-  }
-  revealAudio.currentTime = 0;
-  revealAudio.volume = 0.9;
-  revealAudio.play().catch(e => { console.log('Autoplay:', e) });
+  // Background music disabled as requested
+  return;
 }
 
 function stopRevealMusic(fadeMs = 350){
@@ -537,13 +557,11 @@ function show(id){
   const h = $('#' + id + ' h2'); h && h.focus({ preventScroll: true });
 }
 
-/* ---------- splash: handwritten signature writes itself ---------- */
-const sig = $('#sig'), splash = $('#splash'); let n = 0;
-sig.innerHTML = ['Njithi', 'Cousins'].map((w, k) => `<span aria-hidden="true" class="${k ? 'l2' : ''}">${[...w].map(ch => `<i style="--i:${n++}">${ch}</i>`).join('')}</span>`).join('') +
-  '<svg class="swash" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 12 C50 2 120 2 198 9 C150 10 110 13 80 18"/></svg>';
+/* ---------- splash: handwritten signature writes itself smoothly ---------- */
+const splash = $('#splash');
 function endSplash(){ if (splash.classList.contains('gone')) return; splash.classList.add('gone'); app.classList.remove('splashing'); $('#mark').hidden = false; setTimeout(() => { splash.hidden = true }, 500) }
 $('#mark').hidden = true;
-splash.onclick = endSplash; setTimeout(endSplash, reduced.matches ? 1400 : 3600);
+splash.onclick = endSplash; setTimeout(endSplash, reduced.matches ? 1400 : 3400);
 
 /* ---------- entry & identifiable links ---------- */
 const code = $('#code'), err = $('#err');
@@ -624,7 +642,15 @@ initFromUrl();
 
 /* ---------- wheel: no names, just weight ---------- */
 const cv = $('#cv'), ctx = cv.getContext('2d'), wheel = $('#wheel'), statusEl = $('#status');
-const N = 12, SG = TAU / N, WEDGE = [['#ff6a3d','#2e1431'],['#fff1d6','#2e1431'],['#c9a3c4','#2e1431'],['#3d1b43','#fff1d6']];
+const N = 7, SG = TAU / N, WEDGE = [
+  ['#ff6a3d','#2e1431'],
+  ['#fff1d6','#2e1431'],
+  ['#c9a3c4','#2e1431'],
+  ['#3d1b43','#fff1d6'],
+  ['#ffd166','#2e1431'],
+  ['#1f7a6d','#fff1d6'],
+  ['#ff8552','#2e1431']
+];
 let angle = 0, pin = 0, spinning = false, flash = 0, lastK = 0, chase = 0;
 const kAt = a => Math.floor((-Math.PI / 2 - a) / SG);
 function fit(){ const s = Math.round(wheel.clientWidth * Math.min(devicePixelRatio || 1, 2)); if (s && cv.width !== s) cv.width = cv.height = s }
@@ -641,7 +667,7 @@ function draw(){
   }
   ctx.save(); ctx.rotate(angle); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   for (let i = 0; i < N; i++){
-    const [bg, fg] = WEDGE[i % 4];
+    const [bg, fg] = WEDGE[i % WEDGE.length];
     ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, i * SG, (i + 1) * SG); ctx.closePath(); ctx.fillStyle = bg; ctx.fill();
     ctx.lineWidth = r * .008; ctx.strokeStyle = '#2e1431'; ctx.stroke();
     ctx.save(); ctx.rotate((i + .5) * SG); ctx.translate(R * .68, 0); ctx.rotate(Math.PI / 2); ctx.fillStyle = fg;
@@ -680,33 +706,68 @@ function drumAt(now, level){ if (!roll) roll = now; let hit = false; while (now 
 
 function spin(v0){
   if (spinning || !session) return; spinning = true; cancelAnimationFrame(raf); wheel.setAttribute('aria-disabled', 'true');
-  statusEl.textContent = 'Round and round…'; buzz(20); roll = 0;
-  if (reduced.matches) return drumroll();
-  const dir = v0 < 0 ? -1 : 1, WIND = 420, T = 8600;
-  const turns = Math.max(5, Math.min(9, Math.abs(v0) * 5200 / TAU));
-  const want = -Math.PI / 2 - (((Math.random() * N) | 0) + (dir > 0 ? .12 : .88)) * SG;
-  const back = angle - dir * .16; let end = back + dir * turns * TAU; end += dir * ((((want - end) * dir) % TAU + TAU) % TAU);
+  statusEl.textContent = 'Spinning…'; buzz(20); roll = 0;
+  if (reduced.matches) return finishSpin();
+  const dir = v0 < 0 ? -1 : 1, WIND = 380, T = 6800;
+  const turns = Math.max(4, Math.min(7, Math.abs(v0) * 4500 / TAU));
+  const want = -Math.PI / 2 - (((Math.random() * N) | 0) + (dir > 0 ? .15 : .85)) * SG;
+  const back = angle - dir * .14; let end = back + dir * turns * TAU; end += dir * ((((want - end) * dir) % TAU + TAU) % TAU);
   const from = angle, t0 = performance.now(); let prev = from, prevT = t0;
   (function frame(now){
     const t = now - t0;
     if (t < WIND){ const w = t / WIND; angle = from + (back - from) * (1 - (1 - w) ** 2) }
     else { const u = Math.min(1, (t - WIND) / T); angle = back + (end - back) * ease(u);
-      if (u > .7){ if (u < .72) statusEl.textContent = 'Almost…'; drumAt(now, (u - .7) / .3 * .35) }
-      if (u >= 1){ pin = 0; rumble(0); draw(); return drumroll() } }
+      if (u > .75 && u < .8) statusEl.textContent = 'Slowing down…';
+      if (u >= 1){ pin = 0; rumble(0); draw(); return finishSpin() } }
     const speed = Math.abs(angle - prev) / Math.max(1, now - prevT) * 50; prev = angle; prevT = now;
-    rumble(Math.min(.5, speed * .45)); pegs(dir, speed); pin *= .8; draw();
+    rumble(Math.min(.35, speed * .3)); pegs(dir, speed); pin *= .8; draw();
     raf = requestAnimationFrame(frame);
   })(t0);
 }
 
-function drumroll(){
-  statusEl.textContent = 'Drumroll…';
-  const total = reduced.matches ? 900 : 2700, t0 = performance.now();
-  (function f(now){
-    const u = Math.min(1, (now - t0) / total);
-    drumAt(now, .35 + u * .65); if (!reduced.matches){ flash = .5 + .5 * Math.sin(u * u * 60); chase = (now / 60) | 0; draw() }
-    if (u < 1) return raf = requestAnimationFrame(f);
-    sfx.drum(1.4); buzz([30, 60, 120]); timers.push(setTimeout(() => reveal(false), 260));
+function finishSpin(){
+  // 1. Curtains close smoothly over wheel
+  const curtains = $('#curtains');
+  curtains.classList.add('closed');
+  statusEl.textContent = 'Hold tight…';
+  
+  // 2. Simple, steady drumroll at ~14 hits/sec (not too fast!)
+  const t0 = performance.now();
+  const rollDuration = 2200;
+  const hitInterval = 72; // ~14 hits per sec
+  let nextHit = t0;
+  let hitCount = 0;
+  
+  (function drumFrame(now){
+    const elapsed = now - t0;
+    const u = Math.min(1, elapsed / rollDuration);
+    statusEl.textContent = 'Drumroll…';
+    
+    while (now >= nextHit && elapsed < rollDuration){
+      hitCount++;
+      const handAccent = (hitCount % 2 === 0) ? 0.88 : 1.12;
+      const vol = Math.min(1.2, (0.28 + u * 0.72) * handAccent);
+      sfx.drum(vol);
+      nextHit += hitInterval;
+    }
+    
+    if (elapsed < rollDuration){
+      raf = requestAnimationFrame(drumFrame);
+    } else {
+      // Final accent hit & crash
+      sfx.drum(1.4);
+      buzz([40, 80, 160]);
+      
+      // 3. Fireworks burst with authentic sound
+      sfx.boom();
+      fireworks(2800);
+      
+      // 4. Open curtains and pop up the card!
+      timers.push(setTimeout(() => {
+        curtains.classList.remove('closed');
+        reveal(false);
+      }, 300));
+    }
   })(t0);
 }
 
@@ -820,23 +881,26 @@ function fireworks(ms){
 /* ---------- reveal card ---------- */
 const card = $('#card'), tilt = $('#tilt'), holder = $('#portrait'); let sweep = 0;
 function reveal(returning){
-  const c = session.to;
-  store.set('nj-seen-' + session.slug, '1');
-  holder.innerHTML = portrait(c.t, c.name);
-  holder.className = 'alive';
-  $('#who').textContent = c.name;
-  $('#quip').textContent = c.quip;
+  const name = 'Muriithi';
+  const quip = 'The mastermind behind Secret Santa 2026.';
+  if (session && session.slug) store.set('nj-seen-' + session.slug, '1');
+  $('#who').textContent = name;
+  $('#quip').textContent = quip;
   $('#again').hidden = !returning;
   $('#giftday').textContent = 'Gift day · ' + GIFT_DAY;
-  show('s-card');
   
-  // Play the soothing muffled Tyla chorus on card reveal!
-  playRevealMusic();
-
+  holder.innerHTML = `
+    <div class="photo-card-wrap alive">
+      <img src="cousin_portraits/muriithi.jpg" alt="${name}" class="cousin-face-img">
+    </div>
+  `;
+  holder.className = 'alive';
+  
+  show('s-card');
   card.classList.remove('deal', 'live'); card.style.cssText = ''; void card.offsetWidth; card.classList.add('deal');
   buzz([20, 50, 40, 50, 90]);
+  stopRevealMusic(0);
   if (reduced.matches) return;
-  if (!returning) fireworks(3600);
   timers.push(setTimeout(glareSweep, 800));
 }
 

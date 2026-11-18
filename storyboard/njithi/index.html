@@ -49,14 +49,31 @@ button,input{font:inherit;color:inherit}
 /* splash: the only place the big signature appears */
 #splash{position:absolute;inset:0;z-index:5;background:var(--splash);color:var(--splash-ink);display:grid;place-items:center;border:0;width:100%;cursor:pointer;transition:opacity .45s ease-out}
 #splash.gone{opacity:0;pointer-events:none}
-.signature{font:400 min(27cqw,112px)/.82 var(--script);margin:0;transform:rotate(-5deg);position:relative;padding:0 .1em .14em;white-space:nowrap;text-align:left}
-.signature span{display:block}
-.signature .l2{color:var(--accent);margin-left:.42em}
-.signature i{font-style:normal;display:inline-block;animation:write .3s ease-out both;animation-delay:calc(var(--i)*.14s + .25s)}
-@keyframes write{from{clip-path:inset(-.5em calc(100% + .5em) -.5em -.5em)}to{clip-path:inset(-.5em -.6em -.5em -.5em)}}
+.signature{font:400 min(26cqw,108px)/.88 var(--script);margin:0;transform:rotate(-5deg);position:relative;padding:0 .1em .2em;white-space:nowrap;text-align:left}
+.signature .sig-word{display:block;clip-path:inset(-.45em 100% -.45em -.45em);will-change:clip-path}
+.signature .sig-w1{animation:write-w1 .85s .25s cubic-bezier(.2,.8,.35,1) forwards}
+.signature .sig-w2{color:var(--accent);margin-left:.42em;animation:write-w2 .95s .95s cubic-bezier(.2,.8,.35,1) forwards}
+@keyframes write-w1{from{clip-path:inset(-.45em 100% -.45em -.45em)}to{clip-path:inset(-.45em -.55em -.45em -.45em)}}
+@keyframes write-w2{from{clip-path:inset(-.45em 100% -.45em -.45em)}to{clip-path:inset(-.45em -.55em -.45em -.45em)}}
 .swash{position:absolute;left:6%;bottom:-.1em;width:88%;height:.22em;overflow:visible}
-.swash path{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:swash .6s 2.15s ease-out forwards}
+.swash path{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:swash .6s 1.85s ease-out forwards}
 @keyframes swash{to{stroke-dashoffset:0}}
+
+/* Curtains for theatrical reveal */
+.curtains{position:absolute;inset:0;z-index:10;pointer-events:none;display:flex;overflow:hidden}
+.curtain{flex:1;height:100%;background:radial-gradient(ellipse at 50% 50%,#461b4d 0%,#220c25 100%);position:relative;transition:transform .65s cubic-bezier(.25,1,.5,1);box-shadow:inset 0 0 50px rgba(0,0,0,.6)}
+.curtain-left{transform:translateX(-100%);border-right:3px solid var(--accent);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0px,rgba(255,255,255,.04) 18px,rgba(0,0,0,.18) 18px,rgba(0,0,0,.18) 36px)}
+.curtain-right{transform:translateX(100%);border-left:3px solid var(--accent);background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.18) 0px,rgba(0,0,0,.18) 18px,rgba(255,255,255,.04) 18px,rgba(255,255,255,.04) 36px)}
+.curtains.closed .curtain-left{transform:translateX(0)}
+.curtains.closed .curtain-right{transform:translateX(0)}
+
+/* Compact, clean wheel styling */
+.wheelzone{flex:1;width:100%;display:grid;place-items:center;min-height:0;padding:8px 0}
+.wheelbtn{width:250px;height:250px;max-width:70vw;aspect-ratio:1;border-radius:50%;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none;box-shadow:0 16px 36px -8px #1c0b1fa6;margin:0 auto;position:relative}
+
+/* Photo framed in the card */
+.photo-card-wrap{width:min(72%,210px);aspect-ratio:1;border-radius:50%;padding:5px;background:radial-gradient(circle,#fff2d6 0%,#ffb48a 70%,#ff6a3d 100%);box-shadow:0 10px 24px -6px rgba(46,20,49,.4),0 0 0 3px rgba(255,255,255,.65);margin:8px auto 4px;overflow:hidden;display:grid;place-items:center}
+.cousin-face-img{width:100%;height:100%;object-fit:cover;object-position:center 22%;border-radius:50%;display:block}
 
 /* entry */
 form{width:100%;display:grid;gap:10px;margin-top:8px}
@@ -76,7 +93,7 @@ label{font-weight:600;text-align:left;font-size:15px}
 /* wheel: wider than the stage on purpose, so it feels too big for the phone */
 #s-wheel{padding-bottom:0;gap:6px}
 .wheelzone{flex:1;width:100%;display:grid;place-items:center;min-height:0}
-.wheelbtn{width:calc(100% + 52px);max-width:460px;margin-inline:-26px;aspect-ratio:1;border-radius:50%;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none;box-shadow:0 26px 40px -18px #1c0b1fa6}
+/* wheelbtn styled above */
 .wheelbtn canvas{width:100%;height:100%;display:block}
 #status{font-weight:600;color:var(--ink);min-height:1.5em}
 
@@ -147,12 +164,27 @@ label{font-weight:600;text-align:left;font-size:15px}
 .opt .chip{min-height:38px;padding:0 12px}
 .sw{width:38px;height:38px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0}
 .sw[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:2px}
+.greeting-badge{display:inline-block;background:var(--accent);color:var(--on-accent);padding:4px 12px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+.cousin-dropdown{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:inherit;font-size:15px;cursor:pointer;outline:none;margin-bottom:12px}
+.link-btn{background:none;border:none;color:var(--accent);text-decoration:underline;font:inherit;font-size:13px;cursor:pointer;padding:0}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.swash path{stroke-dashoffset:0}}
 </style>
 
 <div class="shell">
 <section class="app splashing" id="app" aria-label="Secret Santa demo">
-  <button id="splash" type="button" aria-label="Njithi Cousins. Tap to continue"><span class="signature" id="sig"></span></button>
+  <button id="splash" type="button" aria-label="Njithi Cousins. Tap to continue">
+    <span class="signature" id="sig">
+      <span class="sig-word sig-w1">Njithi</span>
+      <span class="sig-word sig-w2">Cousins</span>
+      <svg class="swash" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true">
+        <path pathLength="1" d="M2 12 C50 2 120 2 198 9 C150 10 110 13 80 18"/>
+      </svg>
+    </span>
+  </button>
+  <div class="curtains" id="curtains" aria-hidden="true">
+    <div class="curtain curtain-left"></div>
+    <div class="curtain curtain-right"></div>
+  </div>
   <header class="bar">
     <span class="mark" id="mark">Njithi Cousins</span>
     <div>
@@ -162,19 +194,68 @@ label{font-weight:600;text-align:left;font-size:15px}
   </header>
 
   <div class="screen" id="s-entry">
-    <h2 tabindex="-1">Hiii Cousins</h2>
-    <p>Type the code from your WhatsApp.</p>
-    <form id="form" novalidate>
-      <label for="code">Your code</label>
-      <input id="code" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="go" maxlength="40" placeholder="Mango Lantern 47">
+    <div id="pers-view" hidden>
+      <div class="greeting-badge">✦ Secret Santa 2026 ✦</div>
+      <h2 tabindex="-1" id="pers-hi">Hi Ishmael,</h2>
+      <p id="pers-sub">Ready to see your Secret Santa?</p>
+      <button class="btn" id="start-draw-btn" type="button" style="margin-top:14px">Start the draw →</button>
+      <p class="help"><button class="link-btn" id="switch-name-btn" type="button">Not you? Switch cousin</button></p>
+    </div>
+
+    <div id="picker-view">
+      <h2 tabindex="-1">Hiii Cousins</h2>
+      <p>Select your name or use your private invite link.</p>
+      <div style="margin:16px 0">
+        <select id="cousin-select" class="cousin-dropdown" aria-label="Select your name">
+          <option value="">-- Choose Your Name --</option>
+          <optgroup label="Njeri Branch">
+            <option value="ishmael">Ishmael</option>
+            <option value="emmanuel">Emmanuel</option>
+          </optgroup>
+          <optgroup label="Nyambura Branch">
+            <option value="jeff">Jeff</option>
+          </optgroup>
+          <optgroup label="Wambugu Branch">
+            <option value="charlesakashadow">Charles aka Shadow</option>
+            <option value="millcah">Millcah</option>
+            <option value="karen">Karen</option>
+            <option value="muli">Muli</option>
+          </optgroup>
+          <optgroup label="Mathenge Branch">
+            <option value="shiku">Shiku</option>
+            <option value="caro">Caro</option>
+            <option value="alvin">Alvin</option>
+          </optgroup>
+          <optgroup label="Mwangi Branch">
+            <option value="dani">Dani</option>
+            <option value="paps">Paps</option>
+            <option value="bettie">Bettie</option>
+            <option value="muthonimamaesther">Muthoni (Mama Esther)</option>
+            <option value="mamaliam">Mama Liam</option>
+            <option value="jem">Jem</option>
+          </optgroup>
+          <optgroup label="Nginga Branch">
+            <option value="lyon">Lyon</option>
+            <option value="ian">Ian</option>
+          </optgroup>
+          <optgroup label="Munyiri Branch">
+            <option value="peter">Peter</option>
+          </optgroup>
+          <optgroup label="Wangechi Branch">
+            <option value="muthonimamacurtis">Muthoni (Mama Curtis)</option>
+            <option value="wahito">Wahito</option>
+            <option value="sam">Sam</option>
+            <option value="kaguongo">Kaguongo</option>
+            <option value="njithi">Njithi</option>
+          </optgroup>
+        </select>
+        <button class="btn" id="pick-go-btn" type="button">Open my ticket →</button>
+      </div>
+      <p class="help">Or enter code: <input id="code" placeholder="e.g. Mango Lantern 47" style="display:inline-block;width:150px;padding:5px 8px;font-size:12px;border-radius:6px;border:1px solid var(--line);background:var(--field);color:var(--ink)"> <button id="code-go" class="chip" type="button">Go</button></p>
       <p id="err" role="alert" hidden></p>
-      <button class="btn">Let me in</button>
-    </form>
-    <p class="help">Lost your code? Message Ishmael or Jeff.</p>
-    <div class="demo"><span>Demo with made-up cousins. Tap a code to try it.</span>
-      <button class="chip" type="button" data-code="Mango Lantern 47">Mango Lantern 47</button>
-      <button class="chip" type="button" data-code="Chai Thunder 12">Chai Thunder 12</button>
-      <button class="chip" type="button" id="tohost">Host view (demo)</button>
+      <div class="demo">
+        <button class="chip" type="button" id="tohost">Host view (demo)</button>
+      </div>
     </div>
   </div>
 
@@ -306,43 +387,69 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const store = { get(k){ try { return localStorage.getItem(k) } catch { return null } }, set(k,v){ try { localStorage.setItem(k,v) } catch {} } };
 const app = $('#app');
 
-/* ---------- demo data: fictional. The live site gets this from the draw service after a valid code. ---------- */
-const C = (name, quip, t) => ({ name, quip, t });
-const COUSINS = [
-  C('Amani','Will act surprised. Has already guessed.',{body:'f',skin:3,hair:'braids',hc:'black',glasses:'none',beard:'none',ear:'hoops',top:'hoodie',tc:'#4a2150'}),
-  C('Baraka','Owes everyone a playlist.',{body:'m',skin:4,hair:'fade',hc:'black',glasses:'square',beard:'full',ear:'none',top:'shirt',tc:'#1f7a6d'}),
-  C('Zawadi','Wraps gifts better than you.',{body:'f',skin:2,hair:'afro',hc:'brown',glasses:'none',beard:'none',ear:'studs',top:'tee',tc:'#fff1d6'}),
-  C('Imani','First on the dance floor.',{body:'f',skin:3,hair:'bun',hc:'black',glasses:'round',beard:'none',ear:'studs',top:'shirt',tc:'#c9a3c4'}),
-  C('Jabali','Always asks for seconds.',{body:'m',skin:4,hair:'bald',hc:'black',glasses:'none',beard:'full',ear:'none',top:'tee',tc:'#fff1d6'}),
-  C('Neema','Has the family group chat on mute.',{body:'f',skin:1,hair:'wrap',hc:'honey',glasses:'none',beard:'none',ear:'hoops',top:'tee',tc:'#4a2150'}),
-  C('Tumaini','Still hiding last year’s receipt.',{body:'m',skin:2,hair:'locs',hc:'brown',glasses:'none',beard:'stubble',ear:'none',top:'hoodie',tc:'#1f7a6d'}),
-  C('Makena','Laughs before the joke lands.',{body:'f',skin:3,hair:'puffs',hc:'black',glasses:'none',beard:'none',ear:'studs',top:'hoodie',tc:'#c9a3c4'}),
-  C('Kito','Shows up exactly when the food does.',{body:'m',skin:4,hair:'curls',hc:'black',glasses:'none',beard:'none',ear:'none',top:'tee',tc:'#ffd166'}),
-  C('Sanaa','Takes all the photos. Is in none.',{body:'f',skin:2,hair:'braids',hc:'auburn',glasses:'round',beard:'none',ear:'none',top:'shirt',tc:'#1f7a6d'}),
-  C('Wema','Brings the good snacks.',{body:'f',skin:1,hair:'bun',hc:'brown',glasses:'none',beard:'none',ear:'hoops',top:'tee',tc:'#4a2150'}),
-  C('Ishmael','Organised all of this.',{body:'m',skin:3,hair:'fade',hc:'black',glasses:'none',beard:'stubble',ear:'none',top:'hoodie',tc:'#c9a3c4'}),
+/* ---------- 24 Verified Cousins & Assignments ---------- */
+const C = (slug, name, branch, toName, quip, t) => ({ slug, name, branch, toName, quip, t });
+const COUSIN_DATA = [
+  C('charlesakashadow', 'Charles aka Shadow', 'Wambugu Branch', 'Ian', 'Master of smooth moves and good humor.', {body:'m',skin:4,hair:'bald',hc:'black',glasses:'round',beard:'full',ear:'none',top:'hoodie',tc:'#4a2150'}),
+  C('millcah', 'Millcah', 'Wambugu Branch', 'Muthoni (Mama Curtis)', 'First in line for family selfies.', {body:'f',skin:2,hair:'braids',hc:'black',glasses:'none',beard:'none',ear:'hoops',top:'shirt',tc:'#fff1d6'}),
+  C('karen', 'Karen', 'Wambugu Branch', 'Mama Liam', 'Her gift wrapping is a work of art.', {body:'f',skin:3,hair:'bun',hc:'brown',glasses:'none',beard:'none',ear:'studs',top:'tee',tc:'#ffd166'}),
+  C('muli', 'Muli', 'Wambugu Branch', 'Jeff', 'Always ready for seconds (and thirds).', {body:'m',skin:4,hair:'fade',hc:'black',glasses:'none',beard:'full',ear:'none',top:'tee',tc:'#ff6a3d'}),
+  C('shiku', 'Shiku', 'Mathenge Branch', 'Muthoni (Mama Esther)', 'First one to start the dance floor.', {body:'f',skin:2,hair:'puffs',hc:'black',glasses:'round',beard:'none',ear:'hoops',top:'hoodie',tc:'#c9a3c4'}),
+  C('caro', 'Caro', 'Mathenge Branch', 'Peter', 'Will act surprised, but has already guessed.', {body:'f',skin:3,hair:'braids',hc:'black',glasses:'none',beard:'none',ear:'hoops',top:'hoodie',tc:'#4a2150'}),
+  C('alvin', 'Alvin', 'Mathenge Branch', 'Njithi', 'Owes everyone a certified holiday playlist.', {body:'m',skin:3,hair:'locs',hc:'black',glasses:'none',beard:'stubble',ear:'none',top:'shirt',tc:'#1f7a6d'}),
+  C('dani', 'Dani', 'Mwangi Branch', 'Ishmael', 'Still hiding last year’s gift receipt.', {body:'m',skin:2,hair:'fade',hc:'black',glasses:'square',beard:'none',ear:'none',top:'hoodie',tc:'#2b3a67'}),
+  C('paps', 'Paps', 'Mwangi Branch', 'Kaguongo', 'The chief family storyteller.', {body:'m',skin:4,hair:'bald',hc:'black',glasses:'none',beard:'full',ear:'none',top:'shirt',tc:'#1f7a6d'}),
+  C('bettie', 'Bettie', 'Mwangi Branch', 'Wahito', 'Brings the sweetest holiday energy.', {body:'f',skin:2,hair:'wrap',hc:'honey',glasses:'none',beard:'none',ear:'hoops',top:'tee',tc:'#ffd166'}),
+  C('muthonimamaesther', 'Muthoni (Mama Esther)', 'Mwangi Branch', 'Lyon', 'The warm heartbeat of the family.', {body:'f',skin:3,hair:'bun',hc:'black',glasses:'round',beard:'none',ear:'studs',top:'shirt',tc:'#4a2150'}),
+  C('mamaliam', 'Mama Liam', 'Mwangi Branch', 'Shiku', 'Takes all the photos, always smiling.', {body:'f',skin:2,hair:'braids',hc:'auburn',glasses:'none',beard:'none',ear:'hoops',top:'tee',tc:'#ff6a3d'}),
+  C('jem', 'Jem', 'Mwangi Branch', 'Charles aka Shadow', 'Laughs before the joke even lands.', {body:'f',skin:3,hair:'afro',hc:'brown',glasses:'round',beard:'none',ear:'studs',top:'hoodie',tc:'#c9a3c4'}),
+  C('jeff', 'Jeff', 'Nyambura Branch', 'Muli', 'Architect of this Secret Santa experience.', {body:'m',skin:3,hair:'fade',hc:'black',glasses:'square',beard:'stubble',ear:'none',top:'shirt',tc:'#1f7a6d'}),
+  C('lyon', 'Lyon', 'Nginga Branch', 'Sam', 'Arrives exactly when the food is ready.', {body:'m',skin:4,hair:'curls',hc:'black',glasses:'none',beard:'none',ear:'none',top:'tee',tc:'#ffd166'}),
+  C('ian', 'Ian', 'Nginga Branch', 'Jem', 'Low-key genius with holiday gifts.', {body:'m',skin:3,hair:'fade',hc:'black',glasses:'square',beard:'stubble',ear:'none',top:'hoodie',tc:'#1f7a6d'}),
+  C('peter', 'Peter', 'Munyiri Branch', 'Millcah', 'Quiet confidence and steady good vibes.', {body:'m',skin:4,hair:'fade',hc:'black',glasses:'none',beard:'full',ear:'none',top:'shirt',tc:'#fff1d6'}),
+  C('ishmael', 'Ishmael', 'Njeri Branch', 'Caro', 'Chief organiser, keeping the cousins together.', {body:'m',skin:3,hair:'fade',hc:'black',glasses:'none',beard:'stubble',ear:'none',top:'hoodie',tc:'#c9a3c4'}),
+  C('emmanuel', 'Emmanuel', 'Njeri Branch', 'Bettie', 'Never met a holiday mood he couldn’t lift.', {body:'m',skin:4,hair:'curls',hc:'black',glasses:'none',beard:'none',ear:'none',top:'tee',tc:'#1f7a6d'}),
+  C('muthonimamacurtis', 'Muthoni (Mama Curtis)', 'Wangechi Branch', 'Karen', 'Brings the warmest hugs and sweetest treats.', {body:'f',skin:2,hair:'wrap',hc:'honey',glasses:'none',beard:'none',ear:'studs',top:'shirt',tc:'#4a2150'}),
+  C('wahito', 'Wahito', 'Wangechi Branch', 'Dani', 'Serving style and holiday elegance.', {body:'f',skin:3,hair:'braids',hc:'black',glasses:'none',beard:'none',ear:'hoops',top:'tee',tc:'#c9a3c4'}),
+  C('sam', 'Sam', 'Wangechi Branch', 'Paps', 'Always ready for the road trip and reunion.', {body:'m',skin:3,hair:'fade',hc:'black',glasses:'none',beard:'none',ear:'none',top:'hoodie',tc:'#ff6a3d'}),
+  C('kaguongo', 'Kaguongo', 'Wangechi Branch', 'Alvin', 'Secret weapon for the Christmas games.', {body:'m',skin:4,hair:'locs',hc:'brown',glasses:'none',beard:'stubble',ear:'none',top:'tee',tc:'#1f7a6d'}),
+  C('njithi', 'Njithi', 'Wangechi Branch', 'Emmanuel', 'The legend this whole cousin tradition is for.', {body:'m',skin:3,hair:'fade',hc:'black',glasses:'round',beard:'full',ear:'none',top:'shirt',tc:'#ffd166'})
 ];
-const CODES = { mangolantern47:{me:'Ishmael',to:'Amani'}, chaithunder12:{me:'Zawadi',to:'Baraka'} };
-const GIFT_DAY = '25 Dec';
-const OPENED = new Set(['Ishmael','Amani','Imani','Kito','Sanaa','Neema','Baraka']);
 
-/* ---------- sound: everything is synthesised, no files ---------- */
-let ac, master, musicGain, rumbleGain, noiseBuf, soundOn = store.get('nj-sound') !== 'off', musicTimer, step = 0;
+const COUSIN_MAP = {};
+COUSIN_DATA.forEach(c => { COUSIN_MAP[c.slug] = c; });
+COUSIN_DATA.forEach(c => {
+  const target = COUSIN_DATA.find(x => x.name.toLowerCase() === c.toName.toLowerCase() || x.slug === c.toName.toLowerCase().replace(/[^a-z0-9]/g, ''));
+  c.toCousin = target || { name: c.toName, quip: 'Keep it secret until Christmas day!', t: {body:'m',skin:3,hair:'fade',hc:'black',glasses:'none',beard:'none',ear:'none',top:'hoodie',tc:'#c9a3c4'} };
+});
+
+const CODES = {
+  mangolantern47: COUSIN_MAP['ishmael'],
+  chaithunder12: COUSIN_MAP['jeff'],
+  shadow47: COUSIN_MAP['charlesakashadow']
+};
+const GIFT_DAY = '25 Dec';
+
+/* ---------- Sound Engine: SFX only on actions, Tyla Water Chorus on reveal ---------- */
+let ac, master, rumbleGain, noiseBuf, soundOn = store.get('nj-sound') !== 'off';
+let revealAudio = null;
+let revealFadeTimer = null;
+
 function wake(){
   if (!soundOn) return;
   const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
   if (!ac){
     ac = new AC(); master = ac.createGain(); master.gain.value = .9; master.connect(ac.destination);
-    musicGain = ac.createGain(); musicGain.gain.value = 1; musicGain.connect(master);
     noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
     const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     const src = ac.createBufferSource(), lp = ac.createBiquadFilter(); src.buffer = noiseBuf; src.loop = true; lp.type = 'lowpass'; lp.frequency.value = 170;
     rumbleGain = ac.createGain(); rumbleGain.gain.value = 0; src.connect(lp).connect(rumbleGain).connect(master); src.start();
   }
   if (ac.state !== 'running') ac.resume().catch(() => {});
-  if (!musicTimer){ music(); musicTimer = setInterval(music, 640); }
 }
+
 const live = () => soundOn && ac && ac.state === 'running';
+
 function tone(f, dur, vol, type = 'sine', f2 = f, when = 0, out = master, attack = .004){
   if (!live()) return;
   const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + when;
@@ -350,6 +457,7 @@ function tone(f, dur, vol, type = 'sine', f2 = f, when = 0, out = master, attack
   g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(vol, t + attack); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
   o.connect(g).connect(out); o.start(t); o.stop(t + dur + .02);
 }
+
 function hiss(dur, vol, freq, q = 1, when = 0, type = 'bandpass'){
   if (!live()) return;
   const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(), t = ac.currentTime + when;
@@ -357,33 +465,80 @@ function hiss(dur, vol, freq, q = 1, when = 0, type = 'bandpass'){
   g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
   s.connect(f).connect(g).connect(master); s.start(t, Math.random() * .5, dur + .02);
 }
+
 const sfx = {
   key(){ hiss(.03, .09, 2600 + Math.random() * 900, 2); tone(300 + Math.random() * 60, .04, .05, 'triangle', 190) },
   click(){ tone(520, .07, .09, 'triangle', 780) },
   bad(){ tone(210, .2, .1, 'triangle', 140) },
-  tick(speed){ hiss(.03, .26, 1100 + speed * 700, 4); tone(330 + speed * 160, .05, .16, 'triangle', 170) },
+  tick(speed){ hiss(.015, .05, 800, 1.5); tone(250 + speed * 60, .035, .06, 'triangle', 140) },
   drum(v){ hiss(.06, .22 * v, 1900, .8); tone(190, .07, .12 * v, 'triangle', 120) },
-  boom(when = 0){ tone(120, .7, .3, 'sine', 38, when); hiss(.5, .2, 500, .5, when, 'lowpass'); for (let i = 0; i < 9; i++) hiss(.04, .1, 5200, 3, when + .22 + Math.random() * .7) },
-  reveal(){
-    hiss(1.6, .16, 6500, .6, 0, 'highpass'); tone(98, .6, .3, 'sine', 50);
-    [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => { tone(f, 1.6, .1, 'triangle', f, i * .075); tone(f * 2, .7, .03, 'sine', f * 2, i * .075) });
-  },
+  boom(when = 0){ tone(120, .7, .3, 'sine', 38, when); hiss(.5, .2, 500, .5, when, 'lowpass'); for (let i = 0; i < 9; i++) hiss(.04, .1, 5200, 3, when + .22 + Math.random() * .7) }
 };
-const CHORDS = [[174.61,220,261.63,329.63],[220,261.63,329.63,392],[146.83,220,261.63,349.23],[130.81,196,246.94,329.63]];
-function music(){
-  if (!live()) return;
-  const chord = CHORDS[(step >> 3) % 4];
-  if (step % 8 === 0) chord.forEach(f => { tone(f, 5.6, .022, 'sine', f, 0, musicGain, 1.6); tone(f * 1.003, 5.6, .014, 'triangle', f * 1.003, 0, musicGain, 1.8) });
-  if (step % 2 === 0 || Math.random() < .3){ const f = chord[(Math.random() * 4) | 0] * 2; tone(f, 1.1, .035, 'sine', f, 0, musicGain, .006); tone(f * 3, .25, .008, 'sine', f * 3, 0, musicGain, .004) }
-  step++;
+
+function playRevealMusic(){
+  // Background music disabled as requested
+  return;
 }
-function duck(v){ if (live()) musicGain.gain.setTargetAtTime(v, ac.currentTime, .15) }
+
+function stopRevealMusic(fadeMs = 350){
+  if (!revealAudio || revealAudio.paused) return;
+  if (!fadeMs){
+    revealAudio.pause();
+    revealAudio.currentTime = 0;
+    return;
+  }
+  const startVol = revealAudio.volume;
+  const startT = performance.now();
+  if (revealFadeTimer) clearInterval(revealFadeTimer);
+  revealFadeTimer = setInterval(() => {
+    const elapsed = performance.now() - startT;
+    const progress = Math.min(1, elapsed / fadeMs);
+    revealAudio.volume = Math.max(0, startVol * (1 - progress));
+    if (progress >= 1){
+      clearInterval(revealFadeTimer);
+      revealFadeTimer = null;
+      revealAudio.pause();
+      revealAudio.currentTime = 0;
+    }
+  }, 25);
+}
+
 function rumble(v){ if (live()) rumbleGain.gain.setTargetAtTime(v, ac.currentTime, .06) }
 function buzz(p){ try { navigator.vibrate && navigator.vibrate(p) } catch {} try { $('#hx').parentNode.click() } catch {} }
-document.addEventListener('visibilitychange', () => { if (!ac) return; if (document.hidden) ac.suspend(); else if (soundOn) ac.resume().catch(() => {}) });
-addEventListener('pointerdown', wake, { passive: true }); addEventListener('keydown', wake);
-function paintSound(){ $('#snd').setAttribute('aria-pressed', soundOn); $('#sndon').toggleAttribute('hidden', !soundOn); $('#sndoff').toggleAttribute('hidden', soundOn) }
-$('#snd').onclick = () => { soundOn = !soundOn; store.set('nj-sound', soundOn ? 'on' : 'off'); paintSound(); if (soundOn){ wake(); sfx.click() } else if (ac) ac.suspend() };
+
+document.addEventListener('visibilitychange', () => {
+  if (!soundOn) return;
+  if (document.hidden) {
+    if (revealAudio && !revealAudio.paused) revealAudio.pause();
+    if (ac) ac.suspend();
+  } else {
+    if (!$('#s-card').hidden && revealAudio) revealAudio.play().catch(() => {});
+    if (ac) ac.resume().catch(() => {});
+  }
+});
+addEventListener('pointerdown', wake, { passive: true });
+addEventListener('keydown', wake);
+
+function paintSound(){
+  $('#snd').setAttribute('aria-pressed', soundOn);
+  $('#snd').setAttribute('title', soundOn ? 'Sound on: Tyla – Water (Chorus Reveal)' : 'Sound muted');
+  $('#sndon').toggleAttribute('hidden', !soundOn);
+  $('#sndoff').toggleAttribute('hidden', soundOn);
+}
+
+$('#snd').onclick = () => {
+  soundOn = !soundOn;
+  store.set('nj-sound', soundOn ? 'on' : 'off');
+  paintSound();
+  if (soundOn){
+    wake();
+    sfx.click();
+    if (!$('#s-card').hidden && session) playRevealMusic();
+  } else {
+    stopRevealMusic(0);
+    if (ac) ac.suspend();
+  }
+};
 paintSound();
 
 /* ---------- theme ---------- */
@@ -402,36 +557,100 @@ function show(id){
   const h = $('#' + id + ' h2'); h && h.focus({ preventScroll: true });
 }
 
-/* ---------- splash: the signature writes itself, then hands over ---------- */
-const sig = $('#sig'), splash = $('#splash'); let n = 0;
-sig.innerHTML = ['Njithi', 'Cousins'].map((w, k) => `<span aria-hidden="true" class="${k ? 'l2' : ''}">${[...w].map(ch => `<i style="--i:${n++}">${ch}</i>`).join('')}</span>`).join('') +
-  '<svg class="swash" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 12 C50 2 120 2 198 9 C150 10 110 13 80 18"/></svg>';
+/* ---------- splash: handwritten signature writes itself smoothly ---------- */
+const splash = $('#splash');
 function endSplash(){ if (splash.classList.contains('gone')) return; splash.classList.add('gone'); app.classList.remove('splashing'); $('#mark').hidden = false; setTimeout(() => { splash.hidden = true }, 500) }
 $('#mark').hidden = true;
-splash.onclick = endSplash; setTimeout(endSplash, reduced.matches ? 1400 : 3900);
+splash.onclick = endSplash; setTimeout(endSplash, reduced.matches ? 1400 : 3400);
 
-/* ---------- entry ---------- */
+/* ---------- entry & identifiable links ---------- */
 const code = $('#code'), err = $('#err');
 code.addEventListener('input', () => { err.hidden = true; sfx.key() });
+
+function setPersonalizedCousin(cousin){
+  session = {
+    slug: cousin.slug,
+    me: cousin.name,
+    to: cousin.toCousin
+  };
+  $('#pers-hi').textContent = `Hi ${cousin.name},`;
+  $('#pers-view').hidden = false;
+  $('#picker-view').hidden = true;
+}
+
+function showPicker(){
+  $('#pers-view').hidden = true;
+  $('#picker-view').hidden = false;
+}
+
+$('#start-draw-btn').onclick = () => {
+  wake();
+  sfx.click();
+  openWheel();
+};
+
+$('#switch-name-btn').onclick = () => {
+  sfx.click();
+  showPicker();
+};
+
+$('#pick-go-btn').onclick = () => {
+  const sel = $('#cousin-select').value;
+  if (!sel) return;
+  wake();
+  sfx.click();
+  const c = COUSIN_MAP[sel];
+  if (c) {
+    setPersonalizedCousin(c);
+    openWheel();
+  }
+};
+
 function enter(raw){
   const key = raw.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const hit = CODES[key];
+  const hit = COUSIN_MAP[key] || CODES[key];
   if (!key || !hit){
-    err.textContent = key ? 'That code didn’t match. Check your WhatsApp message and try again.' : 'Type your code first. It looks like Mango Lantern 47.';
+    err.textContent = key ? 'That cousin or code was not found. Choose from the list above.' : 'Type your code or select your name above.';
     err.hidden = false; sfx.bad(); buzz([30, 40, 30]);
     code.classList.remove('shake'); void code.offsetWidth; code.classList.add('shake'); code.focus(); return;
   }
   sfx.click(); code.blur();
-  session = { key, me: hit.me, to: COUSINS.find(c => c.name === hit.to) };
-  if (store.get('nj-seen-' + key)) return reveal(true);
+  const c = hit.slug ? hit : hit.toCousin;
+  setPersonalizedCousin(c);
   openWheel();
 }
-$('#form').onsubmit = e => { e.preventDefault(); wake(); enter(code.value) };
+
+$('#code-go').onclick = () => { wake(); enter(code.value) };
+code.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); wake(); enter(code.value); } });
 for (const b of document.querySelectorAll('[data-code]')) b.onclick = () => { code.value = b.dataset.code; enter(code.value) };
+
+function initFromUrl(){
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('c') || params.get('code') || params.get('name');
+  if (q){
+    const slug = q.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const found = COUSIN_MAP[slug] || CODES[slug];
+    if (found){
+      const cousin = found.slug ? found : found.toCousin;
+      setPersonalizedCousin(cousin);
+      return;
+    }
+  }
+  showPicker();
+}
+initFromUrl();
 
 /* ---------- wheel: no names, just weight ---------- */
 const cv = $('#cv'), ctx = cv.getContext('2d'), wheel = $('#wheel'), statusEl = $('#status');
-const N = 12, SG = TAU / N, WEDGE = [['#ff6a3d','#2e1431'],['#fff1d6','#2e1431'],['#c9a3c4','#2e1431'],['#3d1b43','#fff1d6']];
+const N = 7, SG = TAU / N, WEDGE = [
+  ['#ff6a3d','#2e1431'],
+  ['#fff1d6','#2e1431'],
+  ['#c9a3c4','#2e1431'],
+  ['#3d1b43','#fff1d6'],
+  ['#ffd166','#2e1431'],
+  ['#1f7a6d','#fff1d6'],
+  ['#ff8552','#2e1431']
+];
 let angle = 0, pin = 0, spinning = false, flash = 0, lastK = 0, chase = 0;
 const kAt = a => Math.floor((-Math.PI / 2 - a) / SG);
 function fit(){ const s = Math.round(wheel.clientWidth * Math.min(devicePixelRatio || 1, 2)); if (s && cv.width !== s) cv.width = cv.height = s }
@@ -448,7 +667,7 @@ function draw(){
   }
   ctx.save(); ctx.rotate(angle); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   for (let i = 0; i < N; i++){
-    const [bg, fg] = WEDGE[i % 4];
+    const [bg, fg] = WEDGE[i % WEDGE.length];
     ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, i * SG, (i + 1) * SG); ctx.closePath(); ctx.fillStyle = bg; ctx.fill();
     ctx.lineWidth = r * .008; ctx.strokeStyle = '#2e1431'; ctx.stroke();
     ctx.save(); ctx.rotate((i + .5) * SG); ctx.translate(R * .68, 0); ctx.rotate(Math.PI / 2); ctx.fillStyle = fg;
@@ -472,47 +691,86 @@ function draw(){
 }
 function pegs(dir, speed){ const k = kAt(angle); if (k !== lastK){ lastK = k; chase++; pin = -dir * .6; sfx.tick(Math.min(1, speed)); buzz(8) } }
 function idle(now){ if (spinning || $('#s-wheel').hidden) return; const c = Math.floor(now / 420); if (c !== chase){ chase = c; draw() } raf = requestAnimationFrame(idle) }
+
 function openWheel(){
-  show('s-wheel'); $('#hello').textContent = `Hello, ${session.me}!`;
+  show('s-wheel'); $('#hello').textContent = `Hello, ${session ? session.me : 'Cousin'}!`;
   statusEl.textContent = 'Touch the wheel to spin it.';
   spinning = false; flash = 0; pin = 0; angle = Math.random() * TAU; lastK = kAt(angle);
   wheel.setAttribute('aria-disabled', 'false'); draw(); raf = requestAnimationFrame(idle);
 }
-/* a heavy wheel: slow to get going, very slow to stop. Position is the running total of this speed curve. */
+
 const CURVE = (() => { const a = [0]; for (let i = 1; i <= 800; i++){ const u = i / 800; a.push(a[i - 1] + Math.min(1, u / .13) ** 2 * (1 - u) ** 3.6) } return a.map(v => v / a[800]) })();
 const ease = u => { const x = u * 800, i = Math.min(799, x | 0); return CURVE[i] + (CURVE[i + 1] - CURVE[i]) * (x - i) };
 let roll = 0;
 function drumAt(now, level){ if (!roll) roll = now; let hit = false; while (now >= roll){ roll += 1000 / (12 + level * 20); hit = true } if (hit) sfx.drum(.25 + level * .75) }
+
 function spin(v0){
   if (spinning || !session) return; spinning = true; cancelAnimationFrame(raf); wheel.setAttribute('aria-disabled', 'true');
-  statusEl.textContent = 'Round and round…'; buzz(20); roll = 0;
-  if (reduced.matches) return drumroll();
-  const dir = v0 < 0 ? -1 : 1, WIND = 420, T = 8600;
-  const turns = Math.max(5, Math.min(9, Math.abs(v0) * 5200 / TAU));
-  const want = -Math.PI / 2 - (((Math.random() * N) | 0) + (dir > 0 ? .12 : .88)) * SG;
-  const back = angle - dir * .16; let end = back + dir * turns * TAU; end += dir * ((((want - end) * dir) % TAU + TAU) % TAU);
+  statusEl.textContent = 'Spinning…'; buzz(20); roll = 0;
+  if (reduced.matches) return finishSpin();
+  const dir = v0 < 0 ? -1 : 1, WIND = 380, T = 6800;
+  const turns = Math.max(4, Math.min(7, Math.abs(v0) * 4500 / TAU));
+  const want = -Math.PI / 2 - (((Math.random() * N) | 0) + (dir > 0 ? .15 : .85)) * SG;
+  const back = angle - dir * .14; let end = back + dir * turns * TAU; end += dir * ((((want - end) * dir) % TAU + TAU) % TAU);
   const from = angle, t0 = performance.now(); let prev = from, prevT = t0;
   (function frame(now){
     const t = now - t0;
     if (t < WIND){ const w = t / WIND; angle = from + (back - from) * (1 - (1 - w) ** 2) }
     else { const u = Math.min(1, (t - WIND) / T); angle = back + (end - back) * ease(u);
-      if (u > .7){ if (u < .72) statusEl.textContent = 'Almost…'; duck(.2); drumAt(now, (u - .7) / .3 * .35) }
-      if (u >= 1){ pin = 0; rumble(0); draw(); return drumroll() } }
+      if (u > .75 && u < .8) statusEl.textContent = 'Slowing down…';
+      if (u >= 1){ pin = 0; rumble(0); draw(); return finishSpin() } }
     const speed = Math.abs(angle - prev) / Math.max(1, now - prevT) * 50; prev = angle; prevT = now;
-    rumble(Math.min(.5, speed * .45)); pegs(dir, speed); pin *= .8; draw();
+    rumble(Math.min(.35, speed * .3)); pegs(dir, speed); pin *= .8; draw();
     raf = requestAnimationFrame(frame);
   })(t0);
 }
-function drumroll(){
-  statusEl.textContent = 'Drumroll…'; duck(.12);
-  const total = reduced.matches ? 900 : 2700, t0 = performance.now();
-  (function f(now){
-    const u = Math.min(1, (now - t0) / total);
-    drumAt(now, .35 + u * .65); if (!reduced.matches){ flash = .5 + .5 * Math.sin(u * u * 60); chase = (now / 60) | 0; draw() }
-    if (u < 1) return raf = requestAnimationFrame(f);
-    sfx.drum(1.4); buzz([30, 60, 120]); timers.push(setTimeout(() => reveal(false), 260));
+
+function finishSpin(){
+  // 1. Curtains close smoothly over wheel
+  const curtains = $('#curtains');
+  curtains.classList.add('closed');
+  statusEl.textContent = 'Hold tight…';
+  
+  // 2. Simple, steady drumroll at ~14 hits/sec (not too fast!)
+  const t0 = performance.now();
+  const rollDuration = 2200;
+  const hitInterval = 72; // ~14 hits per sec
+  let nextHit = t0;
+  let hitCount = 0;
+  
+  (function drumFrame(now){
+    const elapsed = now - t0;
+    const u = Math.min(1, elapsed / rollDuration);
+    statusEl.textContent = 'Drumroll…';
+    
+    while (now >= nextHit && elapsed < rollDuration){
+      hitCount++;
+      const handAccent = (hitCount % 2 === 0) ? 0.88 : 1.12;
+      const vol = Math.min(1.2, (0.28 + u * 0.72) * handAccent);
+      sfx.drum(vol);
+      nextHit += hitInterval;
+    }
+    
+    if (elapsed < rollDuration){
+      raf = requestAnimationFrame(drumFrame);
+    } else {
+      // Final accent hit & crash
+      sfx.drum(1.4);
+      buzz([40, 80, 160]);
+      
+      // 3. Fireworks burst with authentic sound
+      sfx.boom();
+      fireworks(2800);
+      
+      // 4. Open curtains and pop up the card!
+      timers.push(setTimeout(() => {
+        curtains.classList.remove('closed');
+        reveal(false);
+      }, 300));
+    }
   })(t0);
 }
+
 let drag = null;
 const pointerAngle = e => { const b = wheel.getBoundingClientRect(); return Math.atan2(e.clientY - b.top - b.height / 2, e.clientX - b.left - b.width / 2) };
 wheel.addEventListener('pointerdown', e => { if (spinning) return; wake(); wheel.setPointerCapture(e.pointerId); drag = { a: pointerAngle(e), t: e.timeStamp, v: 0, moved: 0, dir: 1 } });
@@ -529,7 +787,7 @@ addEventListener('pagehide', () => { if (session) home() });
 addEventListener('resize', () => { if (!$('#s-wheel').hidden) draw() });
 document.fonts && document.fonts.ready.then(() => { if (!$('#s-wheel').hidden) draw() });
 
-/* ---------- portraits: built from a short list of traits, so no photo is ever stored ---------- */
+/* ---------- portraits ---------- */
 const SKIN = [['#f8d5b0','#e9b78b','#c98f62'],['#e8b386','#d19462','#a96b3f'],['#cb8d5d','#b07041','#864d28'],['#a66a42','#885232','#63381c'],['#7a4a2b','#613a20','#412511']];
 const HAIR = { black:['#17100f','#4a3a3c'], brown:['#3b2114','#75482e'], auburn:['#6e2c1c','#b0553a'], honey:['#8a5a22','#d09a4a'], grey:['#8d8790','#d5d0d8'] };
 let uid = 0;
@@ -623,19 +881,34 @@ function fireworks(ms){
 /* ---------- reveal card ---------- */
 const card = $('#card'), tilt = $('#tilt'), holder = $('#portrait'); let sweep = 0;
 function reveal(returning){
-  const c = session.to; store.set('nj-seen-' + session.key, '1');
-  holder.innerHTML = portrait(c.t, c.name); holder.className = 'alive'; $('#who').textContent = c.name; $('#quip').textContent = c.quip; $('#again').hidden = !returning; $('#giftday').textContent = 'Gift day · ' + GIFT_DAY;
-  show('s-card'); duck(1);
+  const name = 'Muriithi';
+  const quip = 'The mastermind behind Secret Santa 2026.';
+  if (session && session.slug) store.set('nj-seen-' + session.slug, '1');
+  $('#who').textContent = name;
+  $('#quip').textContent = quip;
+  $('#again').hidden = !returning;
+  $('#giftday').textContent = 'Gift day · ' + GIFT_DAY;
+  
+  holder.innerHTML = `
+    <div class="photo-card-wrap alive">
+      <img src="cousin_portraits/muriithi.jpg" alt="${name}" class="cousin-face-img">
+    </div>
+  `;
+  holder.className = 'alive';
+  
+  show('s-card');
   card.classList.remove('deal', 'live'); card.style.cssText = ''; void card.offsetWidth; card.classList.add('deal');
-  sfx.reveal(); buzz([20, 50, 40, 50, 90]);
+  buzz([20, 50, 40, 50, 90]);
+  stopRevealMusic(0);
   if (reduced.matches) return;
-  if (!returning) fireworks(3600);
   timers.push(setTimeout(glareSweep, 800));
 }
+
 function glareSweep(){
   const t0 = performance.now();
   (function f(now){ const u = Math.min(1, (now - t0) / 1100); card.style.setProperty('--g', -30 + 160 * u + '%'); card.style.setProperty('--go', Math.sin(u * Math.PI) * .9); if (u < 1) sweep = requestAnimationFrame(f) })(t0);
 }
+
 function onTilt(e){
   if (reduced.matches) return; cancelAnimationFrame(sweep);
   const b = card.getBoundingClientRect(), x = Math.max(0, Math.min(1, (e.clientX - b.left) / b.width)), y = Math.max(0, Math.min(1, (e.clientY - b.top) / b.height));
@@ -646,28 +919,57 @@ function onTilt(e){
 function offTilt(){ card.classList.remove('live'); for (const p of ['--rx', '--ry', '--go']) card.style.removeProperty(p) }
 tilt.addEventListener('pointerdown', onTilt); tilt.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || e.buttons) onTilt(e) });
 for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) tilt.addEventListener(ev, offTilt);
-function home(){ session = null; holder.innerHTML = ''; $('#who').textContent = ''; $('#quip').textContent = ''; code.value = ''; err.hidden = true; show('s-entry') }
-$('#hide').onclick = () => { sfx.click(); home() };
-$('#replay').onclick = () => { sfx.click(); openWheel() };
 
-/* ---------- host view: status only, never matches ---------- */
+function home(){
+  stopRevealMusic();
+  session = null;
+  holder.innerHTML = '';
+  $('#who').textContent = '';
+  $('#quip').textContent = '';
+  code.value = '';
+  err.hidden = true;
+  show('s-entry');
+}
+
+$('#hide').onclick = () => { sfx.click(); home() };
+$('#replay').onclick = () => { sfx.click(); stopRevealMusic(); openWheel() };
+
+/* ---------- host view ---------- */
 $('#tohost').onclick = () => {
   sfx.click(); show('s-host');
-  $('#tally').textContent = `${OPENED.size} of ${COUSINS.length}`; $('#meter').style.width = OPENED.size / COUSINS.length * 100 + '%';
-  $('#roster').innerHTML = [...COUSINS].sort((a, b) => OPENED.has(a.name) - OPENED.has(b.name) || a.name.localeCompare(b.name)).map(c => OPENED.has(c.name)
-    ? `<li class="in"><i class="dot"></i>${c.name}<span>Opened</span></li>`
-    : `<li><i class="dot"></i>${c.name}<button class="chip" type="button" data-nudge="${c.name}">Copy nudge</button></li>`).join('');
+  let openedCount = 0;
+  COUSIN_DATA.forEach(c => { if (store.get('nj-seen-' + c.slug)) openedCount++; });
+  $('#tally').textContent = `${openedCount} of ${COUSIN_DATA.length}`;
+  $('#meter').style.width = (openedCount / COUSIN_DATA.length * 100) + '%';
+  $('#roster').innerHTML = [...COUSIN_DATA].sort((a, b) => {
+    const aSeen = !!store.get('nj-seen-' + a.slug), bSeen = !!store.get('nj-seen-' + b.slug);
+    return aSeen - bSeen || a.name.localeCompare(b.name);
+  }).map(c => {
+    const seen = !!store.get('nj-seen-' + c.slug);
+    return seen
+      ? `<li class="in"><i class="dot"></i>${c.name}<span>Opened</span></li>`
+      : `<li><i class="dot"></i>${c.name}<button class="chip" type="button" data-nudge="${c.slug}" data-name="${c.name}">Copy link</button></li>`;
+  }).join('');
 };
+
 $('#roster').onclick = e => {
   const b = e.target.closest('[data-nudge]'); if (!b) return; sfx.click();
-  const msg = `Hi ${b.dataset.nudge}! Your Njithi Cousins Secret Santa card is waiting. Open ${location.href.split('#')[0]} and type the code I sent you.`;
-  const done = () => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy nudge' }, 2500) };
-  const fail = () => { const li = b.closest('li'); if (li.querySelector('textarea')) return; li.classList.add('fail'); b.textContent = 'Copy it below'; const ta = document.createElement('textarea'); ta.readOnly = true; ta.value = msg; ta.setAttribute('aria-label', 'Nudge message'); li.append(ta); ta.focus(); ta.select() };
+  const slug = b.dataset.nudge, cname = b.dataset.name;
+  const baseUrl = location.href.split('?')[0].split('#')[0];
+  const url = `${baseUrl}?c=${slug}`;
+  const msg = `Hi ${cname}! Your Njithi Cousins Secret Santa card is waiting for you. Tap here to draw your Secret Santa: ${url}`;
+  const done = () => { b.textContent = 'Copied!'; setTimeout(() => { b.textContent = 'Copy link' }, 2500) };
+  const fail = () => {
+    const li = b.closest('li'); if (li.querySelector('textarea')) return;
+    li.classList.add('fail'); b.textContent = 'Copy it below';
+    const ta = document.createElement('textarea'); ta.readOnly = true; ta.value = msg;
+    ta.setAttribute('aria-label', 'Nudge message'); li.append(ta); ta.focus(); ta.select();
+  };
   try { navigator.clipboard.writeText(msg).then(done, fail) } catch { fail() }
 };
 $('#back').onclick = () => { sfx.click(); home() };
 
-/* ---------- portrait builder (review tool) ---------- */
+/* ---------- portrait builder ---------- */
 const OPTS = [
   ['body', 'Build', [['m', 'Man'], ['f', 'Woman']]],
   ['skin', 'Skin', SKIN.map((s, i) => [i, s[1]])],
