@@ -30,7 +30,7 @@
       
       --sans: 'Figtree', 'Geist', system-ui, -apple-system, sans-serif;
       --serif: 'Instrument Serif', Georgia, serif;
-      --script: 'MonteCarlo', 'Yellowtail', cursive;
+      --script: 'Yellowtail', 'Segoe Script', 'Brush Script MT', cursive;
       --mono: 'Geist Mono', ui-monospace, monospace;
     }
 
@@ -73,26 +73,37 @@
     }
 
     *{box-sizing:border-box;margin:0;padding:0}[hidden]{display:none!important}
-    body{
+    html, body{
+      width:100vw;
+      height:100vh;
+      height:100dvh;
+      margin:0;
+      padding:0;
+      overflow:hidden!important;
+      position:fixed;
+      inset:0;
+      touch-action:none;
+      overscroll-behavior:none;
+      -webkit-overflow-scrolling:auto;
       background:var(--page);
       color:var(--ink);
       font:16px/1.5 var(--sans);
       -webkit-tap-highlight-color:transparent;
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding:env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
     }
 
     .shell{
-      width:100%;
-      min-height:100dvh;
+      width:100vw;
+      height:100vh;
+      height:100dvh;
+      max-height:100dvh;
       display:flex;
       flex-direction:column;
+      position:fixed;
+      inset:0;
+      overflow:hidden!important;
       background:var(--surface);
-      position:relative;
-      overflow:hidden;
+      box-sizing:border-box;
+      padding:env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
     }
 
     button, input, select{font:inherit;color:inherit}
@@ -392,107 +403,190 @@
 
     :root[data-theme="light"]{--page:#f2e1cc;--surface:#fff8e9;--surface-card:#f5e9d7;--ink:#331c32;--muted:#624558;--line:#e1c9d5}
     :root[data-palette="editorial"][data-theme="dark"]{--page:#10162c;--surface:#192243;--surface-card:#263253;--ink:#f7efd9;--muted:#c1c9e1;--line:#4d5980;--accent:#aebdff;--on-accent:#10162c}
-    .screen{flex:1 0 auto;justify-content:center;gap:clamp(14px,2.5vh,26px);padding:clamp(16px,4vw,32px)}
-    .screen h2{font:400 clamp(48px,13vw,78px)/.96 var(--script)}
-    #s-entry>div:not(.opening){width:100%;max-width:620px;margin-inline:auto}
-    #s-entry .personal-entry:not([hidden]){
-      flex:1;
+
+    /* Screen: Strict viewport fit, zero scroll on any device */
+    .screen{
+      flex:1 1 0;
+      min-height:0;
+      max-height:100%;
+      height:100%;
+      width:100%;
+      box-sizing:border-box;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:space-between;
+      padding:clamp(8px,1.5vh,20px) clamp(16px,3vw,40px);
+    }
+    .screen h2{font:400 clamp(36px,7vmin,64px)/.98 var(--script);letter-spacing:-.01em}
+
+    /* Loading Page: Letter-by-letter cursive writing of Njithi Cousins */
+    .splash, #splash{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      background:radial-gradient(ellipse at 50% 45%,#512445,#170b1c 73%);
+      color:var(--splash-ink,#fff4dc);
       display:grid;
-      align-content:center;
-      justify-items:center;
-      gap:clamp(24px,6dvh,64px);
+      place-items:center;
+      border:0;
+      width:100vw;
+      height:100vh;
+      height:100dvh;
+      cursor:pointer;
+      transition:opacity .45s ease-out;
     }
-    .entry-greeting{width:100%}
-    #s-entry .entry-greeting h2{
-      font-size:clamp(58px,15vw,112px);
-      margin:clamp(18px,3dvh,30px) 0 12px;
+    #splash.gone{opacity:0;pointer-events:none}
+    .signature{
+      font:400 clamp(54px,14vw,112px)/.86 'Yellowtail','Segoe Script',cursive;
+      margin:0;
+      transform:rotate(-5deg);
+      position:relative;
+      padding:0 .12em .18em;
+      white-space:nowrap;
+      text-align:left;
     }
-    #s-entry .entry-greeting p{
-      max-width:32ch;
-      margin:0 auto;
-      font-size:clamp(16px,4.5vw,22px);
+    .signature span{display:block}
+    .signature .l2{color:var(--accent,#ff6a3d);margin-left:.42em}
+    .signature i{
+      font-style:normal;
+      display:inline-block;
+      animation:write-letter .3s ease-out both;
+      animation-delay:calc(var(--i)*.14s + .25s);
+      will-change:clip-path;
     }
-    .entry-actions{width:100%;max-width:520px}
-    #s-entry .entry-actions .btn{min-height:62px}
-    #s-entry .entry-actions .help{margin:16px 0 0}
-    @media (max-height:520px){
-      #s-entry .personal-entry:not([hidden]){gap:20px}
-      #s-entry .entry-greeting h2{font-size:clamp(48px,10dvh,64px)}
+    @keyframes write-letter{
+      from{clip-path:inset(-.55em calc(100% + .55em) -.55em -.45em)}
+      to{clip-path:inset(-.55em -.55em -.55em -.45em)}
     }
-    .opening{font:400 clamp(54px,14vw,104px)/1.05 var(--script);color:var(--accent);padding:.08em .16em .22em;white-space:nowrap}
-    .opening span{display:inline-block;animation:ink-write .95s ease both}
-    .opening span+span{animation-delay:.42s}
-    @keyframes ink-write{from{clip-path:inset(-15% 100% -25% -15%);opacity:.25}to{clip-path:inset(-15% -15% -25% -15%);opacity:1}}
-    #s-card{gap:14px}
-    #s-card .tilt{width:100%;touch-action:pan-y;padding:0}
-    #s-card .actions{max-width:760px;margin:0}
-    .card{max-width:760px;min-height:0;gap:14px;padding:clamp(20px,4vw,36px);background:linear-gradient(150deg,var(--card-a),var(--card-b));background-color:#692f56}
-    .card::before{background:linear-gradient(#281020b8,#281020b8);opacity:1}
-    #s-card .card-name,#s-card .card p{color:#fff7e9}
-    .photo-card-wrap{width:clamp(188px,65vw,340px);max-width:100%;height:auto;aspect-ratio:1;margin:0 auto}
-    .gift-note{margin:0 auto;max-width:35ch;opacity:.9}
-    .card .foot{gap:10px;flex-wrap:wrap}
-    @media(min-width:720px){
-      #s-wheel .wheelbtn{width:min(48dvh,440px);height:auto}
-      .actions{max-width:540px}
+    .swash{position:absolute;left:6%;bottom:-.1em;width:88%;height:.22em;overflow:visible}
+    .swash path{
+      fill:none;
+      stroke:var(--accent,#ff6a3d);
+      stroke-width:5;
+      stroke-linecap:round;
+      stroke-dasharray:1;
+      stroke-dashoffset:1;
+      animation:swash-line .6s 2.15s ease-out forwards;
     }
+    @keyframes swash-line{to{stroke-dashoffset:0}}
     @media(prefers-reduced-motion:reduce){
-      .opening span,.card.deal{animation:none}
-      .card{transform:none}
+      .signature i{animation:none!important;clip-path:none!important}
+      .swash path{stroke-dashoffset:0!important;animation:none!important}
     }
 
-    .bar{gap:8px}
-    .bar-actions{flex-shrink:0}
-    .mark{font-size:clamp(24px,7vw,32px)}
-    .screen{padding:clamp(14px,4vw,24px)}
-    .screen .card{display:flex;text-align:center;gap:10px;padding:16px}
-    .screen .card .recipient-copy{text-align:center}
-    .screen .card .recipient-copy p{margin-left:auto}
-    #s-card .card-name{font-size:clamp(64px,16vw,104px)}
-    .gift-note{font:600 clamp(17px,3vw,21px)/1.45 var(--sans);color:var(--muted);text-align:center}
-    .premiere{position:fixed;inset:0;display:grid;place-items:center;z-index:40;background:radial-gradient(ellipse at 50% 45%,#512445,#170b1c 73%);color:#ffb68e;transition:opacity .4s ease}
-    .premiere.dismiss{opacity:0;pointer-events:none}
-    .title-ink{width:min(85vw,390px);overflow:visible}
-    .title-ink path{fill:none;stroke:currentColor;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:write-ink var(--duration,.28s) var(--delay) linear forwards}
-    .title-ink .swash{stroke-width:2.4}
-    @keyframes write-ink{to{stroke-dashoffset:0}}
-    .wheelbtn{position:relative}
-    .wheel-pointer{position:absolute;top:2px;left:50%;width:22px;height:34px;translate:-50% 0;transform-origin:center 0;background:linear-gradient(90deg,#a55c38,#ffe0a6 54%,#ab714e);clip-path:polygon(5% 1%,95% 1%,85% 45%,50% 100%,15% 45%);pointer-events:none}
-    .wheel-pointer{transition:opacity .22s ease}
+    /* Screen 1: Entry */
+    #s-entry>div{width:100%;max-width:860px;margin-inline:auto}
+    #s-entry .personal-entry:not([hidden]){
+      flex:1 1 0;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:space-evenly;
+      padding:clamp(8px,1.5vh,24px) 0;
+      width:100%;
+      max-width:860px;
+    }
+    .entry-greeting{width:100%;text-align:center}
+    #s-entry .entry-greeting h2{
+      font-size:clamp(38px,6.5vmin,76px);
+      margin:clamp(6px,1.5vh,18px) 0 clamp(4px,1vh,12px);
+      line-height:1.02;
+    }
+    #s-entry .entry-greeting p{
+      font-size:clamp(15px,2vmin,20px);
+      line-height:1.4;
+      max-width:44ch;
+      margin:0 auto;
+    }
+    .entry-actions{width:100%;max-width:480px;display:flex;flex-direction:column;align-items:center;gap:12px}
+    #s-entry .entry-actions .btn{min-height:clamp(48px,6.5vh,60px);font-size:clamp(16px,2vmin,19px)}
+    #s-entry .entry-actions .help{margin:6px 0 0}
+
+    /* Screen 2: Wheel */
+    #s-wheel{justify-content:space-evenly;gap:clamp(6px,1vh,14px)}
+    #s-wheel>div:first-child h2{font-size:clamp(32px,5.5vmin,56px);margin:2px 0}
+    #s-wheel>div:first-child p{font-size:clamp(13px,1.8vmin,16px)}
+    #s-wheel .wheelzone{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:center;width:100%}
+    #s-wheel .wheelbtn{position:relative;touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center}
+    .wheel-pointer{position:absolute;top:2px;left:50%;width:22px;height:34px;translate:-50% 0;transform-origin:center 0;background:linear-gradient(90deg,#a55c38,#ffe0a6 54%,#ab714e);clip-path:polygon(5% 1%,95% 1%,85% 45%,50% 100%,15% 45%);pointer-events:none;transition:opacity .22s ease}
     .wheel-pointer.ratchet{animation:ratchet .14s ease-out}
     @keyframes ratchet{40%{transform:rotate(-20deg)}}
+    #s-wheel>p:last-child{font-size:clamp(12px,1.6vmin,14px);color:var(--muted);margin:0;flex-shrink:0}
+
+    /* Screen 3: Card */
+    #s-card{justify-content:center;gap:clamp(8px,1.5vh,18px)}
+    #s-card .tilt{width:100%;max-width:860px;display:flex;justify-content:center;align-items:center;flex:1 1 0;min-height:0;touch-action:none;padding:0}
+    #s-card .card{
+      width:100%;
+      max-width:720px;
+      max-height:100%;
+      box-sizing:border-box;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:space-evenly;
+      gap:clamp(8px,1.5vh,16px);
+      padding:clamp(14px,2.5vh,28px) clamp(16px,3vw,36px);
+      background:linear-gradient(150deg,var(--card-a),var(--card-b));
+      background-color:#692f56;
+    }
+    .card::before{background:linear-gradient(#281020b8,#281020b8);opacity:1}
+    #s-card .card-name,#s-card .card p{color:#fff7e9}
+    #s-card .card-name{font-size:clamp(36px,6.5vmin,68px);line-height:1}
+    #s-card .card-quip{font-size:clamp(14px,1.8vmin,18px);margin:4px auto 0}
+    .photo-card-wrap{width:clamp(120px,22vmin,210px);height:auto;aspect-ratio:1;margin:0 auto}
+    .gift-note{font:600 clamp(13px,1.7vmin,16px)/1.4 var(--sans);color:var(--muted);text-align:center;margin:0;flex-shrink:0}
+    .card .foot{gap:10px;flex-wrap:wrap}
+    #s-card .actions{width:100%;max-width:480px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;margin:0}
+    #s-card .actions .btn{min-height:clamp(44px,6vh,54px)}
+
+    /* Screen 4: Host View */
+    #s-host{justify-content:flex-start;gap:10px;padding:16px 20px}
+    #s-host h2{font-size:clamp(28px,4.5vmin,44px);flex-shrink:0}
+    #s-host .tally{font-size:clamp(32px,5vmin,48px);margin:4px 0;flex-shrink:0}
+    #s-host .meter{flex-shrink:0;margin-bottom:8px}
+    #s-host p{flex-shrink:0;font-size:13px}
+    #s-host .roster{flex:1 1 0;min-height:0;width:100%;max-width:640px;overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+    #s-host .actions{flex-shrink:0;width:100%;max-width:480px;margin-top:8px}
+
+    /* Desktop Viewport Enhancement: Full Screen Width & Balanced Widescreen Fit */
+    @media(min-width:860px){
+      #s-wheel .wheelbtn{width:min(48dvh,420px);height:auto}
+      #s-card .card{
+        display:grid;
+        grid-template-columns:minmax(190px,260px) 1fr;
+        grid-template-rows:auto 1fr auto;
+        grid-template-areas:
+          "eyebrow eyebrow"
+          "portrait copy"
+          "foot foot";
+        align-items:center;
+        max-width:820px;
+        padding:clamp(16px,2.5vh,32px) clamp(24px,3.5vw,44px);
+      }
+      #s-card .card .eyebrow{grid-area:eyebrow;text-align:left}
+      #s-card #portrait{grid-area:portrait}
+      #s-card .recipient-copy{grid-area:copy;text-align:left;padding-left:28px}
+      #s-card .recipient-copy p{margin-left:0}
+      #s-card .card .foot{grid-area:foot}
+      #s-card .photo-card-wrap{width:clamp(160px,24vmin,240px);margin:0 auto}
+      .actions{max-width:480px}
+    }
+
     #fx{position:fixed;animation:sky-in .3s ease}
     @keyframes sky-in{from{opacity:.2}to{opacity:1}}
-    @media(orientation:landscape) and (max-height:540px){
-      #s-wheel .wheelbtn{width:min(58dvh,220px);height:auto}
-      .screen .card{display:grid;grid-template-columns:1fr 1fr}
-      .card .eyebrow,.card .foot{grid-column:1/-1}
-      .screen .card .recipient-copy{text-align:left}
-      .screen .card .recipient-copy p{margin-inline:0}
-      .photo-card-wrap{width:clamp(160px,42dvh,220px)}
-    }
   </style>
 </head>
 <body>
 
 <div class="shell">
-  <!-- Theatrical Red Velvet Curtains -->
-  <div class="premiere" id="premiere" aria-hidden="true">
-    <svg class="title-ink" viewBox="0 0 330 128" aria-label="Njithi’s" role="img">
-      <g transform="translate(24 0) skewX(-12)">
-        <path pathLength="1" style="--delay:.10s;--duration:.48s" d="M9 77 C-8 85 7 98 24 79 C39 61 38 15 56 14 C75 11 55 70 70 79 C84 90 94 41 107 23 C116 11 126 12 119 21 C111 36 93 73 85 78"/>
-        <path pathLength="1" style="--delay:.55s;--duration:.36s" d="M86 78 C95 72 106 59 109 52 C105 77 97 112 84 108 C72 104 87 94 100 85 L120 64 M112 40 l1 -2"/>
-        <path pathLength="1" style="--delay:.88s" d="M120 64 L128 53 C128 61 116 80 124 81 C129 81 139 70 146 62 M130 41 l1 -2"/>
-        <path pathLength="1" style="--delay:1.13s" d="M145 64 C154 51 158 38 164 31 C160 46 145 76 150 82 C158 87 170 68 175 63 M143 53 C151 52 163 51 170 53"/>
-        <path pathLength="1" style="--delay:1.39s;--duration:.38s" d="M174 65 C191 46 200 14 192 17 C184 21 174 57 165 83 C178 62 190 54 194 61 C196 68 183 86 193 84 C201 83 208 75 216 65"/>
-        <path pathLength="1" style="--delay:1.74s" d="M216 65 L223 54 C222 65 212 79 218 83 C225 85 232 76 239 70 M227 42 l1 -2"/>
-        <path pathLength="1" style="--delay:1.99s;--duration:.15s" d="M243 40 C249 36 251 31 251 27"/>
-        <path pathLength="1" style="--delay:2.12s;--duration:.36s" d="M238 71 C249 66 259 56 261 51 C253 59 253 65 262 74 C275 88 250 96 245 85 C244 79 261 76 283 79"/>
-      </g>
-      <path class="swash" pathLength="1" style="--delay:2.49s;--duration:.48s" d="M32 106 C92 98 186 96 299 101 C271 102 236 106 207 112"/>
-      <path class="swash" pathLength="1" style="--delay:2.87s" d="M107 113 Q187 108 263 113"/>
-    </svg>
-  </div>
+  <!-- Loading Page: Letter-by-letter cursive writing of Njithi Cousins -->
+  <button class="splash" id="splash" type="button" aria-label="Njithi Cousins. Tap to continue">
+    <span class="signature" id="sig"></span>
+  </button>
   <canvas class="curtains" id="curtains" aria-hidden="true" hidden></canvas>
 
   <!-- Header Bar: Cursive Logo clicks to Home -->
@@ -825,6 +919,10 @@ function show(id, keepCurtain = false){
   for (const s of document.querySelectorAll('.screen')) s.hidden = s.id !== id;
   const h = $('#' + id + ' h2');
   if (h) h.focus({ preventScroll: true });
+  if (typeof LayoutEngine !== 'undefined') {
+    LayoutEngine.update();
+    requestAnimationFrame(() => LayoutEngine.update());
+  }
 }
 
 /* Clicking logo resets back to home seamlessly */
@@ -1208,16 +1306,135 @@ $('#roster').onclick = e => {
 
 $('#back').onclick = () => home();
 
+/* ---------- JavaScript Layout Engine: Exact Viewport Fitting ---------- */
+const LayoutEngine = (() => {
+  const root = document.documentElement;
+  const shell = document.querySelector('.shell');
+  const bar = document.querySelector('.bar');
+
+  function update() {
+    const vv = window.visualViewport;
+    const vpW = Math.round(vv ? vv.width : window.innerWidth);
+    const vpH = Math.round(vv ? vv.height : window.innerHeight);
+
+    root.style.setProperty('--app-w', `${vpW}px`);
+    root.style.setProperty('--app-h', `${vpH}px`);
+    root.style.setProperty('--vh', `${vpH * 0.01}px`);
+
+    document.body.style.width = `${vpW}px`;
+    document.body.style.height = `${vpH}px`;
+    if (shell) {
+      shell.style.width = `${vpW}px`;
+      shell.style.height = `${vpH}px`;
+    }
+
+    const barH = bar ? bar.offsetHeight : 54;
+    const availH = vpH - barH;
+    root.style.setProperty('--avail-h', `${availH}px`);
+
+    const activeScreen = document.querySelector('.screen:not([hidden])');
+    if (!activeScreen) return;
+
+    if (activeScreen.id === 's-wheel') {
+      const topH = (activeScreen.querySelector('div:first-child')?.offsetHeight || 60);
+      const botH = (activeScreen.querySelector('p:last-child')?.offsetHeight || 26);
+      const safePadding = 24;
+      const maxWheelH = availH - topH - botH - safePadding;
+      const maxWheelW = vpW - 40;
+      const wheelSize = Math.max(160, Math.min(maxWheelH, maxWheelW, vpW > 768 ? 440 : 320));
+
+      const wheelEl = document.getElementById('wheel');
+      if (wheelEl) {
+        wheelEl.style.width = `${wheelSize}px`;
+        wheelEl.style.height = `${wheelSize}px`;
+      }
+      if (typeof fit === 'function' && typeof drawWheel === 'function') {
+        drawWheel();
+      }
+    } else if (activeScreen.id === 's-card') {
+      const cardEl = document.getElementById('card');
+      const actionsEl = activeScreen.querySelector('.actions');
+      const noteEl = activeScreen.querySelector('.gift-note');
+      const actH = actionsEl ? actionsEl.offsetHeight : 54;
+      const notH = noteEl ? noteEl.offsetHeight : 24;
+      const maxCardH = Math.max(220, availH - actH - notH - 24);
+
+      if (cardEl) {
+        cardEl.style.maxHeight = `${maxCardH}px`;
+      }
+    } else if (activeScreen.id === 's-host') {
+      const title = activeScreen.querySelector('h2');
+      const tally = activeScreen.querySelector('.tally');
+      const meter = activeScreen.querySelector('.meter');
+      const sub = activeScreen.querySelector('p');
+      const actions = activeScreen.querySelector('.actions');
+      const overhead = (title ? title.offsetHeight : 34) +
+                       (tally ? tally.offsetHeight : 44) +
+                       (meter ? meter.offsetHeight : 16) +
+                       (sub ? sub.offsetHeight : 24) +
+                       (actions ? actions.offsetHeight : 50) + 40;
+      const roster = document.getElementById('roster');
+      if (roster) {
+        roster.style.maxHeight = `${Math.max(100, availH - overhead)}px`;
+      }
+    }
+
+    window.scrollTo(0, 0);
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
+
+  window.addEventListener('resize', update, { passive: true });
+  window.addEventListener('orientationchange', () => { setTimeout(update, 80); }, { passive: true });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', update, { passive: true });
+    window.visualViewport.addEventListener('scroll', () => { window.scrollTo(0, 0); }, { passive: true });
+  }
+
+  // Strictly prevent window/body scroll
+  window.addEventListener('scroll', () => {
+    if (window.scrollX !== 0 || window.scrollY !== 0) {
+      window.scrollTo(0, 0);
+    }
+  }, { passive: false });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!e.target.closest('.roster')) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  document.addEventListener('wheel', (e) => {
+    if (!e.target.closest('.roster')) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  return { update };
+})();
+
 /* Initial Launch */
 initDeviceAndUrl();
+LayoutEngine.update();
 
-const premiere = $('#premiere');
-if (reducedMotion.matches) premiere.hidden = true;
-else {
-  setTimeout(() => {
-    premiere.classList.add('dismiss');
-    setTimeout(() => { premiere.hidden = true; }, 420);
-  }, 3220);
+/* ---------- Splash: Letter-by-letter Cursive Signature ---------- */
+const sig = $('#sig'), splash = $('#splash');
+if (sig && splash) {
+  let n = 0;
+  sig.innerHTML = ['Njithi', 'Cousins'].map((w, k) => `<span aria-hidden="true" class="${k ? 'l2' : ''}">${[...w].map(ch => `<i style="--i:${n++}">${ch}</i>`).join('')}</span>`).join('') +
+    '<svg class="swash" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 12 C50 2 120 2 198 9 C150 10 110 13 80 18"/></svg>';
+
+  function endSplash(){
+    if (splash.classList.contains('gone')) return;
+    splash.classList.add('gone');
+    setTimeout(() => {
+      splash.hidden = true;
+      splash.style.display = 'none';
+      LayoutEngine.update();
+    }, 480);
+  }
+  splash.onclick = endSplash;
+  setTimeout(endSplash, reducedMotion.matches ? 1200 : 3800);
 }
 })();
 </script>
