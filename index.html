@@ -294,7 +294,7 @@
       text-align:center;
       width:100%;
       max-width:390px;
-      min-height:510px;
+      min-height:0;
       justify-content:space-between;
     }
     .card.live{transition:none}
@@ -311,11 +311,15 @@
     @keyframes deal{from{opacity:0;transform:translateY(70px) scale(0.65)}}
 
     .eyebrow{
-      font-size:13px;
+      font-size:clamp(11px, 1.8vmin, 13px);
       font-weight:800;
       letter-spacing:0.18em;
       text-transform:uppercase;
       opacity:0.95;
+      margin:4px 0 0;
+      padding:2px 0;
+      line-height:1.2;
+      flex-shrink:0;
     }
     .card-name{
       font:900 clamp(38px, 11cqw, 46px)/1.05 var(--sans);
@@ -550,19 +554,20 @@
     #s-wheel>p:last-child{font-size:clamp(12px,1.6vmin,14px);color:var(--muted);margin:0;flex-shrink:0}
 
     /* Screen 3: Card */
-    #s-card{justify-content:center;gap:clamp(8px,1.5vh,18px)}
+    #s-card{justify-content:center;gap:clamp(6px,1.2vh,14px)}
     #s-card .tilt{width:100%;max-width:860px;display:flex;justify-content:center;align-items:center;flex:1 1 0;min-height:0;touch-action:none;padding:0}
     #s-card .card{
       width:100%;
       max-width:720px;
       max-height:100%;
+      min-height:0;
       box-sizing:border-box;
       display:flex;
       flex-direction:column;
       align-items:center;
-      justify-content:space-evenly;
-      gap:clamp(8px,1.5vh,16px);
-      padding:clamp(14px,2.5vh,28px) clamp(16px,3vw,36px);
+      justify-content:space-between;
+      gap:clamp(6px,1.2vh,12px);
+      padding:clamp(18px,2.8vh,30px) clamp(16px,3vw,36px);
       background:linear-gradient(150deg,var(--card-a),var(--card-b));
       background-color:#692f56;
     }
@@ -1002,6 +1007,7 @@ $('#palette-toggle').onclick = () => {
   store.set('nj-palette', p);
   const labels = { velvet: 'Velvet', triadic: 'Evergreen', editorial: 'Linen' };
   $('#palette-toggle').innerHTML = `<span>${labels[p]}</span>`;
+  if (typeof updateWheelTexture === 'function') updateWheelTexture();
 };
 
 /* ---------- Dark / Light Theme ---------- */
@@ -1143,26 +1149,38 @@ let lastAccX = 0, lastAccY = 0, lastAccZ = 0, lastShakeTime = 0;
 let lastFrameTime = performance.now();
 let threeInited = false;
 
-function createWheelFaceTexture(){
+function getWheelColors(){
+  const s = getComputedStyle(document.documentElement);
+  const c1 = s.getPropertyValue('--card-b').trim() || '#78394e';
+  const c2 = '#f5ddaf';
+  const c3 = s.getPropertyValue('--curtain-mid').trim() || '#926687';
+  const c4 = '#e9b297';
+  return [c1, c2, c3, c4];
+}
+
+let wheelFaceTexture = null;
+
+function renderFaceCanvas(off){
   const size = 1024;
-  const off = document.createElement('canvas');
   off.width = off.height = size;
   const c = off.getContext('2d');
-  const cx = size / 2, cy = size / 2, r = size / 2 - 14;
+  const cx = size / 2, cy = size / 2, r = size / 2 - 20;
+  const colors = getWheelColors();
+  const N = 8;
+  const step = (Math.PI * 2) / N;
 
   c.clearRect(0, 0, size, size);
 
-  // 12 festive sectors with deep Christmas jewel tones
-  const colors = [
-    '#7b1126', // Ruby Velvet
-    '#184a2c', // Pine Garland
-    '#c59b27', // Antique Gold
-    '#4a183d'  // Deep Mulberry
-  ];
-  const N = 12;
-  const step = (Math.PI * 2) / N;
-  const symbols = ['✦', '❄', '✶', '★'];
+  // Outer dark rim bezel ring #381f32 with #c79865 border
+  c.beginPath();
+  c.arc(cx, cy, r + 10, 0, Math.PI * 2);
+  c.fillStyle = '#381f32';
+  c.fill();
+  c.strokeStyle = '#c79865';
+  c.lineWidth = 16;
+  c.stroke();
 
+  // 8 wedges in the original 4 alternating colors
   for (let i = 0; i < N; i++){
     const startA = i * step;
     const endA = startA + step;
@@ -1174,45 +1192,64 @@ function createWheelFaceTexture(){
     c.fillStyle = colors[i % colors.length];
     c.fill();
 
-    // Sector divider pinstripe in burnished gold
-    c.strokeStyle = '#eed59a';
-    c.lineWidth = 4;
+    // Dark plum divider stroke
+    c.strokeStyle = '#432332';
+    c.lineWidth = 6;
     c.stroke();
 
-    // Emblem in sector
+    // Alternating '✦' and '?' in Georgia font
     c.save();
     c.translate(cx, cy);
     c.rotate(startA + step / 2);
-    c.fillStyle = '#fff4db';
-    c.font = 'bold 44px "Instrument Serif", Georgia, serif';
+    c.translate(r * 0.68, 0);
+    c.rotate(Math.PI / 2);
+    c.fillStyle = (i % 2 ? '#432332' : '#fff4d8');
+    c.font = 'bold 54px Georgia, serif';
     c.textAlign = 'center';
     c.textBaseline = 'middle';
-    c.shadowColor = 'rgba(0,0,0,0.5)';
-    c.shadowBlur = 8;
-    c.shadowOffsetX = 2;
-    c.shadowOffsetY = 2;
-    c.fillText(symbols[i % symbols.length], r * 0.70, 0);
+    c.fillText(i % 2 ? '✦' : '?', 0, 0);
     c.restore();
   }
 
-  // Outer gold rim border on face
+  // Inner center disc: #eac592 with #7a3e37 copper ring
   c.beginPath();
-  c.arc(cx, cy, r - 3, 0, Math.PI * 2);
-  c.strokeStyle = '#ffd875';
-  c.lineWidth = 14;
+  c.arc(cx, cy, r * 0.28, 0, Math.PI * 2);
+  c.fillStyle = '#eac592';
+  c.fill();
+  c.strokeStyle = '#7a3e37';
+  c.lineWidth = 12;
   c.stroke();
 
-  // Subtle inner decorative ring
-  c.beginPath();
-  c.arc(cx, cy, r * 0.44, 0, Math.PI * 2);
-  c.strokeStyle = 'rgba(255, 216, 117, 0.45)';
-  c.lineWidth = 4;
-  c.stroke();
+  // "Spin" text in center
+  c.fillStyle = '#432332';
+  c.font = 'italic bold 44px Georgia, serif';
+  c.textAlign = 'center';
+  c.textBaseline = 'middle';
+  c.fillText('Spin', cx, cy);
 
+  // Golden highlight arc
+  c.beginPath();
+  c.arc(cx, cy, r * 0.96, Math.PI * 1.08, Math.PI * 1.75);
+  c.strokeStyle = 'rgba(255, 230, 182, 0.65)';
+  c.lineWidth = 8;
+  c.stroke();
+}
+
+function createWheelFaceTexture(){
+  const off = document.createElement('canvas');
+  renderFaceCanvas(off);
   const texture = new THREE.CanvasTexture(off);
   texture.minFilter = THREE.LinearFilter;
   texture.magFilter = THREE.LinearFilter;
+  wheelFaceTexture = texture;
   return texture;
+}
+
+function updateWheelTexture(){
+  if (wheelFaceTexture && wheelFaceTexture.image){
+    renderFaceCanvas(wheelFaceTexture.image);
+    wheelFaceTexture.needsUpdate = true;
+  }
 }
 
 function initThreeWheel(){
@@ -1279,8 +1316,8 @@ function initThreeWheel(){
   const faceTexture = createWheelFaceTexture();
   const faceMat = new THREE.MeshStandardMaterial({
     map: faceTexture,
-    metalness: 0.25,
-    roughness: 0.45
+    metalness: 0.22,
+    roughness: 0.40
   });
   const wheelBody = new THREE.Mesh(
     new THREE.CylinderGeometry(1.76, 1.76, 0.12, 64),
@@ -1289,11 +1326,11 @@ function initThreeWheel(){
   wheelBody.rotation.x = Math.PI / 2;
   wheelGroup.add(wheelBody);
 
-  // 12 3D Brass Pegs
+  // 8 3D Brass Pegs
   const pegGeom = new THREE.CylinderGeometry(0.042, 0.046, 0.12, 16);
   const pegCapGeom = new THREE.SphereGeometry(0.046, 16, 8);
-  for (let i = 0; i < 12; i++){
-    const a = (i / 12) * Math.PI * 2;
+  for (let i = 0; i < 8; i++){
+    const a = (i / 8) * Math.PI * 2;
     const pegCol = new THREE.Group();
     const cyl = new THREE.Mesh(pegGeom, pegMat);
     cyl.rotation.x = Math.PI / 2;
@@ -1305,28 +1342,13 @@ function initThreeWheel(){
     wheelGroup.add(pegCol);
   }
 
-  // Center Hub
-  const hubBase = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.46, 0.12, 32), innerBrassMat);
-  hubBase.rotation.x = Math.PI / 2;
-  hubBase.position.z = 0.06;
-  wheelGroup.add(hubBase);
-
-  const hubDome = new THREE.Mesh(
-    new THREE.SphereGeometry(0.36, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2),
-    brassMat
+  // 3D Brass Medallion Bezel Ring (frames center 'Spin' disc)
+  const hubRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.48, 0.032, 16, 48),
+    innerBrassMat
   );
-  hubDome.rotation.x = Math.PI / 2;
-  hubDome.position.z = 0.08;
-  wheelGroup.add(hubDome);
-
-  const rubyMat = new THREE.MeshStandardMaterial({
-    color: 0xdf2448,
-    metalness: 0.4,
-    roughness: 0.15
-  });
-  const centerGem = new THREE.Mesh(new THREE.OctahedronGeometry(0.12, 0), rubyMat);
-  centerGem.position.z = 0.32;
-  wheelGroup.add(centerGem);
+  hubRing.position.z = 0.07;
+  wheelGroup.add(hubRing);
 
   // 3D Ratcheting Pointer (Deflects & Springs on Peg Crossing)
   pointerPivot = new THREE.Group();
@@ -1421,8 +1443,8 @@ function renderThree(now){
     wheelAngle = spinStartAngle + spinTotalAngle * ease;
     if (wheelGroup) wheelGroup.rotation.z = -wheelAngle;
 
-    // Check peg crossing (12 pegs, strictly one click and haptic pulse per peg)
-    const pegStep = (Math.PI * 2) / 12;
+    // Check peg crossing (8 pegs, strictly one click and haptic pulse per peg)
+    const pegStep = (Math.PI * 2) / 8;
     const curPeg = Math.floor(wheelAngle / pegStep);
     if (curPeg > lastPegIndex){
       lastPegIndex = curPeg;
@@ -1565,7 +1587,7 @@ function spin(){
   spinDuration = 5200;
   spinStartAngle = wheelAngle;
   spinTotalAngle = Math.PI * 2 * (3.0 + Math.random() * 1.5); // 3 to 4.5 full rotations
-  lastPegIndex = Math.floor(spinStartAngle / ((Math.PI * 2) / 12));
+  lastPegIndex = Math.floor(spinStartAngle / ((Math.PI * 2) / 8));
 }
 
 wheel.addEventListener('click', () => {
@@ -1829,7 +1851,7 @@ const LayoutEngine = (() => {
       const noteEl = activeScreen.querySelector('.gift-note');
       const actH = actionsEl ? actionsEl.offsetHeight : 54;
       const notH = noteEl ? noteEl.offsetHeight : 24;
-      const maxCardH = Math.max(260, availH - actH - notH - 24);
+      const maxCardH = Math.max(260, availH - actH - notH - 20);
 
       if (cardEl) {
         cardEl.style.maxHeight = `${maxCardH}px`;
@@ -1838,11 +1860,11 @@ const LayoutEngine = (() => {
       const photoWrap = activeScreen.querySelector('.photo-card-wrap');
       if (photoWrap) {
         if (vpW >= 860) {
-          const photoDim = Math.min(Math.max(240, maxCardH * 0.72), 340);
+          const photoDim = Math.min(Math.max(220, maxCardH * 0.65), 320);
           photoWrap.style.width = `${photoDim}px`;
           photoWrap.style.height = `${photoDim}px`;
         } else {
-          const photoDim = Math.min(Math.max(140, maxCardH * 0.45), vpW * 0.58, 220);
+          const photoDim = Math.min(Math.max(105, maxCardH * 0.36), vpW * 0.44, 165);
           photoWrap.style.width = `${photoDim}px`;
           photoWrap.style.height = `${photoDim}px`;
         }
