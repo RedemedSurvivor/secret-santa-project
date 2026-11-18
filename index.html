@@ -452,12 +452,10 @@
     .gift-note{font:400 24px/1.05 var(--script);color:var(--muted)}
     .premiere{position:fixed;inset:0;display:grid;place-items:center;z-index:40;background:radial-gradient(ellipse at 50% 45%,#512445,#170b1c 73%);color:#ffb68e;transition:opacity .4s ease}
     .premiere.dismiss{opacity:0;pointer-events:none}
-    .title-ink{font:400 clamp(52px,15vw,115px)/1.14 var(--script);white-space:nowrap;position:relative;padding:0 .14em .2em}
-    .title-ink span{display:inline-block;opacity:0;animation:ink-letter .44s ease-out forwards;animation-delay:calc(var(--letter) * .13s)}
-    @keyframes ink-letter{from{opacity:0;clip-path:inset(-30% 100% -30% -30%)}to{opacity:1;clip-path:inset(-30% -30% -30% -30%)}}
-    .title-ink::before,.title-ink::after{content:"";position:absolute;left:4%;right:4%;bottom:4%;height:2px;background:currentColor;transform-origin:left;transform:scaleX(0);border-radius:50%;animation:ink-line .42s 1.88s ease forwards}
-    .title-ink::after{left:14%;right:10%;bottom:-2%;animation-delay:2.13s}
-    @keyframes ink-line{to{transform:scaleX(1)}}
+    .title-ink{width:min(85vw,390px);overflow:visible}
+    .title-ink path{fill:none;stroke:currentColor;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:write-ink var(--duration,.28s) var(--delay) linear forwards}
+    .title-ink .swash{stroke-width:2.4}
+    @keyframes write-ink{to{stroke-dashoffset:0}}
     .wheelbtn{position:relative}
     .wheel-pointer{position:absolute;top:2px;left:50%;width:22px;height:34px;translate:-50% 0;transform-origin:center 0;background:linear-gradient(90deg,#a55c38,#ffe0a6 54%,#ab714e);clip-path:polygon(5% 1%,95% 1%,85% 45%,50% 100%,15% 45%);pointer-events:none}
     .wheel-pointer{transition:opacity .22s ease}
@@ -481,7 +479,20 @@
 <div class="shell">
   <!-- Theatrical Red Velvet Curtains -->
   <div class="premiere" id="premiere" aria-hidden="true">
-    <div class="title-ink" id="title-ink"></div>
+    <svg class="title-ink" viewBox="0 0 330 128" aria-label="Njithi’s" role="img">
+      <g transform="translate(24 0) skewX(-12)">
+        <path pathLength="1" style="--delay:.10s;--duration:.48s" d="M9 77 C-8 85 7 98 24 79 C39 61 38 15 56 14 C75 11 55 70 70 79 C84 90 94 41 107 23 C116 11 126 12 119 21 C111 36 93 73 85 78"/>
+        <path pathLength="1" style="--delay:.55s;--duration:.36s" d="M86 78 C95 72 106 59 109 52 C105 77 97 112 84 108 C72 104 87 94 100 85 L120 64 M112 40 l1 -2"/>
+        <path pathLength="1" style="--delay:.88s" d="M120 64 L128 53 C128 61 116 80 124 81 C129 81 139 70 146 62 M130 41 l1 -2"/>
+        <path pathLength="1" style="--delay:1.13s" d="M145 64 C154 51 158 38 164 31 C160 46 145 76 150 82 C158 87 170 68 175 63 M143 53 C151 52 163 51 170 53"/>
+        <path pathLength="1" style="--delay:1.39s;--duration:.38s" d="M174 65 C191 46 200 14 192 17 C184 21 174 57 165 83 C178 62 190 54 194 61 C196 68 183 86 193 84 C201 83 208 75 216 65"/>
+        <path pathLength="1" style="--delay:1.74s" d="M216 65 L223 54 C222 65 212 79 218 83 C225 85 232 76 239 70 M227 42 l1 -2"/>
+        <path pathLength="1" style="--delay:1.99s;--duration:.15s" d="M243 40 C249 36 251 31 251 27"/>
+        <path pathLength="1" style="--delay:2.12s;--duration:.36s" d="M238 71 C249 66 259 56 261 51 C253 59 253 65 262 74 C275 88 250 96 245 85 C244 79 261 76 283 79"/>
+      </g>
+      <path class="swash" pathLength="1" style="--delay:2.49s;--duration:.48s" d="M32 106 C92 98 186 96 299 101 C271 102 236 106 207 112"/>
+      <path class="swash" pathLength="1" style="--delay:2.87s" d="M107 113 Q187 108 263 113"/>
+    </svg>
   </div>
   <canvas class="curtains" id="curtains" aria-hidden="true" hidden></canvas>
 
@@ -687,7 +698,7 @@ const COUSIN_DATA = [
 const COUSIN_MAP = {};
 COUSIN_DATA.forEach(c => { COUSIN_MAP[c.slug] = c; });
 
-/* ---------- Audio Engine: ONLY plays Tyla Water chorus on card reveal ---------- */
+/* Clean instrumental loop while waiting, vocal excerpt on reveal. */
 let soundOn = store.get('nj-sound') !== 'off';
 let revealAudio = null;
 const celebration = new Audio('audio/reveal.mp3');
@@ -699,7 +710,7 @@ let revealFadeTimer = null;
 function playWaitingMusic(){
   if (!soundOn) return;
   if (!revealAudio){
-    revealAudio = new Audio('audio/water_tyla_sax.mp3');
+    revealAudio = new Audio('audio/water-wheel-loop.m4a');
   }
   if (revealFadeTimer){
     clearInterval(revealFadeTimer);
@@ -1063,10 +1074,10 @@ async function finishSpin(){
   reveal(false, true);
   await new Promise(resolve => setTimeout(resolve, 200));
   if (sequence !== curtainSequence) return;
-  playCelebration();
   await moveCurtains(1, 0, 780, sequence);
   if (sequence !== curtainSequence) return;
   curtain.hidden = true;
+  playCelebration();
   celebrateReveal(false);
 }
 
@@ -1231,17 +1242,10 @@ initDeviceAndUrl();
 const premiere = $('#premiere');
 if (reducedMotion.matches) premiere.hidden = true;
 else {
-  const title = $('#title-ink');
-  Array.from('Njithi Cousins').forEach((letter, index) => {
-    const span = document.createElement('span');
-    span.style.setProperty('--letter', index);
-    span.textContent = letter === ' ' ? '\u00a0' : letter;
-    title.append(span);
-  });
   setTimeout(() => {
     premiere.classList.add('dismiss');
     setTimeout(() => { premiere.hidden = true; }, 420);
-  }, 2660);
+  }, 3220);
 }
 })();
 </script>
