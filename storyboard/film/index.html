@@ -19,7 +19,7 @@ canvas{display:block}
   <div class="clip" id="curtain-shot" data-start="5.2" data-duration="1.6" data-track-index="2"><canvas id="motion-curtain"></canvas></div>
 </div>
 <script src="assets/gsap.min.js"></script>
-<script src="assets/wheel-journey.js"></script>
+<script src="assets/spin-wheel.js"></script>
 <script src="assets/curtain-scene.js"></script>
 <script>
 const wheel = document.getElementById('motion-wheel');
@@ -30,7 +30,7 @@ const timeline = gsap.timeline({paused:true});
 timeline.to(scene,{progress:1,duration:5.2,ease:'none',onUpdate(){
   const p = scene.progress;
   const rotation = p < .16 ? 4*p*p : .1024 + .8976*(1-(1-(p-.16)/.84)**2.2);
-  wheelJourney(wheel,p,rotation*Math.PI*4.5);
+  paintSpinWheel(wheel,rotation*Math.PI*4.5);
 }},0);
 timeline.to(scene,{closure:1,duration:.62,ease:'power2.inOut',onUpdate(){
   paintVelvetCurtains(curtain,scene.closure,timeline.time()*1000,palette);
@@ -40,7 +40,7 @@ timeline.to(scene,{closure:0,duration:.78,ease:'power2.inOut',onUpdate(){
 }},6.02);
 timeline.from('#film-title',{opacity:0,duration:.55,ease:'power2.out'},6.12);
 timeline.to({}, {duration:1.4},6.8);
-wheelJourney(wheel);
+paintSpinWheel(wheel);
 window.__timelines = {'njithi-film':timeline};
 </script>
 </body></html>

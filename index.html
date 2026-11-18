@@ -645,9 +645,9 @@
   <canvas id="fx" aria-hidden="true"></canvas>
 </div>
 
-<script src="storyboard/film/assets/wheel-journey.js">})();
+<script src="storyboard/film/assets/spin-wheel.js">
 </script>
-<script src="storyboard/film/assets/curtain-scene.js">})();
+<script src="storyboard/film/assets/curtain-scene.js">
 </script>
 <script>
 (() => {
@@ -698,68 +698,24 @@ const COUSIN_DATA = [
 const COUSIN_MAP = {};
 COUSIN_DATA.forEach(c => { COUSIN_MAP[c.slug] = c; });
 
-/* Clean instrumental loop while waiting, vocal excerpt on reveal. */
+/* One quiet track from the first interaction through the reveal. */
 let soundOn = store.get('nj-sound') !== 'off';
-let revealAudio = null;
-const celebration = new Audio('audio/reveal.mp3');
-celebration.preload = 'auto';
+const backgroundMusic = new Audio('audio/water-background.m4a');
+backgroundMusic.preload = 'none';
+backgroundMusic.loop = true;
 const tickAudio = new Audio('audio/tick.mp3');
 tickAudio.volume = .16;
-let revealFadeTimer = null;
+let musicRequested = false;
 
-function playWaitingMusic(){
-  if (!soundOn) return;
-  if (!revealAudio){
-    revealAudio = new Audio('audio/water-wheel-loop.m4a');
+function playBackgroundMusic(){
+  if (soundOn && !document.hidden && backgroundMusic.paused){
+    backgroundMusic.play().catch(() => {});
   }
-  if (revealFadeTimer){
-    clearInterval(revealFadeTimer);
-    revealFadeTimer = null;
-  }
-  revealAudio.loop = true;
-  revealAudio.volume = 0.10;
-  revealAudio.play().catch(e => console.log('Autoplay prevented:', e));
-}
-
-function playCelebration(){
-  stopRevealMusic(180);
-  if (!soundOn) return;
-  celebration.currentTime = 0;
-  celebration.volume = .60;
-  celebration.play().catch(() => {});
-}
-
-function stopCelebration(){
-  celebration.pause();
-  celebration.currentTime = 0;
-}
-
-function stopRevealMusic(fadeMs = 350){
-  if (!revealAudio || revealAudio.paused) return;
-  if (!fadeMs){
-    revealAudio.pause();
-    revealAudio.currentTime = 0;
-    return;
-  }
-  const startVol = revealAudio.volume;
-  const startT = performance.now();
-  if (revealFadeTimer) clearInterval(revealFadeTimer);
-  revealFadeTimer = setInterval(() => {
-    const elapsed = performance.now() - startT;
-    const progress = Math.min(1, elapsed / fadeMs);
-    revealAudio.volume = Math.max(0, startVol * (1 - progress));
-    if (progress >= 1){
-      clearInterval(revealFadeTimer);
-      revealFadeTimer = null;
-      revealAudio.pause();
-      revealAudio.currentTime = 0;
-    }
-  }, 25);
 }
 
 function paintSound(){
   $('#snd').setAttribute('aria-pressed', soundOn);
-  $('#snd').setAttribute('title', soundOn ? 'Sound on: waiting music' : 'Sound muted');
+  $('#snd').setAttribute('title', soundOn ? 'Sound on' : 'Sound muted');
   $('#sndon').toggleAttribute('hidden', !soundOn);
   $('#sndoff').toggleAttribute('hidden', soundOn);
 }
@@ -768,23 +724,21 @@ $('#snd').onclick = () => {
   soundOn = !soundOn;
   store.set('nj-sound', soundOn ? 'on' : 'off');
   paintSound();
-  if (soundOn){
-    if (!$('#s-wheel').hidden && session) playWaitingMusic();
-  } else {
-    stopRevealMusic(0);
-    stopCelebration();
+  if (!soundOn){
+    backgroundMusic.pause();
+    tickAudio.pause();
   }
 };
 paintSound();
 
-document.addEventListener('visibilitychange', () => {
+document.addEventListener('click', () => {
   if (!soundOn) return;
-  if (document.hidden) {
-    if (revealAudio && !revealAudio.paused) revealAudio.pause();
-    celebration.pause();
-  } else {
-    if (!$('#s-wheel').hidden && revealAudio) revealAudio.play().catch(() => {});
-  }
+  musicRequested = true;
+  playBackgroundMusic();
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) backgroundMusic.pause();
+  else if (musicRequested) playBackgroundMusic();
 });
 
 /* ---------- Palette Switcher (Holiday Velvet -> Triadic 120° Mint -> Editorial Linen) ---------- */
@@ -842,7 +796,6 @@ function show(id, keepCurtain = false){
 /* Clicking logo resets back to home seamlessly */
 $('#logo-home').onclick = e => {
   e.preventDefault();
-  stopRevealMusic();
   home();
 };
 
@@ -953,11 +906,10 @@ function fit(){
   if (s && cv.width !== s) cv.width = cv.height = s;
 }
 
-let wheelProgress = 0;
 function drawWheel(){
   fit();
   const styles = getComputedStyle(document.documentElement);
-  wheelJourney(cv, wheelProgress, angle, [
+  paintSpinWheel(cv, angle, [
     styles.getPropertyValue('--card-b').trim(), '#f5ddaf',
     styles.getPropertyValue('--curtain-mid').trim(), '#e9b297',
   ]);
@@ -971,14 +923,10 @@ function idle(now){
 }
 
 function openWheel(){
-  stopCelebration();
   show('s-wheel');
-  playWaitingMusic();
   $('#hello').textContent = `Hello, ${session ? session.me : 'Cousin'}!`;
   statusEl.textContent = 'Touch the wheel to spin it.';
   spinning = false;
-  wheelProgress = 0;
-  $(".wheel-pointer").style.opacity = "1";
   angle = Math.random() * TAU;
   drawWheel();
   raf = requestAnimationFrame(idle);
@@ -995,6 +943,7 @@ function spin(){
   const duration = 5200;
   const startAngle = angle;
   const totalRotations = TAU * 2.25;
+  const ramp = .16;
   const pointer = $('.wheel-pointer');
   let tick = 0;
   let releaseTick = 0;
@@ -1002,11 +951,9 @@ function spin(){
   function frame(now){
     const elapsed = now - t0;
     const progress = Math.min(1, elapsed / duration);
-    wheelProgress = progress;
-    pointer.style.opacity = (progress > .28 && progress < .69) ? "0" : "1";
-    const easeOut = progress < .16
-      ? 4 * progress * progress
-      : .1024 + .8976 * (1 - (1 - (progress - .16) / .84) ** 2.2);
+    const easeOut = progress < ramp
+      ? progress ** 2 / ramp
+      : 1 - (1 - progress) ** 2 / (1 - ramp);
     angle = startAngle + totalRotations * easeOut;
     drawWheel();
     const nextTick = Math.floor(easeOut * 18);
@@ -1077,7 +1024,6 @@ async function finishSpin(){
   await moveCurtains(1, 0, 780, sequence);
   if (sequence !== curtainSequence) return;
   curtain.hidden = true;
-  playCelebration();
   celebrateReveal(false);
 }
 
@@ -1099,7 +1045,6 @@ function reveal(returning, behindCurtain = false){
 
   show('s-card', behindCurtain);
 
-  if (!behindCurtain && !returning) playCelebration();
 
   if (!behindCurtain) celebrateReveal(returning);
 }
@@ -1146,14 +1091,12 @@ tilt.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || e.b
 for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) tilt.addEventListener(ev, offTilt);
 
 function home(){
-  stopRevealMusic();
-  stopCelebration();
   if (fxc && fx) fxc.clearRect(0, 0, fx.width, fx.height);
   initDeviceAndUrl();
 }
 
 $('#hide').onclick = () => { home(); };
-$('#replay').onclick = () => { stopRevealMusic(); openWheel(); };
+$('#replay').onclick = openWheel;
 
 /* ---------- Vibrant Multi-Colored Fireworks ---------- */
 const fx = $('#fx'), fxc = fx.getContext('2d');
