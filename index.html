@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Geist:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=MonteCarlo&family=Yellowtail&display=swap">
+  <link rel="preload" as="image" href="cousin_portraits/muriithi.jpg">
+  <link rel="preload" as="image" href="cousin_portraits/emmanuel.jpg">
+  <script src="assets/three.min.js"></script>
   <style>
     /* Design Knowledge Base - 2+1 Color Hierarchy & Color Palettes */
     :root {
@@ -484,36 +487,66 @@
       display:flex;
       flex-direction:column;
       align-items:center;
-      justify-content:space-evenly;
-      padding:clamp(8px,1.5vh,24px) 0;
+      justify-content:center;
+      gap:clamp(24px, 5.5vh, 48px);
+      padding:clamp(12px, 2vh, 24px) clamp(16px, 4vw, 32px);
       width:100%;
-      max-width:860px;
+      max-width:640px;
     }
-    .entry-greeting{width:100%;text-align:center}
+    .entry-greeting{
+      width:100%;
+      text-align:center;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:clamp(8px, 1.6vh, 16px);
+    }
     #s-entry .entry-greeting h2{
-      font-size:clamp(38px,6.5vmin,76px);
-      margin:clamp(6px,1.5vh,18px) 0 clamp(4px,1vh,12px);
-      line-height:1.02;
+      font-size:clamp(46px, 9vmin, 82px);
+      margin:0;
+      line-height:1.05;
     }
     #s-entry .entry-greeting p{
-      font-size:clamp(15px,2vmin,20px);
-      line-height:1.4;
-      max-width:44ch;
+      font-size:clamp(15px, 2.2vmin, 20px);
+      line-height:1.45;
+      max-width:38ch;
       margin:0 auto;
     }
-    .entry-actions{width:100%;max-width:480px;display:flex;flex-direction:column;align-items:center;gap:12px}
-    #s-entry .entry-actions .btn{min-height:clamp(48px,6.5vh,60px);font-size:clamp(16px,2vmin,19px)}
-    #s-entry .entry-actions .help{margin:6px 0 0}
+    .entry-actions{
+      width:100%;
+      max-width:440px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+    }
+    #s-entry .entry-actions .btn{
+      width:100%;
+      min-height:clamp(52px, 6.8vh, 62px);
+      font-size:clamp(17px, 2.2vmin, 20px);
+      box-shadow:0 8px 24px rgba(255,106,61,0.28);
+    }
+    #s-entry .entry-actions .help{margin:4px 0 0}
 
     /* Screen 2: Wheel */
     #s-wheel{justify-content:space-evenly;gap:clamp(6px,1vh,14px)}
     #s-wheel>div:first-child h2{font-size:clamp(32px,5.5vmin,56px);margin:2px 0}
     #s-wheel>div:first-child p{font-size:clamp(13px,1.8vmin,16px)}
     #s-wheel .wheelzone{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:center;width:100%}
-    #s-wheel .wheelbtn{position:relative;touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center}
-    .wheel-pointer{position:absolute;top:2px;left:50%;width:22px;height:34px;translate:-50% 0;transform-origin:center 0;background:linear-gradient(90deg,#a55c38,#ffe0a6 54%,#ab714e);clip-path:polygon(5% 1%,95% 1%,85% 45%,50% 100%,15% 45%);pointer-events:none;transition:opacity .22s ease}
-    .wheel-pointer.ratchet{animation:ratchet .14s ease-out}
-    @keyframes ratchet{40%{transform:rotate(-20deg)}}
+    #s-wheel .wheelbtn{
+      position:relative;
+      touch-action:none;
+      user-select:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:50%;
+      box-shadow:0 22px 55px -10px rgba(0,0,0,0.65), 0 0 32px rgba(230,165,90,0.22);
+      transition:transform .18s ease;
+      cursor:pointer;
+    }
+    #s-wheel .wheelbtn:active{transform:scale(0.975)}
+    #s-wheel .wheelbtn canvas{width:100%!important;height:100%!important;display:block;border-radius:50%}
     #s-wheel>p:last-child{font-size:clamp(12px,1.6vmin,14px);color:var(--muted);margin:0;flex-shrink:0}
 
     /* Screen 3: Card */
@@ -692,14 +725,14 @@
   <div class="screen" id="s-wheel" hidden>
     <div>
       <h2 id="hello">Hi cousin</h2>
-      <p id="status">Touch the wheel to spin it.</p>
+      <p id="status">Touch the wheel or shake phone to spin</p>
     </div>
     <div class="wheelzone">
       <div class="wheelbtn" id="wheel" role="button" tabindex="0" aria-label="Spin the wheel">
-        <canvas id="cv"></canvas><span class="wheel-pointer" aria-hidden="true"></span>
+        <canvas id="cv"></canvas>
       </div>
     </div>
-    <p style="font-size:13px;color:var(--muted);">Your match is set. Spin when you’re ready for the reveal.</p>
+    <p style="font-size:13px;color:var(--muted);text-align:center;">✨ Dynamic 3D Wheel · Tilt or shake phone to move & spin</p>
   </div>
 
   <!-- 3. RECIPIENT CARD SCREEN -->
@@ -757,38 +790,58 @@ const store = {
 /* ---------- 24 Cousins & Verified Assignments ---------- */
 const C = (slug, name, branch, toName, quip, photo) => ({ slug, name, branch, toName, quip, photo });
 
-/* Notice: Every spin currently reveals Ishmael with his real photo & witty Man City engineer quip, as requested! */
-const ISHMAEL_RECIPIENT = {
-  name: 'Ishmael',
-  quip: '“Honestly, the best Christmas gift you could get me is a wife.”',
-  photo: 'cousin_portraits/muriithi.jpg'
-};
+/* Randomize between Ishmael (me) and Emmanuel (die-hard Man Utd fan who needs a "kikombe" and a wife) */
+const CANDIDATE_RECIPIENTS = [
+  {
+    slug: 'ishmael',
+    name: 'Ishmael',
+    role: 'Biomedical Engineer · Manchester City',
+    photo: 'cousin_portraits/muriithi.jpg',
+    quip: '“Honestly, the best Christmas gift you could get me is a wife — City already takes care of the trophies.”'
+  },
+  {
+    slug: 'emmanuel',
+    name: 'Emmanuel',
+    role: 'Die-Hard Manchester United Fan',
+    photo: 'cousin_portraits/emmanuel.jpg',
+    quip: '“The best Christmas gift ni kikombe — since United are losing, at least get him a cup for tea! Na bado anatafuta bibi/wife pia.”'
+  }
+];
+
+let selectedRecipient = CANDIDATE_RECIPIENTS[0];
+function randomizeRecipient(){
+  const idx = Math.floor(Math.random() * CANDIDATE_RECIPIENTS.length);
+  selectedRecipient = CANDIDATE_RECIPIENTS[idx];
+  return selectedRecipient;
+}
+
+const ISHMAEL_RECIPIENT = CANDIDATE_RECIPIENTS[0];
 
 const COUSIN_DATA = [
-  C('ishmael', 'Ishmael', 'Njeri Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('emmanuel', 'Emmanuel', 'Njeri Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('jeff', 'Jeff', 'Nyambura Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/jeff.jpg'),
-  C('charlesakashadow', 'Charles aka Shadow', 'Wambugu Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/charles.jpg'),
-  C('millcah', 'Millcah', 'Wambugu Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('karen', 'Karen', 'Wambugu Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/karen.jpg'),
-  C('muli', 'Muli', 'Wambugu Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('shiku', 'Shiku', 'Mathenge Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/shiku.jpg'),
-  C('caro', 'Caro', 'Mathenge Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('alvin', 'Alvin', 'Mathenge Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/alvin.jpg'),
-  C('dani', 'Dani', 'Mwangi Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/dani.jpg'),
-  C('paps', 'Paps', 'Mwangi Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/paps.jpg'),
-  C('bettie', 'Bettie', 'Mwangi Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/bettie.jpg'),
-  C('muthonimamaesther', 'Muthoni (Mama Esther)', 'Mwangi Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('mamaliam', 'Mama Liam', 'Mwangi Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('jem', 'Jem', 'Mwangi Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('lyon', 'Lyon', 'Nginga Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/lyon.jpg'),
-  C('ian', 'Ian', 'Nginga Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/ian.jpg'),
-  C('peter', 'Peter', 'Munyiri Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('muthonimamacurtis', 'Muthoni (Mama Curtis)', 'Wangechi Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('wahito', 'Wahito', 'Wangechi Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('sam', 'Sam', 'Wangechi Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/sam.jpg'),
-  C('kaguongo', 'Kaguongo', 'Wangechi Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/muriithi.jpg'),
-  C('njithi', 'Njithi', 'Wangechi Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/njithi.jpg')
+  C('ishmael', 'Ishmael', 'Njeri Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
+  C('emmanuel', 'Emmanuel', 'Njeri Branch', 'Emmanuel', CANDIDATE_RECIPIENTS[1].quip, 'cousin_portraits/emmanuel.jpg'),
+  C('jeff', 'Jeff', 'Nyambura Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/jeff.jpg'),
+  C('charlesakashadow', 'Charles aka Shadow', 'Wambugu Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/charles.jpg'),
+  C('millcah', 'Millcah', 'Wambugu Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
+  C('karen', 'Karen', 'Wambugu Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/karen.jpg'),
+  C('muli', 'Muli', 'Wambugu Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
+  C('shiku', 'Shiku', 'Mathenge Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/shiku.jpg'),
+  C('caro', 'Caro', 'Mathenge Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
+  C('alvin', 'Alvin', 'Mathenge Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/alvin.jpg'),
+  C('dani', 'Dani', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/dani.jpg'),
+  C('paps', 'Paps', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/paps.jpg'),
+  C('bettie', 'Bettie', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/bettie.jpg'),
+  C('muthonimamaesther', 'Muthoni (Mama Esther)', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
+  C('mamaliam', 'Mama Liam', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
+  C('jem', 'Jem', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
+  C('lyon', 'Lyon', 'Nginga Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/lyon.jpg'),
+  C('ian', 'Ian', 'Nginga Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/ian.jpg'),
+  C('peter', 'Peter', 'Munyiri Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
+  C('muthonimamacurtis', 'Muthoni (Mama Curtis)', 'Wangechi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
+  C('wahito', 'Wahito', 'Wangechi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
+  C('sam', 'Sam', 'Wangechi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/sam.jpg'),
+  C('kaguongo', 'Kaguongo', 'Wangechi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
+  C('njithi', 'Njithi', 'Wangechi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/njithi.jpg')
 ];
 
 const COUSIN_MAP = {};
@@ -800,7 +853,69 @@ const backgroundMusic = new Audio('audio/water-background.m4a');
 backgroundMusic.preload = 'none';
 backgroundMusic.loop = true;
 const tickAudio = new Audio('audio/tick.mp3');
-tickAudio.volume = .16;
+tickAudio.volume = .22;
+
+let audioCtx = null;
+function getAudioCtx(){
+  if (!audioCtx && (window.AudioContext || window.webkitAudioContext)){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx && audioCtx.state === 'suspended'){
+    audioCtx.resume().catch(() => {});
+  }
+  return audioCtx;
+}
+
+/* Synthesize a single, razor-sharp mechanical ratchet tick (zero double-click) */
+function playMechanicalTick(){
+  if (!soundOn) return;
+  try {
+    const ctx = getAudioCtx();
+    if (ctx){
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1600, now);
+      filter.Q.setValueAtTime(4.0, now);
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1150, now);
+      osc.frequency.exponentialRampToValueAtTime(150, now + 0.024);
+
+      gain.gain.setValueAtTime(0.36, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.024);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.026);
+      return;
+    }
+  } catch (e) {}
+
+  try {
+    tickAudio.currentTime = 0;
+    tickAudio.play().catch(() => {});
+  } catch(e) {}
+}
+
+/* Tactile physical haptics */
+function triggerTickHaptic(){
+  if ('vibrate' in navigator){
+    try { navigator.vibrate(12); } catch(e) {}
+  }
+}
+
+function triggerRevealHaptic(){
+  if ('vibrate' in navigator){
+    try { navigator.vibrate([40, 50, 40, 80, 120]); } catch(e) {}
+  }
+}
 
 let wheelMusicActive = false;
 let musicContext, musicGain, fadeTimer;
@@ -979,6 +1094,8 @@ $('#re-spin-btn').onclick = () => {
 };
 
 $('#start-draw-btn').onclick = () => {
+  if (window.requestMotionPermission) window.requestMotionPermission();
+  getAudioCtx();
   if (session) openWheel();
 };
 
@@ -988,7 +1105,9 @@ $('#pick-go-btn').onclick = () => {
   const c = COUSIN_MAP[sel];
   if (c) {
     store.set('nj_device_user', c.slug);
-    session = { slug: c.slug, me: c.name, to: ISHMAEL_RECIPIENT };
+    session = { slug: c.slug, me: c.name, to: CANDIDATE_RECIPIENTS[0] };
+    if (window.requestMotionPermission) window.requestMotionPermission();
+    getAudioCtx();
     openWheel();
   }
 };
@@ -1006,35 +1125,411 @@ function enter(raw){
   }
   $('#err').hidden = true;
   store.set('nj_device_user', hit.slug);
-  session = { slug: hit.slug, me: hit.name, to: ISHMAEL_RECIPIENT };
+  session = { slug: hit.slug, me: hit.name, to: CANDIDATE_RECIPIENTS[0] };
+  if (window.requestMotionPermission) window.requestMotionPermission();
+  getAudioCtx();
   openWheel();
 }
 
-/* ---------- The Canvas Wheel ---------- */
-const cv = $('#cv'), ctx = cv.getContext('2d'), wheel = $('#wheel'), statusEl = $('#status');
-const N = 12, SG = TAU / N, WEDGE = [['#ff6a3d','#2e1431'],['#fff1d6','#2e1431'],['#c9a3c4','#2e1431'],['#3d1b43','#fff1d6']];
-let angle = 0, spinning = false, flash = 0, lastK = 0, chase = 0;
-const kAt = a => Math.floor((-Math.PI / 2 - a) / SG);
+/* ---------- Realistic 3D Three.js Wheel Engine ---------- */
+const cv = $('#cv'), wheel = $('#wheel'), statusEl = $('#status');
+let threeRenderer = null, threeScene = null, threeCamera = null;
+let rigGroup = null, wheelGroup = null, pointerPivot = null;
+let pointerSpringAngle = 0, pointerSpringVel = 0, springActive = false;
+let wheelAngle = 0, spinning = false, spinStartAngle = 0, spinTotalAngle = 0, spinStartTime = 0;
+let lastPegIndex = -1;
+let currentTiltX = 0, currentTiltY = 0, targetTiltX = 0, targetTiltY = 0;
+let lastAccX = 0, lastAccY = 0, lastAccZ = 0, lastShakeTime = 0;
+let lastFrameTime = performance.now();
+let threeInited = false;
 
-function fit(){
-  const s = Math.round(wheel.clientWidth * Math.min(devicePixelRatio || 1, 2));
-  if (s && cv.width !== s) cv.width = cv.height = s;
+function createWheelFaceTexture(){
+  const size = 1024;
+  const off = document.createElement('canvas');
+  off.width = off.height = size;
+  const c = off.getContext('2d');
+  const cx = size / 2, cy = size / 2, r = size / 2 - 14;
+
+  c.clearRect(0, 0, size, size);
+
+  // 12 festive sectors with deep Christmas jewel tones
+  const colors = [
+    '#7b1126', // Ruby Velvet
+    '#184a2c', // Pine Garland
+    '#c59b27', // Antique Gold
+    '#4a183d'  // Deep Mulberry
+  ];
+  const N = 12;
+  const step = (Math.PI * 2) / N;
+  const symbols = ['✦', '❄', '✶', '★'];
+
+  for (let i = 0; i < N; i++){
+    const startA = i * step;
+    const endA = startA + step;
+
+    c.beginPath();
+    c.moveTo(cx, cy);
+    c.arc(cx, cy, r, startA, endA);
+    c.closePath();
+    c.fillStyle = colors[i % colors.length];
+    c.fill();
+
+    // Sector divider pinstripe in burnished gold
+    c.strokeStyle = '#eed59a';
+    c.lineWidth = 4;
+    c.stroke();
+
+    // Emblem in sector
+    c.save();
+    c.translate(cx, cy);
+    c.rotate(startA + step / 2);
+    c.fillStyle = '#fff4db';
+    c.font = 'bold 44px "Instrument Serif", Georgia, serif';
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    c.shadowColor = 'rgba(0,0,0,0.5)';
+    c.shadowBlur = 8;
+    c.shadowOffsetX = 2;
+    c.shadowOffsetY = 2;
+    c.fillText(symbols[i % symbols.length], r * 0.70, 0);
+    c.restore();
+  }
+
+  // Outer gold rim border on face
+  c.beginPath();
+  c.arc(cx, cy, r - 3, 0, Math.PI * 2);
+  c.strokeStyle = '#ffd875';
+  c.lineWidth = 14;
+  c.stroke();
+
+  // Subtle inner decorative ring
+  c.beginPath();
+  c.arc(cx, cy, r * 0.44, 0, Math.PI * 2);
+  c.strokeStyle = 'rgba(255, 216, 117, 0.45)';
+  c.lineWidth = 4;
+  c.stroke();
+
+  const texture = new THREE.CanvasTexture(off);
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  return texture;
 }
 
-function drawWheel(){
-  fit();
-  const styles = getComputedStyle(document.documentElement);
-  paintSpinWheel(cv, angle, [
-    styles.getPropertyValue('--card-b').trim(), '#f5ddaf',
-    styles.getPropertyValue('--curtain-mid').trim(), '#e9b297',
-  ]);
+function initThreeWheel(){
+  if (threeInited || typeof THREE === 'undefined') return;
+
+  threeScene = new THREE.Scene();
+  threeCamera = new THREE.PerspectiveCamera(38, 1, 0.1, 50);
+  threeCamera.position.set(0, -0.05, 5.0);
+  threeCamera.lookAt(0, 0, 0);
+
+  threeRenderer = new THREE.WebGLRenderer({
+    canvas: cv,
+    alpha: true,
+    antialias: true,
+    powerPreference: 'high-performance'
+  });
+  threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+  // Lights
+  const amb = new THREE.AmbientLight(0xfff6ec, 1.4);
+  const sun = new THREE.DirectionalLight(0xfffaea, 2.4);
+  sun.position.set(3.0, 4.0, 5.0);
+  const rim = new THREE.PointLight(0xffaa55, 2.0, 15);
+  rim.position.set(-2.8, -2.5, 3.2);
+  const fill = new THREE.DirectionalLight(0xddeeff, 0.9);
+  fill.position.set(-2.5, 1.5, 2.0);
+
+  threeScene.add(amb);
+  threeScene.add(sun);
+  threeScene.add(rim);
+  threeScene.add(fill);
+
+  // Groups
+  rigGroup = new THREE.Group();
+  wheelGroup = new THREE.Group();
+  rigGroup.add(wheelGroup);
+
+  // Materials
+  const brassMat = new THREE.MeshStandardMaterial({
+    color: 0xd4af37,
+    metalness: 0.92,
+    roughness: 0.22
+  });
+  const innerBrassMat = new THREE.MeshStandardMaterial({
+    color: 0x986f2e,
+    metalness: 0.88,
+    roughness: 0.32
+  });
+  const pegMat = new THREE.MeshStandardMaterial({
+    color: 0xffe285,
+    metalness: 0.96,
+    roughness: 0.12
+  });
+
+  // Outer Torus Rim
+  const rimMesh = new THREE.Mesh(new THREE.TorusGeometry(1.80, 0.085, 20, 64), brassMat);
+  wheelGroup.add(rimMesh);
+
+  // Inner Chamfer Ring
+  const innerRing = new THREE.Mesh(new THREE.TorusGeometry(1.70, 0.035, 16, 64), innerBrassMat);
+  wheelGroup.add(innerRing);
+
+  // Face disk cylinder
+  const faceTexture = createWheelFaceTexture();
+  const faceMat = new THREE.MeshStandardMaterial({
+    map: faceTexture,
+    metalness: 0.25,
+    roughness: 0.45
+  });
+  const wheelBody = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.76, 1.76, 0.12, 64),
+    [brassMat, faceMat, innerBrassMat]
+  );
+  wheelBody.rotation.x = Math.PI / 2;
+  wheelGroup.add(wheelBody);
+
+  // 12 3D Brass Pegs
+  const pegGeom = new THREE.CylinderGeometry(0.042, 0.046, 0.12, 16);
+  const pegCapGeom = new THREE.SphereGeometry(0.046, 16, 8);
+  for (let i = 0; i < 12; i++){
+    const a = (i / 12) * Math.PI * 2;
+    const pegCol = new THREE.Group();
+    const cyl = new THREE.Mesh(pegGeom, pegMat);
+    cyl.rotation.x = Math.PI / 2;
+    const cap = new THREE.Mesh(pegCapGeom, pegMat);
+    cap.position.z = 0.06;
+    pegCol.add(cyl);
+    pegCol.add(cap);
+    pegCol.position.set(Math.cos(a) * 1.63, Math.sin(a) * 1.63, 0.07);
+    wheelGroup.add(pegCol);
+  }
+
+  // Center Hub
+  const hubBase = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.46, 0.12, 32), innerBrassMat);
+  hubBase.rotation.x = Math.PI / 2;
+  hubBase.position.z = 0.06;
+  wheelGroup.add(hubBase);
+
+  const hubDome = new THREE.Mesh(
+    new THREE.SphereGeometry(0.36, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2),
+    brassMat
+  );
+  hubDome.rotation.x = Math.PI / 2;
+  hubDome.position.z = 0.08;
+  wheelGroup.add(hubDome);
+
+  const rubyMat = new THREE.MeshStandardMaterial({
+    color: 0xdf2448,
+    metalness: 0.4,
+    roughness: 0.15
+  });
+  const centerGem = new THREE.Mesh(new THREE.OctahedronGeometry(0.12, 0), rubyMat);
+  centerGem.position.z = 0.32;
+  wheelGroup.add(centerGem);
+
+  // 3D Ratcheting Pointer (Deflects & Springs on Peg Crossing)
+  pointerPivot = new THREE.Group();
+  pointerPivot.position.set(0, 1.88, 0.14);
+
+  const pShape = new THREE.Shape();
+  pShape.moveTo(-0.11, 0.08);
+  pShape.lineTo(0.11, 0.08);
+  pShape.lineTo(0.08, -0.10);
+  pShape.lineTo(0.0, -0.38);
+  pShape.lineTo(-0.08, -0.10);
+  pShape.closePath();
+
+  const pGeom = new THREE.ExtrudeGeometry(pShape, {
+    depth: 0.04,
+    bevelEnabled: true,
+    bevelSegments: 2,
+    steps: 1,
+    bevelSize: 0.015,
+    bevelThickness: 0.015
+  });
+  const pointerMat = new THREE.MeshStandardMaterial({
+    color: 0xdf723e,
+    metalness: 0.90,
+    roughness: 0.20
+  });
+  const pointerMesh = new THREE.Mesh(pGeom, pointerMat);
+  pointerPivot.add(pointerMesh);
+
+  const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.08, 16), pegMat);
+  pin.rotation.x = Math.PI / 2;
+  pin.position.z = 0.04;
+  pointerPivot.add(pin);
+
+  rigGroup.add(pointerPivot);
+  threeScene.add(rigGroup);
+
+  setupMotionControls();
+  threeInited = true;
+  resizeThreeWheel();
+  raf = requestAnimationFrame(renderThree);
 }
 
-function idle(now){
-  if (spinning || $('#s-wheel').hidden) return;
-  const c = Math.floor(now / 420);
-  if (c !== chase){ chase = c; drawWheel(); }
-  raf = requestAnimationFrame(idle);
+function resizeThreeWheel(){
+  if (!threeRenderer || !threeCamera) return;
+  const w = wheel.clientWidth || 300;
+  const h = wheel.clientHeight || 300;
+  if (!w || !h) return;
+  threeRenderer.setSize(w, h, false);
+  threeCamera.aspect = w / h;
+  threeCamera.updateProjectionMatrix();
+}
+
+function renderThree(now){
+  if ($('#s-wheel').hidden){
+    raf = requestAnimationFrame(renderThree);
+    return;
+  }
+  const dt = Math.min(0.04, (now - lastFrameTime) * 0.001);
+  lastFrameTime = now;
+
+  // Smooth lerp orientation tilt (reacts to phone tilt, side placement, desktop mouse)
+  currentTiltX += (targetTiltX - currentTiltX) * 0.10;
+  currentTiltY += (targetTiltY - currentTiltY) * 0.10;
+  if (rigGroup){
+    rigGroup.rotation.x = currentTiltX;
+    rigGroup.rotation.y = currentTiltY;
+  }
+
+  // Pointer spring dynamics (harmonic damped snap-back)
+  if (springActive && pointerPivot){
+    const force = -290 * pointerSpringAngle - 24 * pointerSpringVel;
+    pointerSpringVel += force * dt;
+    pointerSpringAngle += pointerSpringVel * dt;
+    pointerPivot.rotation.z = pointerSpringAngle;
+    if (Math.abs(pointerSpringAngle) < 0.004 && Math.abs(pointerSpringVel) < 0.04){
+      pointerSpringAngle = 0;
+      pointerSpringVel = 0;
+      springActive = false;
+      pointerPivot.rotation.z = 0;
+    }
+  }
+
+  // Wheel spinning animation
+  if (spinning){
+    const elapsed = now - spinStartTime;
+    const progress = Math.min(1, elapsed / spinDuration);
+    const ease = progress < 0.16
+      ? (progress ** 2) / 0.16
+      : 1 - Math.pow(1 - progress, 2.6);
+
+    wheelAngle = spinStartAngle + spinTotalAngle * ease;
+    if (wheelGroup) wheelGroup.rotation.z = -wheelAngle;
+
+    // Check peg crossing (12 pegs, strictly one click and haptic pulse per peg)
+    const pegStep = (Math.PI * 2) / 12;
+    const curPeg = Math.floor(wheelAngle / pegStep);
+    if (curPeg > lastPegIndex){
+      lastPegIndex = curPeg;
+      // Spring ratchet deflection
+      pointerSpringAngle = 0.36;
+      pointerSpringVel = -9.0;
+      springActive = true;
+      if (pointerPivot) pointerPivot.rotation.z = pointerSpringAngle;
+
+      playMechanicalTick();
+      triggerTickHaptic();
+    }
+
+    if (progress >= 1){
+      spinning = false;
+      finishSpin();
+    }
+  } else if (wheelGroup){
+    // Subtle idle gentle oscillation
+    wheelGroup.rotation.z = -wheelAngle + Math.sin(now * 0.0015) * 0.02;
+  }
+
+  if (threeRenderer && threeScene && threeCamera){
+    threeRenderer.render(threeScene, threeCamera);
+  }
+
+  raf = requestAnimationFrame(renderThree);
+}
+
+function setupMotionControls(){
+  // 1. Phone Orientation (Tilt & Side Placement)
+  function handleOrientation(e){
+    if (e.beta == null || e.gamma == null) return;
+    const b = e.beta;
+    const g = e.gamma;
+
+    // Phone held upright (beta ~ 45-55 deg, gamma ~ 0 deg)
+    let tx = (b - 45) * 0.012;
+    let ty = g * 0.014;
+
+    // If placed on its side (large gamma or low beta)
+    if (Math.abs(g) > 38){
+      ty = (g > 0 ? 0.55 : -0.55);
+      tx *= 0.5;
+    } else if (b < 15){
+      // Phone lying flat on table
+      tx = -0.35;
+    }
+
+    targetTiltX = Math.max(-0.48, Math.min(0.48, tx));
+    targetTiltY = Math.max(-0.52, Math.min(0.52, ty));
+  }
+
+  // 2. Shake Detection (Phone Shake triggers spin)
+  function handleMotion(e){
+    const acc = e.accelerationIncludingGravity || e.acceleration;
+    if (!acc) return;
+    const now = performance.now();
+    if (now - lastShakeTime < 1100) return; // Debounce shake triggers
+
+    const dx = Math.abs(acc.x - lastAccX);
+    const dy = Math.abs(acc.y - lastAccY);
+    const dz = Math.abs(acc.z - lastAccZ);
+    const totalDelta = dx + dy + dz;
+
+    if (totalDelta > 22){
+      lastShakeTime = now;
+      const wheelScreen = $('#s-wheel');
+      if (wheelScreen && !wheelScreen.hidden && !spinning){
+        if ('vibrate' in navigator){
+          try { navigator.vibrate([35, 45, 60]); } catch(e) {}
+        }
+        spin();
+      }
+    }
+    lastAccX = acc.x;
+    lastAccY = acc.y;
+    lastAccZ = acc.z;
+  }
+
+  // 3. Desktop Mouse Parallax Fallback
+  window.addEventListener('mousemove', e => {
+    const nx = (e.clientX / window.innerWidth) * 2 - 1;
+    const ny = (e.clientY / window.innerHeight) * 2 - 1;
+    targetTiltY = nx * 0.38;
+    targetTiltX = -ny * 0.32;
+  }, { passive: true });
+
+  if (typeof DeviceOrientationEvent !== 'undefined'){
+    window.addEventListener('deviceorientation', handleOrientation, { passive: true });
+  }
+  if (typeof DeviceMotionEvent !== 'undefined'){
+    window.addEventListener('devicemotion', handleMotion, { passive: true });
+  }
+
+  window.requestMotionPermission = function(){
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+      DeviceOrientationEvent.requestPermission().then(st => {
+        if (st === 'granted') window.addEventListener('deviceorientation', handleOrientation, { passive: true });
+      }).catch(() => {});
+    }
+    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function'){
+      DeviceMotionEvent.requestPermission().then(st => {
+        if (st === 'granted') window.addEventListener('devicemotion', handleMotion, { passive: true });
+      }).catch(() => {});
+    }
+  };
 }
 
 function openWheel(){
@@ -1045,61 +1540,45 @@ function openWheel(){
   setMusicGain(1);
   playBackgroundMusic();
   $('#hello').textContent = 'Hi cousin';
-  statusEl.textContent = 'Touch the wheel to spin it.';
+  statusEl.textContent = 'Touch the wheel or shake phone to spin';
   spinning = false;
-  angle = Math.random() * TAU;
-  drawWheel();
-  raf = requestAnimationFrame(idle);
+  wheelAngle = Math.random() * (Math.PI * 2);
+  initThreeWheel();
+  resizeThreeWheel();
 }
 
 function spin(){
   if (spinning || !session) return;
   spinning = true;
-  cancelAnimationFrame(raf);
+  randomizeRecipient(); // Randomize between Ishmael and Emmanuel on every spin!
   statusEl.textContent = 'Spinning for your Secret Santa…';
 
-  const t0 = performance.now();
-  if (reducedMotion.matches){ finishSpin(); return; }
-  const duration = 5200;
-  const startAngle = angle;
-  const totalRotations = TAU * 2.25;
-  const ramp = .16;
-  const pointer = $('.wheel-pointer');
-  let tick = 0;
-  let releaseTick = 0;
+  getAudioCtx();
+  triggerTickHaptic();
 
-  function frame(now){
-    const elapsed = now - t0;
-    const progress = Math.min(1, elapsed / duration);
-    const easeOut = progress < ramp
-      ? progress ** 2 / ramp
-      : 1 - (1 - progress) ** 2 / (1 - ramp);
-    angle = startAngle + totalRotations * easeOut;
-    drawWheel();
-    const nextTick = Math.floor(easeOut * 18);
-    if (nextTick > tick && now - releaseTick > 115){
-      tick = nextTick;
-      releaseTick = now;
-      pointer.classList.remove('ratchet');
-      void pointer.offsetWidth;
-      pointer.classList.add('ratchet');
-      if (soundOn){
-        tickAudio.currentTime = 0;
-        tickAudio.play().catch(() => {});
-      }
-    }
-
-    if (progress < 1){
-      raf = requestAnimationFrame(frame);
-    } else {
-      finishSpin();
-    }
+  if (reducedMotion.matches){
+    finishSpin();
+    return;
   }
-  raf = requestAnimationFrame(frame);
+
+  spinStartTime = performance.now();
+  spinDuration = 5200;
+  spinStartAngle = wheelAngle;
+  spinTotalAngle = Math.PI * 2 * (3.0 + Math.random() * 1.5); // 3 to 4.5 full rotations
+  lastPegIndex = Math.floor(spinStartAngle / ((Math.PI * 2) / 12));
 }
 
-wheel.addEventListener('click', spin);
-wheel.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); spin(); } });
+wheel.addEventListener('click', () => {
+  if (window.requestMotionPermission) window.requestMotionPermission();
+  spin();
+});
+wheel.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' '){
+    e.preventDefault();
+    if (window.requestMotionPermission) window.requestMotionPermission();
+    spin();
+  }
+});
 
 /* ---------- Curtains Close & Theatrical Reveal ---------- */
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -1152,20 +1631,18 @@ const card = $('#card'), tilt = $('#tilt'), holder = $('#portrait');
 let sweep = 0;
 
 function reveal(returning, behindCurtain = false){
-  const recipient = ISHMAEL_RECIPIENT;
+  const recipient = selectedRecipient || randomizeRecipient();
   if (session && session.slug) store.set('nj-seen-' + session.slug, '1');
 
   $('#who').textContent = recipient.name;
   $('#quip').textContent = recipient.quip;
-  if (!holder.firstElementChild) holder.innerHTML = `
+  holder.innerHTML = `
     <div class="photo-card-wrap">
-      <img src="${recipient.photo}" alt="${recipient.name}" class="cousin-face-img">
+      <img src="${recipient.photo}" alt="${recipient.name}" class="cousin-face-img" loading="eager">
     </div>
   `;
 
   show('s-card', behindCurtain);
-
-
   if (!behindCurtain) celebrateReveal(returning);
 }
 
@@ -1174,6 +1651,8 @@ function celebrateReveal(returning){
   card.classList.remove('deal', 'live');
   void card.offsetWidth;
   card.classList.add('deal');
+
+  triggerRevealHaptic();
 
   // Launch multi-colored, vibrant fireworks!
   if (!returning) fireworks(3800);
@@ -1334,15 +1813,15 @@ const LayoutEngine = (() => {
       const safePadding = 24;
       const maxWheelH = availH - topH - botH - safePadding;
       const maxWheelW = vpW - 40;
-      const wheelSize = Math.max(160, Math.min(maxWheelH, maxWheelW, vpW > 768 ? 440 : 320));
+      const wheelSize = Math.max(160, Math.min(maxWheelH, maxWheelW, vpW > 768 ? 440 : 350));
 
       const wheelEl = document.getElementById('wheel');
       if (wheelEl) {
         wheelEl.style.width = `${wheelSize}px`;
         wheelEl.style.height = `${wheelSize}px`;
       }
-      if (typeof fit === 'function' && typeof drawWheel === 'function') {
-        drawWheel();
+      if (typeof resizeThreeWheel === 'function') {
+        resizeThreeWheel();
       }
     } else if (activeScreen.id === 's-card') {
       const cardEl = document.getElementById('card');
