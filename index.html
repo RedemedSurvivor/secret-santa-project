@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#2e1431">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Geist:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=MonteCarlo&family=Yellowtail&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=MonteCarlo&family=Source+Sans+3:wght@400..800&family=Yellowtail&display=swap">
   <link rel="preload" as="image" href="cousin_portraits/muriithi.jpg">
   <link rel="preload" as="image" href="cousin_portraits/emmanuel.jpg">
   <script src="assets/three.min.js"></script>
@@ -24,14 +24,11 @@
       --accent: #ff6a3d;
       --on-accent: #2e1431;
       --gold: #ffd166;
-      --card-a: #ff7a4d;
-      --card-b: #ff5226;
-      --card-ink: #ffffff;
       --curtain-dark: #3a0008;
       --curtain-mid: #700010;
       --curtain-bright: #b8001f;
       
-      --sans: 'Figtree', 'Geist', system-ui, -apple-system, sans-serif;
+      --sans: 'Source Sans 3', system-ui, -apple-system, sans-serif;
       --serif: 'Instrument Serif', Georgia, serif;
       --script: 'MonteCarlo', 'Yellowtail', cursive;
       --mono: 'Geist Mono', ui-monospace, monospace;
@@ -48,9 +45,6 @@
       --accent: #10b981;
       --on-accent: #052e16;
       --gold: #34d399;
-      --card-a: #10b981;
-      --card-b: #047857;
-      --card-ink: #ffffff;
       --curtain-dark: #022c22;
       --curtain-mid: #064e3b;
       --curtain-bright: #059669;
@@ -67,9 +61,6 @@
       --accent: #0038ff;
       --on-accent: #ffffff;
       --gold: #ffb703;
-      --card-a: #0038ff;
-      --card-b: #002299;
-      --card-ink: #ffffff;
       --curtain-dark: #1e1b4b;
       --curtain-mid: #312e81;
       --curtain-bright: #4338ca;
@@ -85,9 +76,6 @@
       overflow:hidden!important;
       position:fixed;
       inset:0;
-      touch-action:none;
-      overscroll-behavior:none;
-      -webkit-overflow-scrolling:auto;
       background:var(--page);
       color:var(--ink);
       font:16px/1.5 var(--sans);
@@ -117,25 +105,27 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      padding:14px 18px 10px;
+      gap:8px;
+      flex:none;
+      padding:10px clamp(12px,4vw,40px);
       position:relative;
       z-index:6;
       border-bottom:1px solid var(--line);
       background:var(--surface);
     }
     .mark{
-      font:400 32px/1 var(--script);
+      font:400 clamp(23px, 7.3vw, 34px)/1 var(--script);
       color:var(--accent);
       text-decoration:none;
       cursor:pointer;
-      letter-spacing:0.5px;
+      white-space:nowrap;
       transition:transform 0.15s ease;
     }
     .mark:hover{transform:scale(1.03)}
-    .bar-actions{display:flex;align-items:center;gap:6px}
+    .bar-actions{display:flex;align-items:center;gap:4px;flex:none}
     .icon{
-      width:40px;
-      height:40px;
+      width:44px;
+      height:44px;
       border-radius:50%;
       border:1px solid var(--line);
       background:transparent;
@@ -151,7 +141,8 @@
     .palette-btn{
       font-size:12px;
       font-weight:700;
-      padding:6px 12px;
+      min-height:44px;
+      padding:6px 9px;
       border-radius:99px;
       border:1px solid var(--line);
       background:transparent;
@@ -192,19 +183,6 @@
       line-height:1.45;
     }
 
-    .greeting-badge{
-      display:inline-block;
-      background:var(--accent);
-      color:var(--on-accent);
-      padding:5px 14px;
-      border-radius:99px;
-      font-size:12px;
-      font-weight:800;
-      letter-spacing:0.12em;
-      text-transform:uppercase;
-      margin-bottom:12px;
-    }
-
     .btn{
       min-height:58px;
       width:100%;
@@ -242,73 +220,38 @@
     .curtains{position:fixed;inset:0;width:100%;height:100%;pointer-events:auto;z-index:30}
 
 
-    /* Wheel Screen */
-    #s-wheel{justify-content:space-between;padding-bottom:32px}
-    .wheelzone{
-      flex:1;
-      width:100%;
-      display:grid;
-      place-items:center;
-      margin:16px 0;
-    }
-    .wheelbtn{
-      width:min(76vw, 310px);
-      height:min(76vw, 310px);
-      aspect-ratio:1;
-      border-radius:50%;
-      touch-action:none;
-      cursor:pointer;
-      user-select:none;
-      -webkit-user-select:none;
-      box-shadow:0 18px 48px -8px rgba(0,0,0,0.6);
-      position:relative;
-    }
-    .wheelbtn canvas{width:100%;height:100%;display:block}
-
-    /* Recipient Card: Encompassing, large, filling stage */
-    .tilt{
-      perspective:1000px;
-      width:100%;
-      flex:1;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:6px 0;
-      touch-action:none;
-    }
+    /* Recipient card */
+    .tilt{perspective:1100px;width:min(100%, 440px);margin-inline:auto}
     .card{
       --rx:0deg;--ry:0deg;--g:-30%;--go:0;
       position:relative;
+      isolation:isolate;
       overflow:hidden;
-      border-radius:28px;
-      padding:24px 20px;
-      color:var(--card-ink);
-      background:radial-gradient(120% 90% at 20% 0%, var(--card-a), var(--card-b) 75%);
+      display:grid;
+      justify-items:center;
+      gap:clamp(10px, 1.8dvh, 18px);
+      padding:clamp(16px, 3dvh, 32px);
+      border:1px solid var(--line);
+      border-radius:24px;
+      color:var(--ink);
+      background:
+        radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 21%, transparent), transparent 75%),
+        var(--surface-card);
+      box-shadow:0 22px 48px -24px rgba(0,0,0,.65), inset 0 1px rgba(255,255,255,.16);
       transform:rotateX(var(--rx)) rotateY(var(--ry));
-      transition:transform 0.18s ease-out;
-      will-change:transform;
-      box-shadow:0 4px 0 rgba(255,255,255,0.4) inset, 0 24px 50px -10px rgba(0,0,0,0.7);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
+      transition:transform .3s ease-out;
       text-align:center;
-      width:100%;
-      max-width:390px;
-      min-height:0;
-      justify-content:space-between;
     }
-    .card.live{transition:none}
+    .card.live{transition:transform .08s ease-out}
     .card::before{
-      content:"";position:absolute;inset:0;pointer-events:none;opacity:0.35;
-      background:repeating-linear-gradient(118deg, rgba(255,255,255,0) 0 14px, rgba(255,255,255,0.2) 14px 15px);
+      content:"";position:absolute;inset:7px;pointer-events:none;border:1px solid var(--line);border-radius:17px;z-index:-1;
     }
     .card::after{
-      content:"";position:absolute;inset:-20%;pointer-events:none;opacity:var(--go);mix-blend-mode:soft-light;
-      background:linear-gradient(112deg, rgba(255,255,255,0) calc(var(--g) - 22%), rgba(255,255,255,0.8) calc(var(--g) - 3%), #ffffff var(--g), rgba(255,255,255,0.8) calc(var(--g) + 3%), rgba(255,255,255,0) calc(var(--g) + 22%));
+      content:"";position:absolute;inset:-20%;pointer-events:none;opacity:var(--go);mix-blend-mode:soft-light;z-index:-1;
+      background:linear-gradient(112deg, transparent calc(var(--g) - 22%), #fff var(--g), transparent calc(var(--g) + 22%));
     }
-    .card>*{position:relative;z-index:2}
-    .card.deal{animation:deal 0.75s cubic-bezier(0.2, 1.3, 0.3, 1) both}
-    @keyframes deal{from{opacity:0;transform:translateY(70px) scale(0.65)}}
+    .card.deal{animation:deal .65s cubic-bezier(.2,.8,.25,1) both}
+    @keyframes deal{from{opacity:0;transform:translateY(22px) rotateX(-12deg) scale(.96)}}
 
     .eyebrow{
       font-size:clamp(11px, 1.8vmin, 13px);
@@ -321,39 +264,30 @@
       line-height:1.2;
       flex-shrink:0;
     }
-    .card-name{
-      font:900 clamp(38px, 11cqw, 46px)/1.05 var(--sans);
-      letter-spacing:-0.02em;
-      margin:4px 0 2px;
-      color:#ffffff;
-      text-shadow:0 3px 12px rgba(0,0,0,0.3);
+    /* Give the portrait and name the strongest contrast on the card. */
+    #s-card .card-name{
+      font:400 clamp(44px, 10vmin, 82px)/.94 var(--serif);
+      letter-spacing:-.025em;
+      margin:0;
     }
-    .card-quip{
-      font:500 16px/1.45 var(--sans);
-      color:#ffffff;
-      max-width:28ch;
-      margin:4px auto 12px;
-      opacity:0.95;
+    #s-card .card-quip{
+      max-width:30ch;
+      margin:8px auto 0;
+      font-size:clamp(15px, 2.2vmin, 19px);
     }
-
-    /* Photo framed in the card */
     .photo-card-wrap{
-      width:180px;
-      height:180px;
+      width:clamp(96px, 23dvh, 170px);
+      aspect-ratio:1;
       border-radius:50%;
-      padding:5px;
-      background:radial-gradient(circle, #fff 0%, var(--gold) 80%, var(--accent) 100%);
-      box-shadow:0 14px 32px -6px rgba(0,0,0,0.5), 0 0 0 3px rgba(255,255,255,0.8);
-      margin:8px auto;
-      overflow:hidden;
-      display:grid;
-      place-items:center;
+      padding:4px;
+      background:linear-gradient(145deg,#f5ddaf,#b58544);
+      box-shadow:0 12px 30px -12px rgba(0,0,0,.65);
     }
     .cousin-face-img{
       width:100%;
       height:100%;
       object-fit:cover;
-      object-position:center center;
+      object-position:center;
       border-radius:50%;
       display:block;
     }
@@ -362,13 +296,15 @@
       display:flex;
       justify-content:space-between;
       width:100%;
-      font-size:12px;
-      font-weight:800;
-      letter-spacing:0.1em;
+      gap:8px;
+      flex-wrap:wrap;
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.08em;
       text-transform:uppercase;
       opacity:0.85;
       padding-top:12px;
-      border-top:1px solid rgba(255,255,255,0.25);
+      border-top:1px solid var(--line);
     }
 
     .actions{width:100%;display:grid;gap:8px;margin-top:14px}
@@ -411,7 +347,7 @@
     :root[data-theme="light"]{--page:#f2e1cc;--surface:#fff8e9;--surface-card:#f5e9d7;--ink:#331c32;--muted:#624558;--line:#e1c9d5}
     :root[data-palette="editorial"][data-theme="dark"]{--page:#10162c;--surface:#192243;--surface-card:#263253;--ink:#f7efd9;--muted:#c1c9e1;--line:#4d5980;--accent:#aebdff;--on-accent:#10162c}
 
-    /* Screen: Strict viewport fit, zero scroll on any device */
+    /* Keep navigation visible and allow short screens to scroll their content. */
     .screen{
       flex:1 1 0;
       min-height:0;
@@ -419,7 +355,7 @@
       height:100%;
       width:100%;
       box-sizing:border-box;
-      overflow:hidden;
+      overflow:auto;
       display:flex;
       flex-direction:column;
       align-items:center;
@@ -483,103 +419,184 @@
       .swash path{stroke-dashoffset:0!important;animation:none!important}
     }
 
-    /* Screen 1: Entry */
-    #s-entry>div{width:100%;max-width:860px;margin-inline:auto}
-    #s-entry .personal-entry:not([hidden]){
-      flex:1 1 0;
-      min-height:0;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:clamp(24px, 5.5vh, 48px);
-      padding:clamp(12px, 2vh, 24px) clamp(16px, 4vw, 32px);
-      width:100%;
-      max-width:640px;
+    /* Landing */
+    #s-entry,#s-wheel,#s-card{
+      padding:clamp(16px, 3dvh, 36px) clamp(16px, 5vw, 56px);
+      background:
+        radial-gradient(ellipse at 72% 25%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 62%),
+        linear-gradient(155deg, var(--surface), var(--page));
+      justify-content:flex-start;
+      scrollbar-width:thin;
     }
-    .entry-greeting{
-      width:100%;
-      text-align:center;
-      display:flex;
-      flex-direction:column;
+    .landing{
+      width:min(100%, 1080px);
+      margin:auto;
+      display:grid;
+      grid-template-areas:"title" "art" "details";
+      justify-items:center;
       align-items:center;
-      gap:clamp(8px, 1.6vh, 16px);
+      gap:clamp(12px, 3dvh, 28px);
+    }
+    .landing-title{
+      grid-area:title;
+      font:400 clamp(54px, 17vw, 108px)/.86 var(--serif);
+      letter-spacing:-.045em;
+    }
+    .landing-title:focus{outline:none}
+    .landing-title span{
+      display:block;
+      margin-top:12px;
+      font:700 13px/1 var(--sans);
+      letter-spacing:.24em;
+    }
+    .envelope{
+      grid-area:art;
+      position:relative;
+      width:clamp(108px, 24dvh, 207px);
+      aspect-ratio:1.55;
+      background:linear-gradient(155deg,#ffefd2,#dba974);
+      border-radius:8px;
+      transform:rotate(-8deg);
+      box-shadow:0 2px 1px rgba(0,0,0,.14), 0 20px 34px -14px rgba(0,0,0,.6);
+    }
+    .envelope-gif{
+      display:none;
+      position:absolute;
+      width:116.4%;
+      height:auto;
+      max-width:none;
+      left:-8.2%;
+      bottom:-11%;
+      filter:drop-shadow(0 14px 14px rgba(0,0,0,.28));
+    }
+    @media(prefers-reduced-motion:no-preference){
+      .envelope.animated{background:none;box-shadow:none}
+      .envelope.animated span,.envelope.animated::before,.envelope.animated::after{display:none}
+      .envelope.animated .envelope-gif{display:block}
+    }
+    .envelope::before,.envelope::after{content:"";position:absolute;inset:0;border-radius:inherit}
+    .envelope::before{
+      background:linear-gradient(145deg,#fff7e8,#efc797);
+      clip-path:polygon(0 0,100% 0,50% 65%);
+    }
+    .envelope::after{
+      border:1px solid #9c673d45;
+      background:linear-gradient(30deg,transparent 49.5%,#9c673d38 50%, transparent 50.5%) left bottom/50% 60% no-repeat,
+        linear-gradient(-30deg,transparent 49.5%,#9c673d38 50%,transparent 50.5%) right bottom/50% 60% no-repeat;
+    }
+    .envelope span{
+      position:absolute;
+      inset:63% auto auto 50%;
+      translate:-50% -50%;
+      z-index:1;
+      display:grid;
+      place-items:center;
+      width:24%;
+      aspect-ratio:1;
+      border-radius:47% 53% 48% 52%;
+      background:radial-gradient(circle at 34% 27%,#a5434b,#74232e 70%);
+      border:2px solid #ac5f5c;
+      box-shadow:0 2px 4px #6523316b,inset 0 0 0 2px #68202c80;
+      color:#ffe3b9;
+      font:400 clamp(15px,3.5dvh,26px)/1 var(--serif);
+    }
+    .personal-entry,#picker-view{
+      grid-area:details;
+      width:min(100%, 440px);
+      display:grid;
+      gap:clamp(14px, 2.5dvh, 22px);
     }
     #s-entry .entry-greeting h2{
-      font-size:clamp(46px, 9vmin, 82px);
-      margin:0;
-      line-height:1.05;
+      font-size:clamp(31px, 7.5vw, 51px);
+      margin:0 0 6px;
+      line-height:1.08;
     }
-    #s-entry .entry-greeting p{
-      font-size:clamp(15px, 2.2vmin, 20px);
-      line-height:1.45;
-      max-width:38ch;
-      margin:0 auto;
-    }
-    .entry-actions{
-      width:100%;
-      max-width:440px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:14px;
-    }
-    #s-entry .entry-actions .btn{
-      width:100%;
-      min-height:clamp(52px, 6.8vh, 62px);
-      font-size:clamp(17px, 2.2vmin, 20px);
-      box-shadow:0 8px 24px rgba(255,106,61,0.28);
-    }
-    #s-entry .entry-actions .help{margin:4px 0 0}
+    .entry-greeting p{margin-inline:auto}
+    .entry-actions .link-btn,#s-card .link{color:color-mix(in srgb, var(--accent) 72%, var(--ink))}
+    .entry-actions{display:grid;justify-items:center;gap:4px}
+    .entry-actions .btn{min-height:52px;padding:8px 12px;font-size:clamp(15px, 4vw, 17px)}
+    .entry-actions .help{margin:0}
+    .entry-actions .link-btn,#s-card .link{min-height:44px}
+    #picker-view{display:block}
 
-    /* Screen 2: Wheel */
-    #s-wheel{justify-content:space-evenly;gap:clamp(6px,1vh,14px)}
-    #s-wheel>div:first-child h2{font-size:clamp(32px,5.5vmin,56px);margin:2px 0}
-    #s-wheel>div:first-child p{font-size:clamp(13px,1.8vmin,16px)}
-    #s-wheel .wheelzone{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:center;width:100%}
-    #s-wheel .wheelbtn{
-      position:relative;
+    /* Wheel */
+    .wheel-stage{
+      width:min(100%, 620px);
+      display:grid;
+      justify-items:center;
+      gap:clamp(9px, 2dvh, 20px);
+      margin:auto;
+    }
+    .wheel-heading h2{font-size:clamp(34px, 6vmin, 56px)}
+    #status{max-width:none;min-height:2.9em;display:grid;align-content:center}
+    .wheelbtn{
+      width:min(100%, 460px, 57dvh);
+      aspect-ratio:1;
+      border-radius:50%;
       touch-action:none;
       user-select:none;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border-radius:50%;
-      box-shadow:0 22px 55px -10px rgba(0,0,0,0.65), 0 0 32px rgba(230,165,90,0.22);
-      transition:transform .18s ease;
-      cursor:pointer;
+      cursor:grab;
+      background:radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent), transparent 68%);
     }
-    #s-wheel .wheelbtn:active{transform:scale(0.975)}
-    #s-wheel .wheelbtn canvas{width:100%!important;height:100%!important;display:block;border-radius:50%}
-    #s-wheel>p:last-child{font-size:clamp(12px,1.6vmin,14px);color:var(--muted);margin:0;flex-shrink:0}
+    .wheelbtn:active{cursor:grabbing}
+    .wheelbtn canvas{width:100%;height:100%;display:block}
+    #s-wheel .wheel-help{font-size:13px;max-width:none}
 
-    /* Screen 3: Card */
-    #s-card{justify-content:center;gap:clamp(6px,1.2vh,14px)}
-    #s-card .tilt{width:100%;max-width:860px;display:flex;justify-content:center;align-items:center;flex:1 1 0;min-height:0;touch-action:none;padding:0}
-    #s-card .card{
-      width:100%;
-      max-width:720px;
-      max-height:100%;
-      min-height:0;
-      box-sizing:border-box;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:space-between;
-      gap:clamp(6px,1.2vh,12px);
-      padding:clamp(18px,2.8vh,30px) clamp(16px,3vw,36px);
-      background:linear-gradient(150deg,var(--card-a),var(--card-b));
-      background-color:#692f56;
+    /* Card */
+    .card-stage{
+      width:min(100%, 780px);
+      display:grid;
+      justify-items:center;
+      gap:clamp(9px, 2.2dvh, 18px);
+      margin:auto;
     }
-    .card::before{background:linear-gradient(#281020b8,#281020b8);opacity:1}
-    #s-card .card-name,#s-card .card p{color:#fff7e9}
-    #s-card .card-name{font-size:clamp(36px,6.5vmin,68px);line-height:1}
-    #s-card .card-quip{font-size:clamp(14px,1.8vmin,18px);margin:4px auto 0}
-    .photo-card-wrap{width:clamp(120px,22vmin,210px);height:auto;aspect-ratio:1;margin:0 auto}
-    .gift-note{font:600 clamp(13px,1.7vmin,16px)/1.4 var(--sans);color:var(--muted);text-align:center;margin:0;flex-shrink:0}
-    .card .foot{gap:10px;flex-wrap:wrap}
-    #s-card .actions{width:100%;max-width:480px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;margin:0}
-    #s-card .actions .btn{min-height:clamp(44px,6vh,54px)}
+    #s-card .gift-note{max-width:none;font-weight:600}
+    #s-card .actions{width:min(100%, 440px);gap:0;margin:0}
+    #s-card .actions .btn{min-height:48px;font-size:16px}
+    #s-card .card .eyebrow{margin:0;color:var(--muted)}
+    @media(min-width:700px){
+      .landing{
+        grid-template-columns:minmax(0, 1.3fr) minmax(0, 1fr);
+        grid-template-areas:"title art" "details art";
+        justify-items:start;
+        text-align:left;
+        padding:clamp(20px, 5vw, 64px);
+      }
+      .landing-title{font-size:clamp(64px, 9vw, 116px)}
+      .envelope{justify-self:center;width:min(85%, 340px)}
+      .entry-greeting p{margin-inline:0}
+      .entry-actions{justify-items:start}
+      .tilt{width:100%}
+      .card{
+        grid-template-columns:auto minmax(0,1fr);
+        grid-template-areas:"eyebrow eyebrow" "portrait copy" "foot foot";
+        column-gap:clamp(18px, 4vw, 52px);
+        justify-items:stretch;
+        align-items:center;
+        text-align:left;
+      }
+      .card .eyebrow{grid-area:eyebrow}
+      #portrait{grid-area:portrait}
+      .recipient-copy{grid-area:copy}
+      #s-card .card-quip{margin-inline:0}
+      .card .foot{grid-area:foot}
+      .photo-card-wrap{width:clamp(90px, 32dvh, 245px)}
+    }
+    @media(max-width:699px){
+      .landing{margin-block:clamp(6px, 8dvh, 64px) auto}
+    }
+    @media(max-height:480px){
+      .landing{gap:12px;padding-block:0;margin-block:auto}
+      .landing-title{font-size:clamp(46px, 10vmin, 68px)}
+      #s-entry,#s-wheel,#s-card{padding-block:10px}
+      .wheel-stage{gap:4px}
+      .wheelbtn{width:min(100%, 51dvh)}
+      #status{min-height:0}
+      #s-card .card .foot{padding-top:6px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .card,.card.live{transition:none}
+    }
 
     /* Screen 4: Host View */
     #s-host{justify-content:flex-start;gap:10px;padding:16px 20px}
@@ -589,30 +606,6 @@
     #s-host p{flex-shrink:0;font-size:13px}
     #s-host .roster{flex:1 1 0;min-height:0;width:100%;max-width:640px;overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch}
     #s-host .actions{flex-shrink:0;width:100%;max-width:480px;margin-top:8px}
-
-    /* Desktop Viewport Enhancement: Full Screen Width & Balanced Widescreen Fit */
-    @media(min-width:860px){
-      #s-wheel .wheelbtn{width:min(48dvh,420px);height:auto}
-      #s-card .card{
-        display:grid;
-        grid-template-columns:minmax(280px,380px) 1fr;
-        grid-template-rows:auto 1fr auto;
-        grid-template-areas:
-          "eyebrow eyebrow"
-          "portrait copy"
-          "foot foot";
-        align-items:center;
-        max-width:960px;
-        padding:clamp(16px,2.5vh,32px) clamp(24px,3.5vw,48px);
-      }
-      #s-card .card .eyebrow{grid-area:eyebrow;text-align:left}
-      #s-card #portrait{grid-area:portrait;display:flex;justify-content:center;align-items:center}
-      #s-card .recipient-copy{grid-area:copy;text-align:left;padding-left:32px}
-      #s-card .recipient-copy p{margin-left:0}
-      #s-card .card .foot{grid-area:foot}
-      #s-card .photo-card-wrap{width:clamp(220px,32vmin,320px);height:clamp(220px,32vmin,320px);margin:0 auto}
-      .actions{max-width:480px}
-    }
 
     #fx{position:fixed;animation:sky-in .3s ease}
     @keyframes sky-in{from{opacity:.2}to{opacity:1}}
@@ -644,122 +637,129 @@
   </header>
 
   <!-- 1. ENTRY SCREEN -->
-  <div class="screen" id="s-entry">
-    <!-- View A: Returning device user (automatically locked & ready) -->
-    <div id="pers-returning" class="personal-entry" hidden>
-      <div class="entry-greeting">
-        <div class="greeting-badge">✦ Secret Santa 2026 ✦</div>
-        <h2 id="ret-hi">Welcome back, Ishmael!</h2>
-        <p>Open your card whenever you need a reminder of who you’re buying for.</p>
+  <main class="screen" id="s-entry">
+    <div class="landing">
+      <h1 class="landing-title">Secret Santa <span>2026</span></h1>
+      <div class="envelope" aria-hidden="true">
+        <span>✦</span>
+        <img class="envelope-gif" alt="" width="312" height="250">
       </div>
-      <div class="entry-actions">
-        <button class="btn" id="show-saved-card-btn" type="button">Show my Secret Santa card</button>
-        <p class="help"><button class="link-btn" id="re-spin-btn" type="button">Spin the wheel again</button></p>
+      <!-- View A: Returning device user (automatically locked & ready) -->
+      <div id="pers-returning" class="personal-entry" hidden>
+        <div class="entry-greeting">
+          <h2 id="ret-hi">Welcome back, Ishmael!</h2>
+          <p>Open your card whenever you need a reminder of who you’re buying for.</p>
+        </div>
+        <div class="entry-actions">
+          <button class="btn" id="show-saved-card-btn" type="button">Show my Secret Santa card</button>
+          <p class="help"><button class="link-btn" id="re-spin-btn" type="button">Spin the wheel again</button></p>
+        </div>
       </div>
-    </div>
 
-    <!-- View B: First-time direct link invite -->
-    <div id="pers-view" class="personal-entry" hidden>
-      <div class="entry-greeting">
-        <div class="greeting-badge">✦ Secret Santa 2026 ✦</div>
-        <h2 id="pers-hi">Hi cousins,</h2>
-        <p id="pers-sub">Ready to see who you’re buying for this Christmas?</p>
+      <!-- View B: First-time direct link invite -->
+      <div id="pers-view" class="personal-entry" hidden>
+        <div class="entry-greeting">
+          <h2 id="pers-hi">Hi cousins,</h2>
+          <p id="pers-sub">Ready to see who you’re buying for this Christmas?</p>
+        </div>
+        <div class="entry-actions">
+          <button class="btn" id="start-draw-btn" type="button">Start the draw →</button>
+        </div>
       </div>
-      <div class="entry-actions">
-        <button class="btn" id="start-draw-btn" type="button">Start the draw →</button>
-      </div>
-    </div>
 
-    <!-- View C: Fallback cousin picker / code entry -->
-    <div id="picker-view" style="width:100%;margin:auto 0;" hidden>
-      <h2>Hiii Cousins</h2>
-      <p style="margin:6px auto 16px;">Select your name to draw your Secret Santa recipient.</p>
-      <select id="cousin-select" class="cousin-dropdown" aria-label="Select your name">
-        <option value="">-- Choose Your Name --</option>
-        <optgroup label="Njeri Branch">
-          <option value="ishmael">Ishmael</option>
-          <option value="emmanuel">Emmanuel</option>
-        </optgroup>
-        <optgroup label="Nyambura Branch">
-          <option value="jeff">Jeff</option>
-        </optgroup>
-        <optgroup label="Wambugu Branch">
-          <option value="charlesakashadow">Charles aka Shadow</option>
-          <option value="millcah">Millcah</option>
-          <option value="karen">Karen</option>
-          <option value="muli">Muli</option>
-        </optgroup>
-        <optgroup label="Mathenge Branch">
-          <option value="shiku">Shiku</option>
-          <option value="caro">Caro</option>
-          <option value="alvin">Alvin</option>
-        </optgroup>
-        <optgroup label="Mwangi Branch">
-          <option value="dani">Dani</option>
-          <option value="paps">Paps</option>
-          <option value="bettie">Bettie</option>
-          <option value="muthonimamaesther">Muthoni (Mama Esther)</option>
-          <option value="mamaliam">Mama Liam</option>
-          <option value="jem">Jem</option>
-        </optgroup>
-        <optgroup label="Nginga Branch">
-          <option value="lyon">Lyon</option>
-          <option value="ian">Ian</option>
-        </optgroup>
-        <optgroup label="Munyiri Branch">
-          <option value="peter">Peter</option>
-        </optgroup>
-        <optgroup label="Wangechi Branch">
-          <option value="muthonimamacurtis">Muthoni (Mama Curtis)</option>
-          <option value="wahito">Wahito</option>
-          <option value="sam">Sam</option>
-          <option value="kaguongo">Kaguongo</option>
-          <option value="njithi">Njithi</option>
-        </optgroup>
-      </select>
-      <button class="btn" id="pick-go-btn" type="button">Open my ticket →</button>
-      <p class="help" style="margin-top:16px;">Or enter invite code: <input id="code" class="code-input" placeholder="e.g. ishmael"> <button id="code-go" class="chip" type="button">Go</button></p>
-      <p id="err" role="alert" style="color:var(--accent);font-weight:700;margin-top:10px;" hidden></p>
-      <div style="margin-top:20px;border-top:1px dashed var(--line);padding-top:12px;">
-        <button class="chip" type="button" id="tohost">Host progress view</button>
+      <!-- View C: Fallback cousin picker / code entry -->
+      <div id="picker-view" hidden>
+        <h2>Hiii Cousins</h2>
+        <p style="margin:6px auto 16px;">Select your name to draw your Secret Santa recipient.</p>
+        <select id="cousin-select" class="cousin-dropdown" aria-label="Select your name">
+          <option value="">-- Choose Your Name --</option>
+          <optgroup label="Njeri Branch">
+            <option value="ishmael">Ishmael</option>
+            <option value="emmanuel">Emmanuel</option>
+          </optgroup>
+          <optgroup label="Nyambura Branch">
+            <option value="jeff">Jeff</option>
+          </optgroup>
+          <optgroup label="Wambugu Branch">
+            <option value="charlesakashadow">Charles aka Shadow</option>
+            <option value="millcah">Millcah</option>
+            <option value="karen">Karen</option>
+            <option value="muli">Muli</option>
+          </optgroup>
+          <optgroup label="Mathenge Branch">
+            <option value="shiku">Shiku</option>
+            <option value="caro">Caro</option>
+            <option value="alvin">Alvin</option>
+          </optgroup>
+          <optgroup label="Mwangi Branch">
+            <option value="dani">Dani</option>
+            <option value="paps">Paps</option>
+            <option value="bettie">Bettie</option>
+            <option value="muthonimamaesther">Muthoni (Mama Esther)</option>
+            <option value="mamaliam">Mama Liam</option>
+            <option value="jem">Jem</option>
+          </optgroup>
+          <optgroup label="Nginga Branch">
+            <option value="lyon">Lyon</option>
+            <option value="ian">Ian</option>
+          </optgroup>
+          <optgroup label="Munyiri Branch">
+            <option value="peter">Peter</option>
+          </optgroup>
+          <optgroup label="Wangechi Branch">
+            <option value="muthonimamacurtis">Muthoni (Mama Curtis)</option>
+            <option value="wahito">Wahito</option>
+            <option value="sam">Sam</option>
+            <option value="kaguongo">Kaguongo</option>
+            <option value="njithi">Njithi</option>
+          </optgroup>
+        </select>
+        <button class="btn" id="pick-go-btn" type="button">Open my ticket →</button>
+        <p class="help" style="margin-top:16px;">Or enter invite code: <input id="code" class="code-input" placeholder="e.g. ishmael"> <button id="code-go" class="chip" type="button">Go</button></p>
+        <p id="err" role="alert" style="color:var(--accent);font-weight:700;margin-top:10px;" hidden></p>
+        <div style="margin-top:20px;border-top:1px dashed var(--line);padding-top:12px;">
+          <button class="chip" type="button" id="tohost">Host progress view</button>
+        </div>
       </div>
     </div>
-  </div>
+  </main>
 
   <!-- 2. WHEEL SCREEN -->
   <div class="screen" id="s-wheel" hidden>
-    <div>
-      <h2 id="hello">Hi cousin</h2>
-      <p id="status">Touch or flick to spin · Grab anytime to stop</p>
-    </div>
-    <div class="wheelzone">
-      <div class="wheelbtn" id="wheel" role="button" tabindex="0" aria-label="Spin the wheel">
+    <div class="wheel-stage">
+      <div class="wheel-heading">
+        <h2 id="hello">Hi cousin</h2>
+        <p id="status" role="status">Touch or flick to spin · Grab anytime to stop</p>
+      </div>
+      <div class="wheelbtn" id="wheel" role="button" tabindex="0" aria-label="Spin the wheel" aria-describedby="wheel-help">
         <canvas id="cv"></canvas>
       </div>
+      <p class="wheel-help" id="wheel-help">✨ Drag forwards or backwards · Tap anytime to stop</p>
     </div>
-    <p style="font-size:13px;color:var(--muted);text-align:center;">✨ Drag forwards or backwards · Tap anytime to stop</p>
   </div>
 
   <!-- 3. RECIPIENT CARD SCREEN -->
   <div class="screen" id="s-card" hidden>
-    <div class="tilt" id="tilt">
-      <article class="card" id="card">
-        <span class="eyebrow">You’re buying for</span>
-        <div id="portrait"></div>
-        <div class="recipient-copy">
-          <h2 class="card-name" id="who" tabindex="-1">Ishmael</h2>
-          <p class="card-quip" id="quip"></p>
-        </div>
-        <div class="foot">
-          <span id="giftday">Gift day · 25 Dec</span>
-          <span>Shh ✦ Secret Santa</span>
-        </div>
-      </article>
-    </div>
-    <p class="gift-note">Keep your name under wraps until gift day.</p>
-    <div class="actions">
-      <button class="btn" type="button" id="hide">Done. Close my card</button>
-      <button class="link" type="button" id="replay">Watch the spin again</button>
+    <div class="card-stage">
+      <div class="tilt" id="tilt">
+        <article class="card" id="card">
+          <span class="eyebrow">You’re buying for</span>
+          <div id="portrait"></div>
+          <div class="recipient-copy">
+            <h2 class="card-name" id="who" tabindex="-1">Ishmael</h2>
+            <p class="card-quip" id="quip"></p>
+          </div>
+          <div class="foot">
+            <span id="giftday">Gift day · 25 Dec</span>
+            <span>Shh ✦ Secret Santa</span>
+          </div>
+        </article>
+      </div>
+      <p class="gift-note">Keep your name under wraps until gift day.</p>
+      <div class="actions">
+        <button class="btn" type="button" id="hide">Done. Close my card</button>
+        <button class="link" type="button" id="replay">Watch the spin again</button>
+      </div>
     </div>
   </div>
 
@@ -1048,12 +1048,11 @@ function show(id, keepCurtain = false){
   timers.forEach(clearTimeout);
   timers = [];
   for (const s of document.querySelectorAll('.screen')) s.hidden = s.id !== id;
-  const h = $('#' + id + ' h2');
-  if (h) h.focus({ preventScroll: true });
-  if (typeof LayoutEngine !== 'undefined') {
-    LayoutEngine.update();
-    requestAnimationFrame(() => LayoutEngine.update());
-  }
+  const screen = $('#' + id);
+  screen.scrollTop = 0;
+  const heading = screen.querySelector(id === 's-entry' ? 'h1' : 'h2');
+  heading?.setAttribute('tabindex', '-1');
+  heading?.focus({ preventScroll: true });
 }
 
 /* Clicking logo resets back to home seamlessly */
@@ -1110,7 +1109,6 @@ $('#re-spin-btn').onclick = () => {
 };
 
 $('#start-draw-btn').onclick = () => {
-  if (window.requestMotionPermission) window.requestMotionPermission();
   getAudioCtx();
   if (session) openWheel();
 };
@@ -1122,7 +1120,6 @@ $('#pick-go-btn').onclick = () => {
   if (c) {
     store.set('nj_device_user', c.slug);
     session = { slug: c.slug, me: c.name, to: CANDIDATE_RECIPIENTS[0] };
-    if (window.requestMotionPermission) window.requestMotionPermission();
     getAudioCtx();
     openWheel();
   }
@@ -1142,7 +1139,6 @@ function enter(raw){
   $('#err').hidden = true;
   store.set('nj_device_user', hit.slug);
   session = { slug: hit.slug, me: hit.name, to: CANDIDATE_RECIPIENTS[0] };
-  if (window.requestMotionPermission) window.requestMotionPermission();
   getAudioCtx();
   openWheel();
 }
@@ -1150,23 +1146,25 @@ function enter(raw){
 /* ---------- Realistic 3D Three.js Wheel Engine ---------- */
 const cv = $('#cv'), wheel = $('#wheel'), statusEl = $('#status');
 let threeRenderer = null, threeScene = null, threeCamera = null;
-let rigGroup = null, wheelGroup = null, pointerPivot = null;
+let rigGroup = null, wheelGroup = null, pointerPivot = null, wheelKeyLight = null;
 let pointerSpringAngle = 0, pointerSpringVel = 0, springActive = false;
-let wheelAngle = 0, spinning = false, spinStartAngle = 0, spinTotalAngle = 0, spinStartTime = 0;
-let lastPegIndex = -1;
-let currentTiltX = 0, currentTiltY = 0, targetTiltX = 0, targetTiltY = 0;
-let lastAccX = 0, lastAccY = 0, lastAccZ = 0, lastShakeTime = 0;
-let lastFrameTime = performance.now();
+let wheelAngle = 0;
+let lastPegIndex = 0;
+const REST_TILT_X = 0.06, REST_TILT_Y = -0.08;
+let currentTiltX = REST_TILT_X, currentTiltY = REST_TILT_Y;
+let targetTiltX = currentTiltX, targetTiltY = currentTiltY;
+let wheelHover = null;
+let hoverLift = 0;
+let lastFrameTime = 0;
 let threeInited = false;
 
-// Dynamic interactive physics: drag, bidirectional velocity, tap-to-stop
-let angularVelocity = 0; // radians per second
-let isDraggingWheel = false;
-let dragStartAngle = 0;
-let dragPrevAngle = 0;
-let dragLastTime = 0;
-let dragMovedTotal = 0;
-let hasSpunInRun = false;
+const PEG_STEP = TAU / 8;
+const WHEEL_READY = 'Touch or flick to spin · Grab anytime to stop';
+const WHEEL_STOPPED = 'Stopped! Tap to reveal or flick again';
+let angularVelocity = 0;
+let drag = null;
+let wheelMoved = false;
+let revealing = false;
 
 function getWheelColors(){
   const pal = document.documentElement.dataset.palette;
@@ -1278,7 +1276,7 @@ function initThreeWheel(){
 
   threeScene = new THREE.Scene();
   threeCamera = new THREE.PerspectiveCamera(38, 1, 0.1, 50);
-  threeCamera.position.set(0, -0.05, 5.0);
+  threeCamera.position.set(0, 0.08, 6.35);
   threeCamera.lookAt(0, 0, 0);
 
   threeRenderer = new THREE.WebGLRenderer({
@@ -1291,13 +1289,13 @@ function initThreeWheel(){
 
   // Soft, balanced lighting (non-blinding, preserving rich colors)
   const amb = new THREE.AmbientLight(0xfff8f0, 0.9);
-  const sun = new THREE.DirectionalLight(0xfffaea, 1.1);
-  sun.position.set(2.5, 3.5, 4.0);
+  wheelKeyLight = new THREE.DirectionalLight(0xfffaea, 1.1);
+  wheelKeyLight.position.set(2.5, 3.5, 4.0);
   const fill = new THREE.DirectionalLight(0xddeeff, 0.4);
   fill.position.set(-2.0, 1.0, 2.0);
 
   threeScene.add(amb);
-  threeScene.add(sun);
+  threeScene.add(wheelKeyLight);
   threeScene.add(fill);
 
   // Groups
@@ -1388,8 +1386,8 @@ function initThreeWheel(){
   });
   const pointerMat = new THREE.MeshStandardMaterial({
     color: 0xdf723e,
-    metalness: 0.90,
-    roughness: 0.20
+    metalness: 0.5,
+    roughness: 0.34
   });
   const pointerMesh = new THREE.Mesh(pGeom, pointerMat);
   pointerPivot.add(pointerMesh);
@@ -1402,39 +1400,56 @@ function initThreeWheel(){
   rigGroup.add(pointerPivot);
   threeScene.add(rigGroup);
 
-  setupMotionControls();
   threeInited = true;
-  resizeThreeWheel();
-  raf = requestAnimationFrame(renderThree);
+  new ResizeObserver(resizeThreeWheel).observe(wheel);
 }
 
 function resizeThreeWheel(){
   if (!threeRenderer || !threeCamera) return;
-  const w = wheel.clientWidth || 300;
-  const h = wheel.clientHeight || 300;
+  const w = wheel.clientWidth;
+  const h = wheel.clientHeight;
   if (!w || !h) return;
   threeRenderer.setSize(w, h, false);
   threeCamera.aspect = w / h;
   threeCamera.updateProjectionMatrix();
 }
 
+function updateRatchetingPointer(delta){
+  const peg = Math.floor((wheelAngle + PEG_STEP / 2) / PEG_STEP);
+  if (peg === lastPegIndex) return;
+  lastPegIndex = peg;
+  const direction = Math.sign(delta);
+  pointerSpringAngle = 0.30 * direction;
+  pointerSpringVel = -8 * direction;
+  springActive = true;
+  if (pointerPivot) pointerPivot.rotation.z = pointerSpringAngle;
+  playMechanicalTick();
+  triggerTickHaptic();
+}
+
 function renderThree(now){
-  if ($('#s-wheel').hidden){
-    raf = requestAnimationFrame(renderThree);
-    return;
-  }
-  const dt = Math.min(0.04, (now - lastFrameTime) * 0.001);
+  if ($('#s-wheel').hidden) return;
+  const dt = Math.min(0.04, (now - lastFrameTime) / 1000);
   lastFrameTime = now;
 
-  // Smooth lerp orientation tilt (reacts to phone tilt, side placement, desktop mouse)
-  currentTiltX += (targetTiltX - currentTiltX) * 0.10;
-  currentTiltY += (targetTiltY - currentTiltY) * 0.10;
+  // Keep the view steady during drags and spins so it tracks the pointer.
+  if (!drag && !angularVelocity && !revealing){
+    const blend = 1 - Math.exp(-dt * 8);
+    const hover = reducedMotion.matches ? null : wheelHover;
+    const pitch = targetTiltX - (hover?.y ?? 0) * 0.18;
+    const yaw = targetTiltY - (hover?.x ?? 0) * 0.20;
+    currentTiltX += (pitch - currentTiltX) * blend;
+    currentTiltY += (yaw - currentTiltY) * blend;
+    hoverLift += ((hover ? 1 : 0) - hoverLift) * blend;
+  }
   if (rigGroup){
-    rigGroup.rotation.x = currentTiltX;
-    rigGroup.rotation.y = currentTiltY;
+    const lift = reducedMotion.matches ? 0 : hoverLift;
+    rigGroup.rotation.x = reducedMotion.matches ? 0 : currentTiltX;
+    rigGroup.rotation.y = reducedMotion.matches ? 0 : currentTiltY;
+    rigGroup.scale.setScalar(1 + lift * 0.035);
+    wheelKeyLight.intensity = 1.1 + lift * 0.3;
   }
 
-  // Pointer spring dynamics (harmonic damped snap-back)
   if (springActive && pointerPivot){
     const force = -320 * pointerSpringAngle - 26 * pointerSpringVel;
     pointerSpringVel += force * dt;
@@ -1448,137 +1463,43 @@ function renderThree(now){
     }
   }
 
-  // Check peg crossings in either direction (clockwise or counter-clockwise)
-  function checkPegCrossing(angleDelta){
-    const pegStep = (Math.PI * 2) / 8;
-    const curPeg = Math.floor(wheelAngle / pegStep);
-    if (curPeg !== lastPegIndex){
-      const dir = angleDelta >= 0 ? 1 : -1;
-      lastPegIndex = curPeg;
-      // Spring ratchet deflection matching velocity direction
-      pointerSpringAngle = 0.36 * dir;
-      pointerSpringVel = -9.0 * dir;
-      springActive = true;
-      if (pointerPivot) pointerPivot.rotation.z = pointerSpringAngle;
-
-      playMechanicalTick();
-      triggerTickHaptic();
-    }
+  if (angularVelocity){
+    const delta = angularVelocity * dt;
+    wheelAngle += delta;
+    updateRatchetingPointer(delta);
+    angularVelocity *= Math.exp(-1.1 * dt);
+    if (Math.abs(angularVelocity) < 0.45) finishSpin();
   }
 
-  // Wheel dynamic motion physics (interactive drag, reverse spin, inertial deceleration, stop-anytime)
-  if (isDraggingWheel){
-    // While user is holding and rotating the wheel directly
-    if (wheelGroup) wheelGroup.rotation.z = -wheelAngle;
-  } else if (spinning){
-    // Inertial physics simulation with friction damping
-    const deltaA = angularVelocity * dt;
-    wheelAngle += deltaA;
-    if (wheelGroup) wheelGroup.rotation.z = -wheelAngle;
-
-    checkPegCrossing(deltaA);
-
-    // Exponential friction decay (smooth deceleration)
-    const friction = Math.pow(0.58, dt); // gentle natural coasting
-    angularVelocity *= friction;
-
-    // Stop threshold: when wheel slows to a halt
-    if (Math.abs(angularVelocity) < 0.22){
-      spinning = false;
-      angularVelocity = 0;
-      finishSpin();
-    }
-  } else if (wheelGroup){
-    // Subtle idle gentle oscillation when idle
-    wheelGroup.rotation.z = -wheelAngle + Math.sin(now * 0.0015) * 0.02;
-  }
-
-  if (threeRenderer && threeScene && threeCamera){
+  if (threeRenderer){
+    wheelGroup.rotation.z = -wheelAngle;
     threeRenderer.render(threeScene, threeCamera);
   }
-
-  raf = requestAnimationFrame(renderThree);
+  if (!$('#s-wheel').hidden) raf = requestAnimationFrame(renderThree);
 }
 
-function setupMotionControls(){
-  // 1. Phone Orientation (Tilt & Side Placement)
-  function handleOrientation(e){
-    if (e.beta == null || e.gamma == null) return;
-    const b = e.beta;
-    const g = e.gamma;
+let motionOrigin = null;
 
-    // Phone held upright (beta ~ 45-55 deg, gamma ~ 0 deg)
-    let tx = (b - 45) * 0.012;
-    let ty = g * 0.014;
-
-    // If placed on its side (large gamma or low beta)
-    if (Math.abs(g) > 38){
-      ty = (g > 0 ? 0.55 : -0.55);
-      tx *= 0.5;
-    } else if (b < 15){
-      // Phone lying flat on table
-      tx = -0.35;
-    }
-
-    targetTiltX = Math.max(-0.48, Math.min(0.48, tx));
-    targetTiltY = Math.max(-0.52, Math.min(0.52, ty));
-  }
-
-  // 2. Shake Detection (Phone Shake triggers spin)
-  function handleMotion(e){
-    const acc = e.accelerationIncludingGravity || e.acceleration;
-    if (!acc) return;
-    const now = performance.now();
-    if (now - lastShakeTime < 1100) return; // Debounce shake triggers
-
-    const dx = Math.abs(acc.x - lastAccX);
-    const dy = Math.abs(acc.y - lastAccY);
-    const dz = Math.abs(acc.z - lastAccZ);
-    const totalDelta = dx + dy + dz;
-
-    if (totalDelta > 22){
-      lastShakeTime = now;
-      const wheelScreen = $('#s-wheel');
-      if (wheelScreen && !wheelScreen.hidden && !spinning){
-        if ('vibrate' in navigator){
-          try { navigator.vibrate([35, 45, 60]); } catch(e) {}
-        }
-        spin();
-      }
-    }
-    lastAccX = acc.x;
-    lastAccY = acc.y;
-    lastAccZ = acc.z;
-  }
-
-  // 3. Desktop Mouse Parallax Fallback
-  window.addEventListener('mousemove', e => {
-    const nx = (e.clientX / window.innerWidth) * 2 - 1;
-    const ny = (e.clientY / window.innerHeight) * 2 - 1;
-    targetTiltY = nx * 0.38;
-    targetTiltX = -ny * 0.32;
-  }, { passive: true });
-
-  if (typeof DeviceOrientationEvent !== 'undefined'){
-    window.addEventListener('deviceorientation', handleOrientation, { passive: true });
-  }
-  if (typeof DeviceMotionEvent !== 'undefined'){
-    window.addEventListener('devicemotion', handleMotion, { passive: true });
-  }
-
-  window.requestMotionPermission = function(){
-    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
-      DeviceOrientationEvent.requestPermission().then(st => {
-        if (st === 'granted') window.addEventListener('deviceorientation', handleOrientation, { passive: true });
-      }).catch(() => {});
-    }
-    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function'){
-      DeviceMotionEvent.requestPermission().then(st => {
-        if (st === 'granted') window.addEventListener('devicemotion', handleMotion, { passive: true });
-      }).catch(() => {});
-    }
-  };
+function clamp(value, low, high){
+  return Math.max(low, Math.min(high, value));
 }
+
+function wrappedAngle(angle){
+  return Math.atan2(Math.sin(angle), Math.cos(angle));
+}
+
+function handleOrientation(event){
+  if ($('#s-wheel').hidden || drag || angularVelocity || revealing || reducedMotion.matches) return;
+  const { beta, gamma } = event;
+  if (!Number.isFinite(beta) || !Number.isFinite(gamma)) return;
+  motionOrigin ??= { beta, gamma };
+  const pitch = wrappedAngle((beta - motionOrigin.beta) * Math.PI / 180);
+  const roll = (gamma - motionOrigin.gamma) * Math.PI / 180;
+  targetTiltX = REST_TILT_X + clamp(pitch * .23, -.10, .10);
+  targetTiltY = REST_TILT_Y + clamp(roll * .23, -.10, .10);
+}
+
+window.addEventListener('deviceorientation', handleOrientation, { passive: true });
 
 function openWheel(){
   show('s-wheel');
@@ -1587,193 +1508,141 @@ function openWheel(){
   wheelMusicActive = true;
   setMusicGain(1);
   playBackgroundMusic();
-  $('#hello').textContent = 'Hi cousin';
-  statusEl.textContent = 'Touch or flick to spin · Grab anytime to stop';
-  spinning = false;
-  isDraggingWheel = false;
-  angularVelocity = 0;
-  hasSpunInRun = false;
-  wheelAngle = Math.random() * (Math.PI * 2);
-  initThreeWheel();
-  resizeThreeWheel();
 
-  // Crucial: Restart animation loop because show('s-wheel') cancels raf!
-  cancelAnimationFrame(raf);
+  statusEl.textContent = WHEEL_READY;
+  angularVelocity = 0;
+  drag = null;
+  wheelMoved = false;
+  revealing = false;
+  motionOrigin = null;
+  wheelHover = null;
+  hoverLift = 0;
+  currentTiltX = targetTiltX = REST_TILT_X;
+  currentTiltY = targetTiltY = REST_TILT_Y;
+  wheelAngle = Math.random() * TAU;
+  lastPegIndex = Math.floor((wheelAngle + PEG_STEP / 2) / PEG_STEP);
+  pointerSpringAngle = pointerSpringVel = 0;
+  springActive = false;
+
+  initThreeWheel();
+  if (pointerPivot) pointerPivot.rotation.z = 0;
+  resizeThreeWheel();
   lastFrameTime = performance.now();
   raf = requestAnimationFrame(renderThree);
 }
 
-function startForwardSpin(boost = 1.0){
-  if (spinning && !isDraggingWheel) return;
-  spinning = true;
-  isDraggingWheel = false;
-  hasSpunInRun = true;
-  randomizeRecipient();
-  statusEl.textContent = 'Spinning for your Secret Santa…';
-
-  getAudioCtx();
-  triggerTickHaptic();
-
+function coastWheel(velocity){
+  wheelMoved = true;
   if (reducedMotion.matches){
     finishSpin();
     return;
   }
-
-  cancelAnimationFrame(raf);
-  lastFrameTime = performance.now();
-  raf = requestAnimationFrame(renderThree);
-
-  // Initial angular velocity (approx 22 to 28 rad/s, smooth decay)
-  angularVelocity = (22 + Math.random() * 6) * boost;
-  lastPegIndex = Math.floor(wheelAngle / ((Math.PI * 2) / 8));
+  angularVelocity = velocity;
+  statusEl.textContent = velocity < 0 ? 'Spinning backwards…' : 'Spinning for your Secret Santa…';
 }
 
-function spin(){
-  startForwardSpin(1.0);
-}
-
-// Interactive pointer drag / flick / tap-to-stop setup
-function getPointerAngle(clientX, clientY){
-  const rect = wheel.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + rect.height / 2;
-  return Math.atan2(clientY - cy, clientX - cx);
-}
-
-let lastPointerX = 0, lastPointerY = 0;
-let dragAngleHistory = [];
-
-wheel.addEventListener('pointerdown', e => {
-  if (window.requestMotionPermission) window.requestMotionPermission();
+function activateWheel(){
+  if (revealing || drag) return;
   getAudioCtx();
-  wheel.setPointerCapture(e.pointerId);
+  if (wheelMoved){
+    finishSpin();
+  } else {
+    triggerTickHaptic();
+    coastWheel(19 + Math.random() * 4);
+  }
+}
 
-  // If already spinning fast, touching it immediately grabs / brakes it!
-  if (spinning && Math.abs(angularVelocity) > 1.2){
-    spinning = false;
+function getPointerAngle(event){
+  const rect = wheel.getBoundingClientRect();
+  const x = event.clientX - rect.left - rect.width / 2;
+  const y = event.clientY - rect.top - rect.height / 2;
+  // Re-entering from the hub starts a fresh angle sample instead of jumping 180°.
+  return Math.hypot(x, y) < rect.width * .12 ? null : Math.atan2(y, x);
+}
+
+wheel.addEventListener('pointerdown', event => {
+  if (!event.isPrimary || event.button !== 0 || revealing || drag) return;
+  getAudioCtx();
+  wheel.setPointerCapture(event.pointerId);
+  if (angularVelocity){
     angularVelocity = 0;
     triggerTickHaptic();
-    statusEl.textContent = 'Stopped! Tap to reveal or flick again';
-    // If it was already spinning significantly and user stopped it, give them a chance to reveal or flick
+    statusEl.textContent = WHEEL_STOPPED;
   }
-
-  isDraggingWheel = true;
-  dragStartAngle = getPointerAngle(e.clientX, e.clientY);
-  dragPrevAngle = dragStartAngle;
-  dragLastTime = performance.now();
-  dragMovedTotal = 0;
-  dragAngleHistory = [{ angle: dragStartAngle, time: dragLastTime }];
-  lastPointerX = e.clientX;
-  lastPointerY = e.clientY;
+  drag = {
+    id: event.pointerId,
+    previous: getPointerAngle(event),
+    travel: 0,
+    samples: [{ angle: wheelAngle, time: event.timeStamp }]
+  };
 });
 
-wheel.addEventListener('pointermove', e => {
-  if (!isDraggingWheel) return;
-  const now = performance.now();
-  const curA = getPointerAngle(e.clientX, e.clientY);
-  
-  // Angle difference handling -PI to +PI wrapping
-  let deltaA = curA - dragPrevAngle;
-  if (deltaA > Math.PI) deltaA -= Math.PI * 2;
-  else if (deltaA < -Math.PI) deltaA += Math.PI * 2;
+function aimWheelHover(event){
+  if (event.pointerType !== 'mouse' || reducedMotion.matches) return;
+  const { left, top, width, height } = wheel.getBoundingClientRect();
+  wheelHover = {
+    x: clamp(2 * (event.clientX - left) / width - 1, -1, 1),
+    y: clamp(2 * (event.clientY - top) / height - 1, -1, 1)
+  };
+}
 
-  wheelAngle += deltaA;
-  dragMovedTotal += Math.abs(deltaA);
-  dragPrevAngle = curA;
-
-  // Peg ticking while dragging
-  const pegStep = (Math.PI * 2) / 8;
-  const curPeg = Math.floor(wheelAngle / pegStep);
-  if (curPeg !== lastPegIndex){
-    const dir = deltaA >= 0 ? 1 : -1;
-    lastPegIndex = curPeg;
-    pointerSpringAngle = 0.30 * dir;
-    pointerSpringVel = -8.0 * dir;
-    springActive = true;
-    if (pointerPivot) pointerPivot.rotation.z = pointerSpringAngle;
-    playMechanicalTick();
-    triggerTickHaptic();
+wheel.addEventListener('pointerenter', aimWheelHover);
+wheel.addEventListener('pointerleave', () => { wheelHover = null; });
+wheel.addEventListener('pointermove', event => {
+  if (!drag){
+    aimWheelHover(event);
+    return;
   }
-
-  dragAngleHistory.push({ angle: curA, time: now, deltaA });
-  if (dragAngleHistory.length > 8) dragAngleHistory.shift();
+  if (drag.id !== event.pointerId) return;
+  const angle = getPointerAngle(event);
+  if (drag.previous === null || angle === null){
+    drag.previous = angle;
+    drag.samples = [{ angle: wheelAngle, time: event.timeStamp }];
+    return;
+  }
+  const delta = wrappedAngle(angle - drag.previous);
+  drag.previous = angle;
+  drag.travel += Math.abs(delta);
+  if (reducedMotion.matches) return;
+  wheelAngle += delta;
+  if (delta) updateRatchetingPointer(delta);
+  drag.samples = drag.samples.filter(sample => event.timeStamp - sample.time <= 100);
+  drag.samples.push({ angle: wheelAngle, time: event.timeStamp });
 });
 
-function handlePointerEnd(e){
-  if (!isDraggingWheel) return;
-  isDraggingWheel = false;
-  try { wheel.releasePointerCapture(e.pointerId); } catch(err){}
+function endWheelDrag(event){
+  if (!drag || drag.id !== event.pointerId) return;
+  const { travel, samples } = drag;
+  drag = null;
+  if (event.type !== 'pointerup') return;
 
-  const now = performance.now();
-  // Calculate flick velocity from the last few samples
-  let calcVelocity = 0;
-  if (dragAngleHistory.length >= 2){
-    const oldest = dragAngleHistory[0];
-    const newest = dragAngleHistory[dragAngleHistory.length - 1];
-    const dt = (newest.time - oldest.time) * 0.001;
-    if (dt > 0.015){
-      let netDelta = 0;
-      for (let i = 1; i < dragAngleHistory.length; i++){
-        let d = dragAngleHistory[i].angle - dragAngleHistory[i-1].angle;
-        if (d > Math.PI) d -= Math.PI * 2;
-        else if (d < -Math.PI) d += Math.PI * 2;
-        netDelta += d;
-      }
-      calcVelocity = netDelta / dt;
-    }
+  if (travel < .12){
+    activateWheel();
+    return;
   }
 
-  // If user made a tiny tap without dragging (dragMovedTotal < 0.15 rad)
-  if (dragMovedTotal < 0.15){
-    if (hasSpunInRun && !spinning){
-      // Tapped to finish / reveal
-      finishSpin();
-      return;
-    } else {
-      // Normal launch forward spin
-      startForwardSpin(1.0);
-      return;
-    }
-  }
+  const first = samples[0];
+  const last = samples.at(-1);
+  const seconds = (last.time - first.time) / 1000;
+  const velocity = event.timeStamp - last.time <= 100 && seconds >= .015
+    ? clamp((last.angle - first.angle) / seconds, -30, 30)
+    : 0;
 
-  // If flicked with substantial angular velocity (forward or backward)
-  if (Math.abs(calcVelocity) > 2.5){
-    spinning = true;
-    hasSpunInRun = true;
-    randomizeRecipient();
-    statusEl.textContent = calcVelocity < 0 ? 'Spinning backwards…' : 'Spinning for your Secret Santa…';
-    // Clamp max velocity for realistic feel (up to 32 rad/s)
-    const sign = calcVelocity >= 0 ? 1 : -1;
-    angularVelocity = sign * Math.min(34, Math.max(14, Math.abs(calcVelocity)));
-    cancelAnimationFrame(raf);
-    lastFrameTime = performance.now();
-    raf = requestAnimationFrame(renderThree);
-  } else if (dragMovedTotal > 0.8) {
-    // Moved wheel significantly and released gently: conclude spin after short settle
-    if (hasSpunInRun){
-      finishSpin();
-    } else {
-      hasSpunInRun = true;
-      randomizeRecipient();
-      finishSpin();
-    }
+  wheelMoved = true;
+  if (reducedMotion.matches || Math.abs(velocity) >= 1.4){
+    coastWheel(velocity);
+  } else {
+    statusEl.textContent = WHEEL_STOPPED;
   }
 }
 
-wheel.addEventListener('pointerup', handlePointerEnd);
-wheel.addEventListener('pointercancel', handlePointerEnd);
-
-wheel.addEventListener('keydown', e => {
-  if (e.key === 'Enter' || e.key === ' '){
-    e.preventDefault();
-    if (window.requestMotionPermission) window.requestMotionPermission();
-    if (spinning){
-      spinning = false;
-      angularVelocity = 0;
-      finishSpin();
-    } else {
-      startForwardSpin(1.0);
-    }
+wheel.addEventListener('pointerup', endWheelDrag);
+wheel.addEventListener('pointercancel', endWheelDrag);
+wheel.addEventListener('lostpointercapture', endWheelDrag);
+wheel.addEventListener('keydown', event => {
+  if (event.key === 'Enter' || event.key === ' '){
+    event.preventDefault();
+    if (!event.repeat) activateWheel();
   }
 });
 
@@ -1807,6 +1676,10 @@ function moveCurtains(from, to, duration, sequence){
 }
 
 async function finishSpin(){
+  if (revealing || $('#s-wheel').hidden) return;
+  revealing = true;
+  angularVelocity = 0;
+  randomizeRecipient();
   statusEl.textContent = 'Hold tight…';
   if (reducedMotion.matches || !fabric){ reveal(false); return; }
   const sequence = ++curtainSequence;
@@ -1828,8 +1701,14 @@ const card = $('#card'), tilt = $('#tilt'), holder = $('#portrait');
 let sweep = 0;
 
 function reveal(returning, behindCurtain = false){
-  const recipient = selectedRecipient || randomizeRecipient();
-  if (session && session.slug) store.set('nj-seen-' + session.slug, '1');
+  const saved = returning && session && store.get('nj-recipient-' + session.slug);
+  const recipient = returning
+    ? CANDIDATE_RECIPIENTS.find(person => person.slug === saved) || ISHMAEL_RECIPIENT
+    : selectedRecipient;
+  if (session?.slug){
+    store.set('nj-seen-' + session.slug, '1');
+    store.set('nj-recipient-' + session.slug, recipient.slug);
+  }
 
   $('#who').textContent = recipient.name;
   $('#quip').textContent = recipient.quip;
@@ -1840,6 +1719,7 @@ function reveal(returning, behindCurtain = false){
   `;
 
   show('s-card', behindCurtain);
+  offTilt();
   if (!behindCurtain) celebrateReveal(returning);
 }
 
@@ -1868,23 +1748,30 @@ function glareSweep(){
 
 /* 3D Card Tilt on touch / drag */
 function onTilt(e){
-  cancelAnimationFrame(sweep);
-  const b = card.getBoundingClientRect();
+  if (reducedMotion.matches) return;
+  const b = tilt.getBoundingClientRect();
   const x = Math.max(0, Math.min(1, (e.clientX - b.left) / b.width));
   const y = Math.max(0, Math.min(1, (e.clientY - b.top) / b.height));
-  card.classList.add('live'); card.classList.remove('deal');
-  card.style.setProperty('--rx', (0.5 - y) * 20 + 'deg');
-  card.style.setProperty('--ry', (x - 0.5) * 24 + 'deg');
+  if (card.getAnimations().some(animation => animation.animationName === 'deal' && animation.playState === 'running')) return;
+  cancelAnimationFrame(sweep);
+  card.classList.remove('deal');
+  card.classList.add('live');
+  card.style.setProperty('--rx', (0.5 - y) * 12 + 'deg');
+  card.style.setProperty('--ry', (x - 0.5) * 14 + 'deg');
   card.style.setProperty('--g', 10 + x * 55 + y * 30 + '%');
-  card.style.setProperty('--go', 0.95);
+  card.style.setProperty('--go', 0.65);
 }
 function offTilt(){
+  cancelAnimationFrame(sweep);
   card.classList.remove('live');
   for (const p of ['--rx', '--ry', '--go']) card.style.removeProperty(p);
 }
-tilt.addEventListener('pointerdown', onTilt);
-tilt.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || e.buttons) onTilt(e); });
-for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) tilt.addEventListener(ev, offTilt);
+tilt.addEventListener('pointermove', event => {
+  if (event.isPrimary && (event.pointerType === 'mouse' || event.buttons)) onTilt(event);
+});
+for (const event of ['pointerup', 'pointerleave', 'pointercancel']){
+  tilt.addEventListener(event, offTilt);
+}
 
 function home(){
   if (fxc && fx) fxc.clearRect(0, 0, fx.width, fx.height);
@@ -1975,129 +1862,8 @@ $('#roster').onclick = e => {
 
 $('#back').onclick = () => home();
 
-/* ---------- JavaScript Layout Engine: Exact Viewport Fitting ---------- */
-const LayoutEngine = (() => {
-  const root = document.documentElement;
-  const shell = document.querySelector('.shell');
-  const bar = document.querySelector('.bar');
-
-  function update() {
-    const vv = window.visualViewport;
-    const vpW = Math.round(vv ? vv.width : window.innerWidth);
-    const vpH = Math.round(vv ? vv.height : window.innerHeight);
-
-    root.style.setProperty('--app-w', `${vpW}px`);
-    root.style.setProperty('--app-h', `${vpH}px`);
-    root.style.setProperty('--vh', `${vpH * 0.01}px`);
-
-    document.body.style.width = `${vpW}px`;
-    document.body.style.height = `${vpH}px`;
-    if (shell) {
-      shell.style.width = `${vpW}px`;
-      shell.style.height = `${vpH}px`;
-    }
-
-    const barH = bar ? bar.offsetHeight : 54;
-    const availH = vpH - barH;
-    root.style.setProperty('--avail-h', `${availH}px`);
-
-    const activeScreen = document.querySelector('.screen:not([hidden])');
-    if (!activeScreen) return;
-
-    if (activeScreen.id === 's-wheel') {
-      const topH = (activeScreen.querySelector('div:first-child')?.offsetHeight || 60);
-      const botH = (activeScreen.querySelector('p:last-child')?.offsetHeight || 26);
-      const safePadding = 24;
-      const maxWheelH = availH - topH - botH - safePadding;
-      const maxWheelW = vpW - 40;
-      const wheelSize = Math.max(160, Math.min(maxWheelH, maxWheelW, vpW > 768 ? 440 : 350));
-
-      const wheelEl = document.getElementById('wheel');
-      if (wheelEl) {
-        wheelEl.style.width = `${wheelSize}px`;
-        wheelEl.style.height = `${wheelSize}px`;
-      }
-      if (typeof resizeThreeWheel === 'function') {
-        resizeThreeWheel();
-      }
-    } else if (activeScreen.id === 's-card') {
-      const cardEl = document.getElementById('card');
-      const actionsEl = activeScreen.querySelector('.actions');
-      const noteEl = activeScreen.querySelector('.gift-note');
-      const actH = actionsEl ? actionsEl.offsetHeight : 54;
-      const notH = noteEl ? noteEl.offsetHeight : 24;
-      const maxCardH = Math.max(260, availH - actH - notH - 20);
-
-      if (cardEl) {
-        cardEl.style.maxHeight = `${maxCardH}px`;
-      }
-
-      const photoWrap = activeScreen.querySelector('.photo-card-wrap');
-      if (photoWrap) {
-        if (vpW >= 860) {
-          const photoDim = Math.min(Math.max(220, maxCardH * 0.65), 320);
-          photoWrap.style.width = `${photoDim}px`;
-          photoWrap.style.height = `${photoDim}px`;
-        } else {
-          const photoDim = Math.min(Math.max(105, maxCardH * 0.36), vpW * 0.44, 165);
-          photoWrap.style.width = `${photoDim}px`;
-          photoWrap.style.height = `${photoDim}px`;
-        }
-      }
-    } else if (activeScreen.id === 's-host') {
-      const title = activeScreen.querySelector('h2');
-      const tally = activeScreen.querySelector('.tally');
-      const meter = activeScreen.querySelector('.meter');
-      const sub = activeScreen.querySelector('p');
-      const actions = activeScreen.querySelector('.actions');
-      const overhead = (title ? title.offsetHeight : 34) +
-                       (tally ? tally.offsetHeight : 44) +
-                       (meter ? meter.offsetHeight : 16) +
-                       (sub ? sub.offsetHeight : 24) +
-                       (actions ? actions.offsetHeight : 50) + 40;
-      const roster = document.getElementById('roster');
-      if (roster) {
-        roster.style.maxHeight = `${Math.max(100, availH - overhead)}px`;
-      }
-    }
-
-    window.scrollTo(0, 0);
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-  }
-
-  window.addEventListener('resize', update, { passive: true });
-  window.addEventListener('orientationchange', () => { setTimeout(update, 80); }, { passive: true });
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', update, { passive: true });
-    window.visualViewport.addEventListener('scroll', () => { window.scrollTo(0, 0); }, { passive: true });
-  }
-
-  // Strictly prevent window/body scroll
-  window.addEventListener('scroll', () => {
-    if (window.scrollX !== 0 || window.scrollY !== 0) {
-      window.scrollTo(0, 0);
-    }
-  }, { passive: false });
-
-  document.addEventListener('touchmove', (e) => {
-    if (!e.target.closest('.roster')) {
-      e.preventDefault();
-    }
-  }, { passive: false });
-
-  document.addEventListener('wheel', (e) => {
-    if (!e.target.closest('.roster')) {
-      e.preventDefault();
-    }
-  }, { passive: false });
-
-  return { update };
-})();
-
-/* Initial Launch */
+/* Initial launch */
 initDeviceAndUrl();
-LayoutEngine.update();
 
 /* ---------- Splash: Letter-by-letter Cursive Signature ---------- */
 const sig = $('#sig'), splash = $('#splash');
@@ -2112,7 +1878,11 @@ if (sig && splash) {
     setTimeout(() => {
       splash.hidden = true;
       splash.style.display = 'none';
-      LayoutEngine.update();
+      if (!reducedMotion.matches){
+        const animation = $('.envelope-gif');
+        animation.addEventListener('load', () => animation.parentElement.classList.add('animated'), { once: true });
+        animation.src = 'assets/envelope-reveal.gif';
+      }
     }, 480);
   }
   splash.onclick = endSplash;
