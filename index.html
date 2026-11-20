@@ -632,6 +632,67 @@
       .card .foot{grid-area:foot}
       .photo-card-wrap{width:clamp(90px, 32dvh, 245px)}
     }
+    @media(min-width:1000px) and (min-height:481px){
+      .landing,.wheel-stage{
+        width:min(100%, 1680px);
+        grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr);
+        column-gap:clamp(28px, 4vw, 88px);
+        justify-items:start;
+        text-align:left;
+      }
+      .landing{
+        padding:0 clamp(4px, 2.2vw, 40px);
+        row-gap:clamp(20px, 4dvh, 40px);
+      }
+      .landing-title{
+        font-size:clamp(74px, min(9.1vw, 20dvh), 190px);
+      }
+      .landing-title span{font-size:clamp(14px, 1vw, 18px);margin-top:18px}
+      .envelope{width:min(86%, 64dvh, 620px)}
+      .personal-entry{width:min(100%, 540px);gap:clamp(18px, 3dvh, 28px)}
+      #s-entry .entry-greeting h2{font-size:clamp(43px, min(4.6vw, 8dvh), 76px)}
+      #s-entry .entry-greeting p{
+        max-width:36ch;
+        font-size:clamp(18px, 1.35vw, 24px);
+        text-wrap:pretty;
+      }
+      .entry-actions .btn{
+        width:auto;
+        min-height:58px;
+        padding-inline:clamp(24px, 3vw, 50px);
+        font-size:clamp(18px, 1.25vw, 22px);
+      }
+      .entry-actions .link-btn{padding-inline:0;font-size:16px}
+
+      .wheel-stage{
+        width:min(100%, 1440px);
+        grid-template-areas:"heading wheel" "help wheel";
+        grid-template-rows:1fr 1fr;
+        row-gap:clamp(14px, 3dvh, 30px);
+        padding-inline:clamp(4px, 3vw, 50px);
+      }
+      .wheel-heading{grid-area:heading;align-self:end}
+      .wheel-heading h2{font-size:clamp(54px, 6vw, 100px)}
+      #status{font-size:clamp(17px, 1.35vw, 22px);min-height:2.9em}
+      .wheelbtn{grid-area:wheel;justify-self:center;width:min(100%, 73dvh, 720px)}
+      #s-wheel .wheel-help{grid-area:help;align-self:start;font-size:16px}
+      .wheel-help strong{font-size:19px}
+
+      .card-stage{width:min(100%, 1140px)}
+      .card{
+        padding:clamp(20px, 4dvh, 42px);
+        column-gap:clamp(32px, 6vw, 100px);
+        grid-template-columns:minmax(0, .9fr) minmax(0, 1.1fr);
+      }
+      .photo-card-wrap{width:min(100%, clamp(145px, 38dvh, 340px));margin-inline:0}
+      #s-card .card-name{font-size:clamp(62px, min(7.2vw, 13dvh), 116px)}
+      #s-card .card-quip{font-size:clamp(18px, 1.5vw, 24px)}
+    }
+    @media(min-width:1000px) and (481px <= height <= 580px){
+      .card-stage{gap:8px}
+      .card{padding-block:16px}
+      .photo-card-wrap{width:32dvh}
+    }
     @media(max-width:699px){
       .landing{margin-block:clamp(6px, 8dvh, 64px) auto}
       .envelope{margin-top:clamp(14px,3dvh,24px)}
