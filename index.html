@@ -451,7 +451,7 @@
       letter-spacing:-.045em;
     }
     .landing-title:focus{outline:none}
-    .landing-title span{
+    .landing-title .landing-year{
       display:block;
       margin-top:12px;
       font:700 13px/1 var(--sans);
@@ -647,7 +647,7 @@
       .landing-title{
         font-size:clamp(74px, min(9.1vw, 20dvh), 190px);
       }
-      .landing-title span{font-size:clamp(14px, 1vw, 18px);margin-top:18px}
+      .landing-title .landing-year{font-size:clamp(14px, 1vw, 18px);margin-top:18px}
       .envelope{width:min(86%, 64dvh, 620px)}
       .personal-entry{width:min(100%, 540px);gap:clamp(18px, 3dvh, 28px)}
       #s-entry .entry-greeting h2{font-size:clamp(43px, min(4.6vw, 8dvh), 76px)}
@@ -687,6 +687,102 @@
       .photo-card-wrap{width:min(100%, clamp(145px, 38dvh, 340px));margin-inline:0}
       #s-card .card-name{font-size:clamp(62px, min(7.2vw, 13dvh), 116px)}
       #s-card .card-quip{font-size:clamp(18px, 1.5vw, 24px)}
+    }
+    #start-draw-btn{gap:.3em}
+
+    @media(min-width:1000px) and (min-height:620px){
+      .landing{
+        grid-template-columns:minmax(0, 1fr) minmax(0, 1.08fr);
+        column-gap:clamp(30px, 5vw, 96px);
+        row-gap:clamp(12px, 2.5dvh, 24px);
+      }
+      .landing-title{
+        position:relative;
+        padding-inline-end:.13em;
+        font-size:clamp(108px, min(12.5vw, 27dvh), 246px);
+        line-height:.8;
+      }
+      .landing-secret{
+        display:block;
+        width:max-content;
+        font-size:.57em;
+        line-height:.88;
+        transform:rotate(-6deg);
+        transform-origin:left bottom;
+      }
+      .landing-santa{
+        display:block;
+        width:max-content;
+        margin-inline-start:.16em;
+        font-style:italic;
+        transform:rotate(-3deg);
+        transform-origin:left center;
+      }
+      .landing-title .landing-year{
+        position:absolute;
+        inset:.5em 0 auto auto;
+        margin:0;
+        padding-block-start:.55em;
+        border-top:1px solid currentColor;
+        color:var(--muted);
+      }
+      .landing::before{
+        content:"";
+        grid-area:art;
+        place-self:center;
+        width:min(96%, 75dvh, 740px);
+        aspect-ratio:1.2;
+        transform:rotate(7deg);
+        border:1px solid var(--line);
+        border-radius:14px;
+        background:radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 8%, transparent), transparent 72%);
+      }
+      .envelope{
+        place-self:center;
+        width:min(81%, 60dvh, 620px);
+        transform:rotate(-13deg) translateY(4%);
+      }
+      .personal-entry{margin-inline-start:clamp(14px, 2vw, 42px)}
+      #s-entry .entry-greeting h2{font-size:clamp(43px, min(4vw, 8dvh), 68px)}
+    }
+    @media(min-width:1000px) and (min-height:481px){
+      .entry-actions .btn{
+        isolation:isolate;
+        position:relative;
+        background:transparent;
+        box-shadow:none;
+        border-radius:8px;
+        justify-content:space-between;
+        min-width:min(100%, 270px);
+        padding-inline:26px;
+        transform:rotate(-2deg);
+        transform-origin:left center;
+        transition:transform .2s ease, filter .2s ease;
+      }
+      .entry-actions .btn::before{
+        content:"";
+        position:absolute;
+        z-index:-1;
+        inset:0;
+        border-radius:inherit;
+        background:
+          radial-gradient(circle at 0 50%,transparent 6px,var(--accent) 7px) left / 51% 100% no-repeat,
+          radial-gradient(circle at 100% 50%,transparent 6px,var(--accent) 7px) right / 51% 100% no-repeat;
+      }
+      #start-draw-btn{gap:22px}
+      .draw-arrow{
+        display:grid;
+        place-items:center;
+        align-self:stretch;
+        border-inline-start:1px dashed currentColor;
+        padding-inline-start:18px;
+        font-size:1.28em;
+      }
+      .entry-actions .btn:hover,.entry-actions .btn:focus-visible{transform:rotate(0) translateY(-3px)}
+      @media(prefers-reduced-motion:reduce){
+        .entry-actions .btn{transition:none}
+        .entry-actions .btn:hover,.entry-actions .btn:focus-visible{transform:rotate(-2deg)}
+      }
     }
     @media(min-width:1000px) and (481px <= height <= 580px){
       .card-stage{gap:8px}
@@ -751,7 +847,7 @@
   <!-- 1. ENTRY SCREEN -->
   <main class="screen" id="s-entry">
     <div class="landing">
-      <h1 class="landing-title">Secret Santa <span>2026</span></h1>
+      <h1 class="landing-title"><span class="landing-secret">Secret</span> <span class="landing-santa">Santa</span> <span class="landing-year">2026</span></h1>
       <div class="envelope" aria-hidden="true">
         <div class="envelope-flap"><span class="envelope-seal">✦</span></div>
         <div class="envelope-letter"><img src="assets/santa-letter.png" alt="" width="208" height="208"></div>
@@ -776,7 +872,7 @@
           <p id="pers-sub">Ready to see who you’re buying for this Christmas?</p>
         </div>
         <div class="entry-actions">
-          <button class="btn" id="start-draw-btn" type="button">Start the draw →</button>
+          <button class="btn" id="start-draw-btn" type="button">Start the draw <span class="draw-arrow" aria-hidden="true">→</span></button>
         </div>
       </div>
 
