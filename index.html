@@ -121,7 +121,11 @@
       white-space:nowrap;
       transition:transform 0.15s ease;
     }
-    .mark:hover{transform:scale(1.03)}
+    .mark i{display:inline-block;font-style:normal}
+    .mark-word{display:inline-block}
+    @media(prefers-reduced-motion:no-preference){
+      .mark.writing i{animation:write-letter .28s ease-out both;animation-delay:calc(var(--i)*.055s)}
+    }
     .bar-actions{display:flex;align-items:center;gap:4px;flex:none}
     .icon{
       width:44px;
@@ -247,11 +251,15 @@
       content:"";position:absolute;inset:7px;pointer-events:none;border:1px solid var(--line);border-radius:17px;z-index:-1;
     }
     .card::after{
-      content:"";position:absolute;inset:-20%;pointer-events:none;opacity:var(--go);mix-blend-mode:soft-light;z-index:-1;
-      background:linear-gradient(112deg, transparent calc(var(--g) - 22%), #fff var(--g), transparent calc(var(--g) + 22%));
+      content:"";position:absolute;inset:-20%;pointer-events:none;opacity:var(--go);mix-blend-mode:soft-light;z-index:2;
+      background:linear-gradient(112deg, transparent calc(var(--g) - 20%), #fff1d0 var(--g), transparent calc(var(--g) + 20%));
     }
-    .card.deal{animation:deal .65s cubic-bezier(.2,.8,.25,1) both}
-    @keyframes deal{from{opacity:0;transform:translateY(22px) rotateX(-12deg) scale(.96)}}
+    .card.deal{animation:deal .75s cubic-bezier(.2,.85,.3,1) both}
+    @keyframes deal{
+      0%{opacity:0;transform:translateY(46px) rotateX(-24deg) scale(.84)}
+      65%{opacity:1;transform:translateY(-4px) rotateX(4deg) scale(1.015)}
+      100%{transform:translateY(0) rotateX(0) scale(1)}
+    }
 
     .eyebrow{
       font-size:clamp(11px, 1.8vmin, 13px);
@@ -452,46 +460,70 @@
     .envelope{
       grid-area:art;
       position:relative;
+      isolation:isolate;
       width:clamp(108px, 24dvh, 207px);
       aspect-ratio:1.55;
-      background:linear-gradient(155deg,#ffefd2,#dba974);
-      border-radius:8px;
       transform:rotate(-8deg);
-      box-shadow:0 2px 1px rgba(0,0,0,.14), 0 20px 34px -14px rgba(0,0,0,.6);
+      perspective:700px;
+      border-radius:8px;
+      background:linear-gradient(150deg,#e5bf8d,#a66e48);
+      box-shadow:0 17px 31px -13px rgba(0,0,0,.58);
     }
-    .envelope-gif{
-      display:none;
-      position:absolute;
-      width:116.4%;
-      height:auto;
-      max-width:none;
-      left:-8.2%;
-      bottom:-11%;
-      filter:drop-shadow(0 14px 14px rgba(0,0,0,.28));
-    }
-    @media(prefers-reduced-motion:no-preference){
-      .envelope.animated{background:none;box-shadow:none}
-      .envelope.animated span,.envelope.animated::before,.envelope.animated::after{display:none}
-      .envelope.animated .envelope-gif{display:block}
-    }
-    .envelope::before,.envelope::after{content:"";position:absolute;inset:0;border-radius:inherit}
-    .envelope::before{
-      background:linear-gradient(145deg,#fff7e8,#efc797);
-      clip-path:polygon(0 0,100% 0,50% 65%);
-    }
-    .envelope::after{
-      border:1px solid #9c673d45;
-      background:linear-gradient(30deg,transparent 49.5%,#9c673d38 50%, transparent 50.5%) left bottom/50% 60% no-repeat,
-        linear-gradient(-30deg,transparent 49.5%,#9c673d38 50%,transparent 50.5%) right bottom/50% 60% no-repeat;
-    }
-    .envelope span{
-      position:absolute;
-      inset:63% auto auto 50%;
-      translate:-50% -50%;
+    .envelope-letter,.envelope-flap,.envelope-pocket{position:absolute}
+    .envelope-letter{
       z-index:1;
+      inset:12% 17% 7%;
+      display:grid;
+      place-items:start center;
+      overflow:hidden;
+      padding-top:5%;
+      border:1px solid #d4b184;
+      border-radius:5px;
+      background:#fff3dc;
+      box-shadow:0 2px 9px #774a344d;
+      transform:translateY(9%);
+    }
+    .envelope-letter::before{
+      content:"";position:absolute;inset:6%;border:1px solid #c59c655e;border-radius:3px;
+    }
+    .envelope-letter img{display:block;width:43%;height:auto}
+    .envelope-pocket{
+      z-index:2;
+      inset:0;
+      border-radius:inherit;
+      background:linear-gradient(34deg,#edcda4 49.7%,#e1ac7c 50%,#f7dbb5 50.4%) left / 50.1% 100% no-repeat,
+        linear-gradient(-34deg,#e4b387 49.7%,#d59e70 50%,#f0c99d 50.4%) right / 50.1% 100% no-repeat;
+      clip-path:polygon(0 0,50% 59%,100% 0,100% 100%,0 100%);
+    }
+    .envelope-pocket::after{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(155deg,#f5d6af,#dcaa78);
+      clip-path:polygon(0 100%,50% 47%,100% 100%);
+    }
+    .envelope-flap{
+      z-index:3;
+      inset:0 0 auto;
+      height:66%;
+      transform-origin:top center;
+      transform-style:preserve-3d;
+    }
+    .envelope-flap::before,.envelope-flap::after{
+      content:"";position:absolute;inset:0;border-radius:8px 8px 0 0;
+      clip-path:polygon(0 0,100% 0,50% 100%);
+      backface-visibility:hidden;
+    }
+    .envelope-flap::before{background:linear-gradient(155deg,#fff3dc,#edc398)}
+    .envelope-flap::after{
+      transform:rotateX(180deg);
+      background:linear-gradient(#d49d69,#ecc59a);
+    }
+    .envelope-seal{
+      position:absolute;
+      inset:85% auto auto 50%;
+      translate:-50% -50%;
       display:grid;
       place-items:center;
-      width:24%;
+      width:22%;
       aspect-ratio:1;
       border-radius:47% 53% 48% 52%;
       background:radial-gradient(circle at 34% 27%,#a5434b,#74232e 70%);
@@ -499,6 +531,23 @@
       box-shadow:0 2px 4px #6523316b,inset 0 0 0 2px #68202c80;
       color:#ffe3b9;
       font:400 clamp(15px,3.5dvh,26px)/1 var(--serif);
+      backface-visibility:hidden;
+    }
+    @media(prefers-reduced-motion:no-preference){
+      .envelope.ready .envelope-flap{animation:envelope-flap 6s infinite both}
+      .envelope.ready .envelope-letter{animation:envelope-letter 6s infinite both}
+    }
+    @keyframes envelope-flap{
+      0%,12%,77%,100%{transform:rotateX(0)}
+      25%,64%{transform:rotateX(116deg)}
+      12%,64%{animation-timing-function:cubic-bezier(.42,0,.3,1)}
+      0%,19%,70%,100%{z-index:3}
+      20%,69%{z-index:0}
+    }
+    @keyframes envelope-letter{
+      0%,26%,61%,100%{transform:translateY(9%)}
+      39%,49%{transform:translateY(-48%) rotate(3deg)}
+      26%,49%{animation-timing-function:cubic-bezier(.3,.65,.3,1)}
     }
     .personal-entry,#picker-view{
       grid-area:details;
@@ -540,7 +589,8 @@
     }
     .wheelbtn:active{cursor:grabbing}
     .wheelbtn canvas{width:100%;height:100%;display:block}
-    #s-wheel .wheel-help{font-size:13px;max-width:none}
+    #s-wheel .wheel-help{font-size:13px;max-width:none;display:grid;gap:2px}
+    .wheel-help strong{font-size:15px;font-weight:700;color:var(--ink)}
 
     /* Card */
     .card-stage{
@@ -584,6 +634,7 @@
     }
     @media(max-width:699px){
       .landing{margin-block:clamp(6px, 8dvh, 64px) auto}
+      .envelope{margin-top:clamp(14px,3dvh,24px)}
     }
     @media(max-height:480px){
       .landing{gap:12px;padding-block:0;margin-block:auto}
@@ -622,7 +673,7 @@
 
   <!-- Header Bar: Cursive Logo clicks to Home -->
   <header class="bar">
-    <a href="?" class="mark" id="logo-home" title="Go to Home">Njithi Cousins</a>
+    <a href="?" class="mark" id="logo-home" title="Go to Home" aria-label="Njithi Cousins">Njithi Cousins</a>
     <div class="bar-actions">
       <button class="palette-btn" id="palette-toggle" type="button" title="Switch Design Palette">
         <span> Palette</span>
@@ -641,8 +692,9 @@
     <div class="landing">
       <h1 class="landing-title">Secret Santa <span>2026</span></h1>
       <div class="envelope" aria-hidden="true">
-        <span>✦</span>
-        <img class="envelope-gif" alt="" width="312" height="250">
+        <div class="envelope-flap"><span class="envelope-seal">✦</span></div>
+        <div class="envelope-letter"><img src="assets/santa-letter.png" alt="" width="208" height="208"></div>
+        <div class="envelope-pocket"></div>
       </div>
       <!-- View A: Returning device user (automatically locked & ready) -->
       <div id="pers-returning" class="personal-entry" hidden>
@@ -734,7 +786,7 @@
       <div class="wheelbtn" id="wheel" role="button" tabindex="0" aria-label="Spin the wheel" aria-describedby="wheel-help">
         <canvas id="cv"></canvas>
       </div>
-      <p class="wheel-help" id="wheel-help">✨ Drag forwards or backwards · Tap anytime to stop</p>
+      <p class="wheel-help" id="wheel-help"><strong>Drag forwards or backwards</strong> <span>Tap anytime to stop</span></p>
     </div>
   </div>
 
@@ -1150,7 +1202,7 @@ let rigGroup = null, wheelGroup = null, pointerPivot = null, wheelKeyLight = nul
 let pointerSpringAngle = 0, pointerSpringVel = 0, springActive = false;
 let wheelAngle = 0;
 let lastPegIndex = 0;
-const REST_TILT_X = 0.06, REST_TILT_Y = -0.08;
+const REST_TILT_X = 0, REST_TILT_Y = 0;
 let currentTiltX = REST_TILT_X, currentTiltY = REST_TILT_Y;
 let targetTiltX = currentTiltX, targetTiltY = currentTiltY;
 let wheelHover = null;
@@ -1244,7 +1296,11 @@ function renderFaceCanvas(off){
   c.font = 'italic bold 44px Georgia, serif';
   c.textAlign = 'center';
   c.textBaseline = 'middle';
-  c.fillText('Spin', cx, cy);
+  c.save();
+  c.translate(cx, cy);
+  c.rotate(-Math.PI / 2);
+  c.fillText('Spin', 0, 0);
+  c.restore();
 
   // Golden highlight arc
   c.beginPath();
@@ -1519,7 +1575,7 @@ function openWheel(){
   hoverLift = 0;
   currentTiltX = targetTiltX = REST_TILT_X;
   currentTiltY = targetTiltY = REST_TILT_Y;
-  wheelAngle = Math.random() * TAU;
+  wheelAngle = 0;
   lastPegIndex = Math.floor((wheelAngle + PEG_STEP / 2) / PEG_STEP);
   pointerSpringAngle = pointerSpringVel = 0;
   springActive = false;
@@ -1586,7 +1642,6 @@ function aimWheelHover(event){
   };
 }
 
-wheel.addEventListener('pointerenter', aimWheelHover);
 wheel.addEventListener('pointerleave', () => { wheelHover = null; });
 wheel.addEventListener('pointermove', event => {
   if (!drag){
@@ -1756,8 +1811,8 @@ function onTilt(e){
   cancelAnimationFrame(sweep);
   card.classList.remove('deal');
   card.classList.add('live');
-  card.style.setProperty('--rx', (0.5 - y) * 12 + 'deg');
-  card.style.setProperty('--ry', (x - 0.5) * 14 + 'deg');
+  card.style.setProperty('--rx', (0.5 - y) * 18 + 'deg');
+  card.style.setProperty('--ry', (x - 0.5) * 20 + 'deg');
   card.style.setProperty('--g', 10 + x * 55 + y * 30 + '%');
   card.style.setProperty('--go', 0.65);
 }
@@ -1766,6 +1821,7 @@ function offTilt(){
   card.classList.remove('live');
   for (const p of ['--rx', '--ry', '--go']) card.style.removeProperty(p);
 }
+tilt.addEventListener('pointerdown', event => { if (event.isPrimary) onTilt(event); });
 tilt.addEventListener('pointermove', event => {
   if (event.isPrimary && (event.pointerType === 'mouse' || event.buttons)) onTilt(event);
 });
@@ -1867,9 +1923,31 @@ initDeviceAndUrl();
 
 /* ---------- Splash: Letter-by-letter Cursive Signature ---------- */
 const sig = $('#sig'), splash = $('#splash');
+function signatureLetters(words, wordClass, separator = ''){
+  let index = 0;
+  return words.map((word, position) =>
+    `<span aria-hidden="true" class="${wordClass(position)}">${[...word].map(letter =>
+      `<i style="--i:${index++}">${letter}</i>`
+    ).join('')}</span>`
+  ).join(separator);
+}
+
+const signatureWords = ['Njithi', 'Cousins'];
+const mark = $('#logo-home');
+mark.innerHTML = signatureLetters(signatureWords, () => 'mark-word', ' ');
+function writeMark(){
+  if (reducedMotion.matches || !splash.hidden) return;
+  mark.classList.remove('writing');
+  void mark.offsetWidth;
+  mark.classList.add('writing');
+}
+mark.addEventListener('pointerenter', event => {
+  if (event.pointerType === 'mouse') writeMark();
+});
+mark.addEventListener('focus', writeMark);
+
 if (sig && splash) {
-  let n = 0;
-  sig.innerHTML = ['Njithi', 'Cousins'].map((w, k) => `<span aria-hidden="true" class="${k ? 'l2' : ''}">${[...w].map(ch => `<i style="--i:${n++}">${ch}</i>`).join('')}</span>`).join('') +
+  sig.innerHTML = signatureLetters(signatureWords, position => position ? 'l2' : '') +
     '<svg class="swash" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 12 C50 2 120 2 198 9 C150 10 110 13 80 18"/></svg>';
 
   function endSplash(){
@@ -1878,11 +1956,7 @@ if (sig && splash) {
     setTimeout(() => {
       splash.hidden = true;
       splash.style.display = 'none';
-      if (!reducedMotion.matches){
-        const animation = $('.envelope-gif');
-        animation.addEventListener('load', () => animation.parentElement.classList.add('animated'), { once: true });
-        animation.src = 'assets/envelope-reveal.gif';
-      }
+      $('.envelope').classList.add('ready');
     }, 480);
   }
   splash.onclick = endSplash;
