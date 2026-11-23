@@ -969,7 +969,7 @@
       <div class="wheelbtn" id="wheel" role="button" tabindex="0" aria-label="Spin the wheel" aria-describedby="wheel-help">
         <canvas id="cv"></canvas>
       </div>
-      <p class="wheel-help" id="wheel-help"><strong>Drag forwards or backwards</strong> <span>Tap anytime to stop</span></p>
+      <p class="wheel-help" id="wheel-help"><strong>Spin it either way</strong> <span>Tap while it spins to stop and reveal</span></p>
     </div>
   </div>
 
@@ -980,7 +980,7 @@
         <article class="card" id="card">
           <div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:6px;">
             <span class="eyebrow" style="margin:0;">You’re buying for</span>
-            <span id="preview-badge" style="font-size:0.75rem;padding:2px 10px;border-radius:999px;background:rgba(255,244,220,0.14);color:var(--gold);font-weight:700;letter-spacing:0.02em;">🔒 Only you can see this</span>
+            <span id="preview-badge" style="font-size:0.75rem;padding:2px 10px;border-radius:999px;background:rgba(255,244,220,0.14);color:var(--gold);font-weight:700;letter-spacing:0.02em;white-space:nowrap;">🔒 Private</span>
           </div>
           <div id="portrait"></div>
           <div class="recipient-copy">
@@ -1411,7 +1411,7 @@ async function initDeviceAndUrl(){
   store.set('nj-my-token', token);
   selectedRecipient = data.recipient;
   if (data.recipient.photo) { const warm = new Image(); warm.src = data.recipient.photo; }
-  if (badge) badge.textContent = '🔒 Only you can see this';
+  if (badge) badge.textContent = '🔒 Private';
   session = { slug: data.giverSlug, me: data.giverName, to: data.recipient, token };
 
   if (store.get('nj-seen-tok-' + token)){
@@ -1481,8 +1481,8 @@ let lastFrameTime = 0;
 let threeInited = false;
 
 const PEG_STEP = TAU / 8;
-const WHEEL_READY = 'Touch or flick to spin · Grab anytime to stop';
-const WHEEL_STOPPED = 'Stopped! Tap to reveal or flick again';
+const WHEEL_READY = 'Swipe or tap the wheel to spin';
+const WHEEL_STOPPED = 'Stopped! Tap the wheel to reveal';
 let angularVelocity = 0;
 let drag = null;
 let wheelMoved = false;
@@ -1958,7 +1958,9 @@ function endWheelDrag(event){
   if (reducedMotion.matches || Math.abs(velocity) >= 1.4){
     coastWheel(velocity);
   } else {
-    statusEl.textContent = WHEEL_STOPPED;
+    // A slow drag still spins the wheel (in the drag's direction) rather than stalling.
+    const direction = Math.sign(velocity || (last.angle - first.angle)) || 1;
+    coastWheel(direction * (9 + Math.random() * 3));
   }
 }
 
@@ -2058,12 +2060,14 @@ function reveal(returning, behindCurtain = false){
   const countBadge = $('#preview-badge');
   if (countBadge) {
     if (isPrivateMode) {
-      countBadge.textContent = '🔒 Only you can see this';
+      countBadge.textContent = '🔒 Private';
     } else {
       countBadge.textContent = `Preview ${candidateIndex + 1} of ${CANDIDATE_RECIPIENTS.length}`;
     }
   }
   holder.replaceChildren(portraitFor(recipient));
+  const eyebrow = card.querySelector('.eyebrow');
+  if (eyebrow) eyebrow.textContent = isPrivateMode ? 'You’re buying for' : 'Preview · not a real draw';
   if (isPrivateMode && session?.token) store.set('nj-seen-tok-' + session.token, '1');
 
   show('s-card', behindCurtain);
@@ -2162,8 +2166,9 @@ if (nextBtn) nextBtn.onclick = () => { advanceRecipientLoop(1); reveal(false); }
 
 /* ---------- Vibrant Multi-Colored Fireworks ---------- */
 const fx = $('#fx'), fxc = fx.getContext('2d');
+const LOW_POWER = (navigator.hardwareConcurrency || 4) <= 4 || (navigator.deviceMemory || 4) <= 2;
 function fireworks(ms){
-  const d = Math.min(devicePixelRatio || 1, 2);
+  const d = Math.min(devicePixelRatio || 1, LOW_POWER ? 1.25 : 2);
   const w = fx.width = fx.clientWidth * d, h = fx.height = fx.clientHeight * d;
   // High-saturation vibrant festival palette
   const cols = ['#ff7443', '#ffd48e', '#fbc1b6', '#fff4dc'];
@@ -2175,7 +2180,7 @@ function fireworks(ms){
     const y = h * (0.10 + Math.random() * 0.12);
     const c1 = cols[(Math.random() * cols.length) | 0];
     const c2 = cols[(Math.random() * cols.length) | 0];
-    const n = 64;
+    const n = LOW_POWER ? 34 : 64;
     for (let i = 0; i < n; i++){
       const a = (i / n) * TAU + Math.random() * 0.15;
       const s = (1.4 + Math.random() * 3.4) * d;
