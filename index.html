@@ -890,7 +890,7 @@
             <option value="jeff">Jeff</option>
           </optgroup>
           <optgroup label="Wambugu Branch">
-            <option value="charlesakashadow">Charles aka Shadow</option>
+            <option value="charles-wambugu">Charles Wambugu</option>
             <option value="millcah">Millcah</option>
             <option value="karen">Karen</option>
             <option value="muli">Muli</option>
@@ -902,7 +902,7 @@
           </optgroup>
           <optgroup label="Mwangi Branch">
             <option value="dani">Dani</option>
-            <option value="paps">Paps</option>
+            <option value="charles-mwangi">Charles Mwangi</option>
             <option value="bettie">Bettie</option>
             <option value="muthonimamaesther">Muthoni (Mama Esther)</option>
             <option value="mamaliam">Mama Liam</option>
@@ -952,7 +952,10 @@
     <div class="card-stage">
       <div class="tilt" id="tilt">
         <article class="card" id="card">
-          <span class="eyebrow">You’re buying for</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:6px;">
+            <span class="eyebrow" style="margin:0;">You’re buying for</span>
+            <span id="preview-badge" style="font-size:0.75rem;padding:2px 10px;border-radius:999px;background:rgba(255,244,220,0.14);color:var(--gold);font-weight:700;letter-spacing:0.02em;">1 of 18</span>
+          </div>
           <div id="portrait"></div>
           <div class="recipient-copy">
             <h2 class="card-name" id="who" tabindex="-1">Ishmael</h2>
@@ -964,10 +967,14 @@
           </div>
         </article>
       </div>
-      <p class="gift-note">Keep your name under wraps until gift day.</p>
+      <p class="gift-note">Reviewing tethered photos & names. Keep gifts under wraps!</p>
       <div class="actions">
-        <button class="btn" type="button" id="hide">Done. Close my card</button>
-        <button class="link" type="button" id="replay">Watch the spin again</button>
+        <div style="display:flex;gap:10px;width:100%;justify-content:center;margin-bottom:8px;">
+          <button class="btn" type="button" id="prev-cousin" style="flex:1;background:rgba(255,244,220,0.12);color:var(--ink);padding:10px 14px;font-size:0.9rem;">← Prev</button>
+          <button class="btn" type="button" id="next-cousin" style="flex:1;background:var(--accent);color:var(--on-accent);padding:10px 14px;font-size:0.9rem;font-weight:700;">Next Cousin →</button>
+        </div>
+        <button class="link" type="button" id="replay" style="margin-bottom:6px;">Spin the wheel again</button>
+        <button class="btn" type="button" id="hide" style="background:none;border:1px solid var(--line);color:var(--muted);font-size:0.85rem;">Done. Close card</button>
       </div>
     </div>
   </div>
@@ -1004,72 +1011,86 @@ const store = {
 /* ---------- 24 Cousins & Verified Assignments ---------- */
 const C = (slug, name, branch, toName, quip, photo) => ({ slug, name, branch, toName, quip, photo });
 
-/* Randomize between Ishmael (me) and Emmanuel (die-hard Man Utd fan who needs a "kikombe" and a wife) */
+/* ---------- 18 Tethered Cousins Loop for Interactive Review ---------- */
 const CANDIDATE_RECIPIENTS = [
-  {
-    slug: 'ishmael',
-    name: 'Ishmael',
-    role: 'Biomedical Engineer · Manchester City',
-    photo: 'cousin_portraits/muriithi.jpg',
-    quip: '“Honestly, the best Christmas gift you could get me is a wife.”'
-  },
-  {
-    slug: 'emmanuel',
-    name: 'Emmanuel',
-    role: 'Die-Hard Manchester United Fan',
-    photo: 'cousin_portraits/emmanuel.jpg',
-    quip: '“Kikombe itanitosha tu”'
-  }
+  { slug: 'lyon', name: 'Lyon', branch: 'Nginga Branch', photo: 'cousin_portraits/lyon.jpg', quip: '“Secret Santa mode activated! Ready for something special.”' },
+  { slug: 'wahito', name: 'Wahito', branch: 'Wangechi Branch', photo: 'cousin_portraits/wahito.jpg', quip: '“Christmas season is here — get ready to be spoiled!”' },
+  { slug: 'jeff', name: 'Jeff', branch: 'Nyambura Branch', photo: 'cousin_portraits/jeff.jpg', quip: '“May your gifts be merry, memorable, and right on budget!”' },
+  { slug: 'dani', name: 'Dani', branch: 'Mwangi Branch', photo: 'cousin_portraits/dani.jpg', quip: '“Wishing you laughs, joy, and the best gift under the tree!”' },
+  { slug: 'shiku', name: 'Shiku', branch: 'Mathenge Branch', photo: 'cousin_portraits/shiku.jpg', quip: '“All I want for Christmas is good vibes, good family, and great gifts.”' },
+  { slug: 'caro', name: 'Caro', branch: 'Mathenge Branch', photo: 'cousin_portraits/caro.jpg', quip: '“Happy Holidays! Hope you’re ready for a delightful surprise.”' },
+  { slug: 'ishmael', name: 'Ishmael', branch: 'Njeri Branch', photo: 'cousin_portraits/ishmael.jpg', quip: '“Honestly, the best Christmas gift you could get me is a wife.”' },
+  { slug: 'ian', name: 'Ian', branch: 'Nginga Branch', photo: 'cousin_portraits/ian.jpg', quip: '“Festive greetings! Let the Christmas celebrations begin.”' },
+  { slug: 'milcah', name: 'Milcah', branch: 'Wambugu Branch', photo: 'cousin_portraits/milcah.jpg', quip: '“Bringing pure holiday warmth and cheer to the cousin squad!”' },
+  { slug: 'sam', name: 'Sam', branch: 'Wangechi Branch', photo: 'cousin_portraits/sam.jpg', quip: '“Ready for Christmas cheer and good holiday memories!”' },
+  { slug: 'bettie', name: 'Bettie', branch: 'Mwangi Branch', photo: 'cousin_portraits/bettie.jpg', quip: '“Making spirits bright! Can’t wait to see your Christmas smile.”' },
+  { slug: 'emmanuel', name: 'Emmanuel', branch: 'Njeri Branch', photo: 'cousin_portraits/emmanuel.jpg', quip: '“Kikombe itanitosha tu”' },
+  { slug: 'karen', name: 'Karen', branch: 'Wambugu Branch', photo: 'cousin_portraits/karen.jpg', quip: '“Here’s to peace, joy, and the most thoughtful gift ever!”' },
+  { slug: 'kaguongo', name: 'Maurice Kaguongo', branch: 'Wangechi Branch', photo: 'cousin_portraits/kaguongo.jpg', quip: '“Wishing you laughter, great food, and a wonderful Christmas!”' },
+  { slug: 'charles-wambugu', name: 'Charles Wambugu', branch: 'Wambugu Branch', photo: 'cousin_portraits/charles_wambugu.jpg', quip: '“Shadow in the building — sending festive greetings your way!”' },
+  { slug: 'njithi', name: 'Njithi', branch: 'Wangechi Branch', photo: 'cousin_portraits/njithi.jpg', quip: '“Holiday magic and family love! Make this Christmas unforgettable.”' },
+  { slug: 'charles-mwangi', name: 'Charles Mwangi', branch: 'Mwangi Branch', photo: 'cousin_portraits/charles_mwangi.jpg', quip: '“Warm Christmas wishes from the Mwangi branch to you!”' },
+  { slug: 'mama-liam', name: 'Mama Liam', branch: 'Mwangi Branch', photo: 'cousin_portraits/mama_liam.jpg', quip: '“Blessings, joy, and happy holidays to all the cousins!”' }
 ];
 
+let candidateIndex = 0;
 let selectedRecipient = CANDIDATE_RECIPIENTS[0];
 let spinCount = 0;
 
+function advanceRecipientLoop(step = 1){
+  candidateIndex = (candidateIndex + step + CANDIDATE_RECIPIENTS.length) % CANDIDATE_RECIPIENTS.length;
+  selectedRecipient = CANDIDATE_RECIPIENTS[candidateIndex];
+  return selectedRecipient;
+}
+
 function randomizeRecipient(){
-  // On new devices / first spin, start with Ishmael!
-  if (spinCount === 0 && !store.get('nj-first-spin-done')){
-    selectedRecipient = CANDIDATE_RECIPIENTS[0]; // Guaranteed Ishmael first on new devices
-    store.set('nj-first-spin-done', '1');
-  } else {
-    // On subsequent spins / re-spins, randomize between Ishmael and Emmanuel
-    const idx = Math.floor(Math.random() * CANDIDATE_RECIPIENTS.length);
-    selectedRecipient = CANDIDATE_RECIPIENTS[idx];
-  }
+  advanceRecipientLoop(1);
   spinCount++;
   return selectedRecipient;
 }
 
-const ISHMAEL_RECIPIENT = CANDIDATE_RECIPIENTS[0];
+const ISHMAEL_RECIPIENT = CANDIDATE_RECIPIENTS[6];
 
 const COUSIN_DATA = [
-  C('ishmael', 'Ishmael', 'Njeri Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
-  C('emmanuel', 'Emmanuel', 'Njeri Branch', 'Emmanuel', CANDIDATE_RECIPIENTS[1].quip, 'cousin_portraits/emmanuel.jpg'),
-  C('jeff', 'Jeff', 'Nyambura Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/jeff.jpg'),
-  C('charlesakashadow', 'Charles aka Shadow', 'Wambugu Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/charles.jpg'),
-  C('millcah', 'Millcah', 'Wambugu Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
-  C('karen', 'Karen', 'Wambugu Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/karen.jpg'),
-  C('muli', 'Muli', 'Wambugu Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
-  C('shiku', 'Shiku', 'Mathenge Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/shiku.jpg'),
-  C('caro', 'Caro', 'Mathenge Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
-  C('alvin', 'Alvin', 'Mathenge Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/alvin.jpg'),
-  C('dani', 'Dani', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/dani.jpg'),
-  C('paps', 'Paps', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/paps.jpg'),
-  C('bettie', 'Bettie', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/bettie.jpg'),
-  C('muthonimamaesther', 'Muthoni (Mama Esther)', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
-  C('mamaliam', 'Mama Liam', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
-  C('jem', 'Jem', 'Mwangi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
-  C('lyon', 'Lyon', 'Nginga Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/lyon.jpg'),
-  C('ian', 'Ian', 'Nginga Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/ian.jpg'),
-  C('peter', 'Peter', 'Munyiri Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
-  C('muthonimamacurtis', 'Muthoni (Mama Curtis)', 'Wangechi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
-  C('wahito', 'Wahito', 'Wangechi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
-  C('sam', 'Sam', 'Wangechi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/sam.jpg'),
-  C('kaguongo', 'Kaguongo', 'Wangechi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/muriithi.jpg'),
-  C('njithi', 'Njithi', 'Wangechi Branch', 'Ishmael', CANDIDATE_RECIPIENTS[0].quip, 'cousin_portraits/njithi.jpg')
+  C('charles-wambugu', 'Charles Wambugu', 'Wambugu Branch', 'Charles Wambugu', 'Shadow in the building', 'cousin_portraits/charles_wambugu.jpg'),
+  C('millcah', 'Millcah', 'Wambugu Branch', 'Millcah', 'Holiday warmth', 'cousin_portraits/milcah.jpg'),
+  C('karen', 'Karen', 'Wambugu Branch', 'Karen', 'Thoughtful gift', 'cousin_portraits/karen.jpg'),
+  C('muli', 'Muli', 'Wambugu Branch', 'Muli', 'Merry Christmas', 'cousin_portraits/muriithi.jpg'),
+  C('shiku', 'Shiku', 'Mathenge Branch', 'Shiku', 'Good vibes', 'cousin_portraits/shiku.jpg'),
+  C('caro', 'Caro', 'Mathenge Branch', 'Caro', 'Delightful surprise', 'cousin_portraits/caro.jpg'),
+  C('alvin', 'Alvin', 'Mathenge Branch', 'Alvin', 'Holiday joy', 'cousin_portraits/alvin.jpg'),
+  C('dani', 'Dani', 'Mwangi Branch', 'Dani', 'Laughter and cheer', 'cousin_portraits/dani.jpg'),
+  C('charles-mwangi', 'Charles Mwangi', 'Mwangi Branch', 'Charles Mwangi', 'Mwangi branch greetings', 'cousin_portraits/charles_mwangi.jpg'),
+  C('bettie', 'Bettie', 'Mwangi Branch', 'Bettie', 'Making spirits bright', 'cousin_portraits/bettie.jpg'),
+  C('muthonimamaesther', 'Muthoni (Mama Esther)', 'Mwangi Branch', 'Muthoni', 'Merry Christmas', 'cousin_portraits/muriithi.jpg'),
+  C('mamaliam', 'Mama Liam', 'Mwangi Branch', 'Mama Liam', 'Blessings and joy', 'cousin_portraits/mama_liam.jpg'),
+  C('jem', 'Jem', 'Mwangi Branch', 'Jem', 'Festive season', 'cousin_portraits/muriithi.jpg'),
+  C('jeff', 'Jeff', 'Nyambura Branch', 'Jeff', 'Merry and memorable', 'cousin_portraits/jeff.jpg'),
+  C('lyon', 'Lyon', 'Nginga Branch', 'Lyon', 'Secret Santa mode', 'cousin_portraits/lyon.jpg'),
+  C('ian', 'Ian', 'Nginga Branch', 'Ian', 'Festive greetings', 'cousin_portraits/ian.jpg'),
+  C('peter', 'Peter', 'Munyiri Branch', 'Peter', 'Holiday warmth', 'cousin_portraits/muriithi.jpg'),
+  C('ishmael', 'Ishmael', 'Njeri Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/ishmael.jpg'),
+  C('emmanuel', 'Emmanuel', 'Njeri Branch', 'Emmanuel', 'Kikombe itanitosha tu', 'cousin_portraits/emmanuel.jpg'),
+  C('muthonimamacurtis', 'Muthoni (Mama Curtis)', 'Wangechi Branch', 'Muthoni', 'Christmas joy', 'cousin_portraits/muriithi.jpg'),
+  C('wahito', 'Wahito', 'Wangechi Branch', 'Wahito', 'Get ready to be spoiled', 'cousin_portraits/wahito.jpg'),
+  C('sam', 'Sam', 'Wangechi Branch', 'Sam', 'Good holiday memories', 'cousin_portraits/sam.jpg'),
+  C('kaguongo', 'Maurice Kaguongo', 'Wangechi Branch', 'Kaguongo', 'Laughter and great food', 'cousin_portraits/kaguongo.jpg'),
+  C('njithi', 'Njithi', 'Wangechi Branch', 'Njithi', 'Holiday magic', 'cousin_portraits/njithi.jpg')
 ];
 
 const COUSIN_MAP = {};
-COUSIN_DATA.forEach(c => { COUSIN_MAP[c.slug] = c; });
+COUSIN_DATA.forEach(c => {
+  COUSIN_MAP[c.slug] = c;
+  if (c.slug === 'charles-wambugu') {
+    COUSIN_MAP['charlesakashadow'] = c;
+    COUSIN_MAP['charles'] = c;
+    COUSIN_MAP['shadow'] = c;
+  }
+  if (c.slug === 'charles-mwangi') {
+    COUSIN_MAP['paps'] = c;
+    COUSIN_MAP['charlesm'] = c;
+  }
+});
 
 /* Start on the wheel and carry the same track through the reveal. */
 let soundOn = store.get('nj-sound') !== 'off';
@@ -1913,17 +1934,13 @@ const card = $('#card'), tilt = $('#tilt'), holder = $('#portrait');
 let sweep = 0;
 
 function reveal(returning, behindCurtain = false){
-  const saved = returning && session && store.get('nj-recipient-' + session.slug);
-  const recipient = returning
-    ? CANDIDATE_RECIPIENTS.find(person => person.slug === saved) || ISHMAEL_RECIPIENT
-    : selectedRecipient;
-  if (session?.slug){
-    store.set('nj-seen-' + session.slug, '1');
-    store.set('nj-recipient-' + session.slug, recipient.slug);
-  }
-
+  const recipient = selectedRecipient;
   $('#who').textContent = recipient.name;
   $('#quip').textContent = recipient.quip;
+  const countBadge = $('#preview-badge');
+  if (countBadge) {
+    countBadge.textContent = `${(candidateIndex % CANDIDATE_RECIPIENTS.length) + 1} of ${CANDIDATE_RECIPIENTS.length}`;
+  }
   holder.innerHTML = `
     <div class="photo-card-wrap">
       <img src="${recipient.photo}" alt="${recipient.name}" class="cousin-face-img" loading="eager">
@@ -1993,6 +2010,10 @@ function home(){
 
 $('#hide').onclick = () => { home(); };
 $('#replay').onclick = openWheel;
+const prevBtn = $('#prev-cousin');
+if (prevBtn) prevBtn.onclick = () => { advanceRecipientLoop(-1); reveal(false); };
+const nextBtn = $('#next-cousin');
+if (nextBtn) nextBtn.onclick = () => { advanceRecipientLoop(1); reveal(false); };
 
 /* ---------- Vibrant Multi-Colored Fireworks ---------- */
 const fx = $('#fx'), fxc = fx.getContext('2d');
