@@ -17,7 +17,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); color: var(--ink); font-family: 'Figtree', sans-serif; padding: 24px; min-height: 100vh; }
-    .wrap { max-width: 900px; margin: 0 auto; }
+    .wrap { max-width: 960px; margin: 0 auto; }
     header { margin-bottom: 24px; text-align: center; }
     h1 { font-size: 2.2rem; font-weight: 800; }
     h1 span { font-family: 'Instrument Serif', serif; font-style: italic; color: #ff7a4d; }
@@ -35,13 +35,14 @@
     a.send-btn:hover { background: #20ba5a; transform: scale(1.02); }
     a.send-btn.sent { background: #4b5563; color: #d1d5db; }
     .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; background: rgba(255,244,220,0.08); }
+    .code-pill { font-family: monospace; font-size: 0.8rem; background: rgba(255,255,255,0.07); padding: 2px 6px; border-radius: 4px; color: #ffd166; }
   </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>Njithi Cousins <span>Secret Santa</span> WhatsApp Dispatcher</h1>
-    <p class="sub">Click any cousin to open WhatsApp Web with their pre-filled private link. Zero ban risk, under 2 minutes.</p>
+    <p class="sub">Click any cousin to open WhatsApp with their private, encrypted link. Zero names in URLs &bull; Zero ban risk.</p>
   </header>
 
   <div class="stats">
@@ -57,6 +58,7 @@
           <th>#</th>
           <th>Cousin</th>
           <th>Family Branch</th>
+          <th>Secure Code</th>
           <th>Phone (2547...)</th>
           <th>Private Invite</th>
           <th>Action</th>
@@ -68,10 +70,11 @@
           <td style="color:var(--muted);">1</td>
           <td><strong>Charles Wambugu</strong></td>
           <td><span class="tag">Wambugu</span></td>
+          <td><span class="code-pill">6tqQLDun</span></td>
           <td><input type="text" class="phone" id="phone-charles-wambugu" placeholder="2547..." onchange="updateLink('charles-wambugu')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=charles-wambugu" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=6tqQLDun" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-charles-wambugu" onclick="dispatch('charles-wambugu', 'Charles Wambugu', event)">
+            <a href="#" class="send-btn" id="btn-charles-wambugu" onclick="dispatch('6tqQLDun', 'charles-wambugu', 'Charles Wambugu', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -81,10 +84,11 @@
           <td style="color:var(--muted);">2</td>
           <td><strong>Millcah</strong></td>
           <td><span class="tag">Wambugu</span></td>
+          <td><span class="code-pill">tdnMDsY8</span></td>
           <td><input type="text" class="phone" id="phone-millcah" placeholder="2547..." onchange="updateLink('millcah')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=millcah" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=tdnMDsY8" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-millcah" onclick="dispatch('millcah', 'Millcah', event)">
+            <a href="#" class="send-btn" id="btn-millcah" onclick="dispatch('tdnMDsY8', 'millcah', 'Millcah', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -94,10 +98,11 @@
           <td style="color:var(--muted);">3</td>
           <td><strong>Karen</strong></td>
           <td><span class="tag">Wambugu</span></td>
+          <td><span class="code-pill">XVVV6VHf</span></td>
           <td><input type="text" class="phone" id="phone-karen" placeholder="2547..." onchange="updateLink('karen')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=karen" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=XVVV6VHf" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-karen" onclick="dispatch('karen', 'Karen', event)">
+            <a href="#" class="send-btn" id="btn-karen" onclick="dispatch('XVVV6VHf', 'karen', 'Karen', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -107,10 +112,11 @@
           <td style="color:var(--muted);">4</td>
           <td><strong>Muli</strong></td>
           <td><span class="tag">Wambugu</span></td>
+          <td><span class="code-pill">4Nwwxyna</span></td>
           <td><input type="text" class="phone" id="phone-muli" placeholder="2547..." onchange="updateLink('muli')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=muli" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=4Nwwxyna" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-muli" onclick="dispatch('muli', 'Muli', event)">
+            <a href="#" class="send-btn" id="btn-muli" onclick="dispatch('4Nwwxyna', 'muli', 'Muli', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -120,10 +126,11 @@
           <td style="color:var(--muted);">5</td>
           <td><strong>Shiku</strong></td>
           <td><span class="tag">Mathenge</span></td>
+          <td><span class="code-pill">Nr8bzBNn</span></td>
           <td><input type="text" class="phone" id="phone-shiku" placeholder="2547..." onchange="updateLink('shiku')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=shiku" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=Nr8bzBNn" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-shiku" onclick="dispatch('shiku', 'Shiku', event)">
+            <a href="#" class="send-btn" id="btn-shiku" onclick="dispatch('Nr8bzBNn', 'shiku', 'Shiku', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -133,10 +140,11 @@
           <td style="color:var(--muted);">6</td>
           <td><strong>Caro</strong></td>
           <td><span class="tag">Mathenge</span></td>
+          <td><span class="code-pill">JGrRbB9R</span></td>
           <td><input type="text" class="phone" id="phone-caro" placeholder="2547..." onchange="updateLink('caro')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=caro" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=JGrRbB9R" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-caro" onclick="dispatch('caro', 'Caro', event)">
+            <a href="#" class="send-btn" id="btn-caro" onclick="dispatch('JGrRbB9R', 'caro', 'Caro', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -146,10 +154,11 @@
           <td style="color:var(--muted);">7</td>
           <td><strong>Alvin</strong></td>
           <td><span class="tag">Mathenge</span></td>
+          <td><span class="code-pill">Kjyr7kwA</span></td>
           <td><input type="text" class="phone" id="phone-alvin" placeholder="2547..." onchange="updateLink('alvin')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=alvin" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=Kjyr7kwA" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-alvin" onclick="dispatch('alvin', 'Alvin', event)">
+            <a href="#" class="send-btn" id="btn-alvin" onclick="dispatch('Kjyr7kwA', 'alvin', 'Alvin', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -159,10 +168,11 @@
           <td style="color:var(--muted);">8</td>
           <td><strong>Dani</strong></td>
           <td><span class="tag">Mwangi</span></td>
+          <td><span class="code-pill">YUJ3UUny</span></td>
           <td><input type="text" class="phone" id="phone-dani" placeholder="2547..." onchange="updateLink('dani')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=dani" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=YUJ3UUny" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-dani" onclick="dispatch('dani', 'Dani', event)">
+            <a href="#" class="send-btn" id="btn-dani" onclick="dispatch('YUJ3UUny', 'dani', 'Dani', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -172,10 +182,11 @@
           <td style="color:var(--muted);">9</td>
           <td><strong>Charles Mwangi</strong></td>
           <td><span class="tag">Mwangi</span></td>
+          <td><span class="code-pill">qMcZuxNN</span></td>
           <td><input type="text" class="phone" id="phone-charles-mwangi" placeholder="2547..." onchange="updateLink('charles-mwangi')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=charles-mwangi" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=qMcZuxNN" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-charles-mwangi" onclick="dispatch('charles-mwangi', 'Charles Mwangi', event)">
+            <a href="#" class="send-btn" id="btn-charles-mwangi" onclick="dispatch('qMcZuxNN', 'charles-mwangi', 'Charles Mwangi', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -185,10 +196,11 @@
           <td style="color:var(--muted);">10</td>
           <td><strong>Bettie</strong></td>
           <td><span class="tag">Mwangi</span></td>
+          <td><span class="code-pill">Waz5PYRQ</span></td>
           <td><input type="text" class="phone" id="phone-bettie" placeholder="2547..." onchange="updateLink('bettie')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=bettie" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=Waz5PYRQ" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-bettie" onclick="dispatch('bettie', 'Bettie', event)">
+            <a href="#" class="send-btn" id="btn-bettie" onclick="dispatch('Waz5PYRQ', 'bettie', 'Bettie', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -198,10 +210,11 @@
           <td style="color:var(--muted);">11</td>
           <td><strong>Muthoni (Mama Esther)</strong></td>
           <td><span class="tag">Mwangi</span></td>
+          <td><span class="code-pill">v5Xtn2Ep</span></td>
           <td><input type="text" class="phone" id="phone-muthoni-mama-esther" placeholder="2547..." onchange="updateLink('muthoni-mama-esther')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=muthoni-mama-esther" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=v5Xtn2Ep" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-muthoni-mama-esther" onclick="dispatch('muthoni-mama-esther', 'Muthoni (Mama Esther)', event)">
+            <a href="#" class="send-btn" id="btn-muthoni-mama-esther" onclick="dispatch('v5Xtn2Ep', 'muthoni-mama-esther', 'Muthoni (Mama Esther)', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -211,10 +224,11 @@
           <td style="color:var(--muted);">12</td>
           <td><strong>Mama Liam</strong></td>
           <td><span class="tag">Mwangi</span></td>
+          <td><span class="code-pill">BoKUMNTK</span></td>
           <td><input type="text" class="phone" id="phone-mama-liam" placeholder="2547..." onchange="updateLink('mama-liam')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=mama-liam" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=BoKUMNTK" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-mama-liam" onclick="dispatch('mama-liam', 'Mama Liam', event)">
+            <a href="#" class="send-btn" id="btn-mama-liam" onclick="dispatch('BoKUMNTK', 'mama-liam', 'Mama Liam', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -224,10 +238,11 @@
           <td style="color:var(--muted);">13</td>
           <td><strong>Jem</strong></td>
           <td><span class="tag">Mwangi</span></td>
+          <td><span class="code-pill">Tf75By7j</span></td>
           <td><input type="text" class="phone" id="phone-jem" placeholder="2547..." onchange="updateLink('jem')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=jem" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=Tf75By7j" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-jem" onclick="dispatch('jem', 'Jem', event)">
+            <a href="#" class="send-btn" id="btn-jem" onclick="dispatch('Tf75By7j', 'jem', 'Jem', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -237,10 +252,11 @@
           <td style="color:var(--muted);">14</td>
           <td><strong>Jeff</strong></td>
           <td><span class="tag">Nyambura</span></td>
+          <td><span class="code-pill">2U49QPAr</span></td>
           <td><input type="text" class="phone" id="phone-jeff" placeholder="2547..." onchange="updateLink('jeff')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=jeff" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=2U49QPAr" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-jeff" onclick="dispatch('jeff', 'Jeff', event)">
+            <a href="#" class="send-btn" id="btn-jeff" onclick="dispatch('2U49QPAr', 'jeff', 'Jeff', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -250,10 +266,11 @@
           <td style="color:var(--muted);">15</td>
           <td><strong>Lyon</strong></td>
           <td><span class="tag">Nginga</span></td>
+          <td><span class="code-pill">DWMUWdsd</span></td>
           <td><input type="text" class="phone" id="phone-lyon" placeholder="2547..." onchange="updateLink('lyon')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=lyon" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=DWMUWdsd" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-lyon" onclick="dispatch('lyon', 'Lyon', event)">
+            <a href="#" class="send-btn" id="btn-lyon" onclick="dispatch('DWMUWdsd', 'lyon', 'Lyon', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -263,10 +280,11 @@
           <td style="color:var(--muted);">16</td>
           <td><strong>Ian</strong></td>
           <td><span class="tag">Nginga</span></td>
+          <td><span class="code-pill">wRhjFqHq</span></td>
           <td><input type="text" class="phone" id="phone-ian" placeholder="2547..." onchange="updateLink('ian')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=ian" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=wRhjFqHq" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-ian" onclick="dispatch('ian', 'Ian', event)">
+            <a href="#" class="send-btn" id="btn-ian" onclick="dispatch('wRhjFqHq', 'ian', 'Ian', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -276,10 +294,11 @@
           <td style="color:var(--muted);">17</td>
           <td><strong>Peter</strong></td>
           <td><span class="tag">Munyiri</span></td>
+          <td><span class="code-pill">RFBLwk6W</span></td>
           <td><input type="text" class="phone" id="phone-peter" placeholder="2547..." onchange="updateLink('peter')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=peter" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=RFBLwk6W" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-peter" onclick="dispatch('peter', 'Peter', event)">
+            <a href="#" class="send-btn" id="btn-peter" onclick="dispatch('RFBLwk6W', 'peter', 'Peter', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -289,10 +308,11 @@
           <td style="color:var(--muted);">18</td>
           <td><strong>Ishmael</strong></td>
           <td><span class="tag">Njeri</span></td>
+          <td><span class="code-pill">mYJUYea2</span></td>
           <td><input type="text" class="phone" id="phone-ishmael" placeholder="2547..." onchange="updateLink('ishmael')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=ishmael" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=mYJUYea2" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-ishmael" onclick="dispatch('ishmael', 'Ishmael', event)">
+            <a href="#" class="send-btn" id="btn-ishmael" onclick="dispatch('mYJUYea2', 'ishmael', 'Ishmael', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -302,10 +322,11 @@
           <td style="color:var(--muted);">19</td>
           <td><strong>Emmanuel</strong></td>
           <td><span class="tag">Njeri</span></td>
+          <td><span class="code-pill">TwuXSSWg</span></td>
           <td><input type="text" class="phone" id="phone-emmanuel" placeholder="2547..." onchange="updateLink('emmanuel')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=emmanuel" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=TwuXSSWg" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-emmanuel" onclick="dispatch('emmanuel', 'Emmanuel', event)">
+            <a href="#" class="send-btn" id="btn-emmanuel" onclick="dispatch('TwuXSSWg', 'emmanuel', 'Emmanuel', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -315,10 +336,11 @@
           <td style="color:var(--muted);">20</td>
           <td><strong>Muthoni (Mama Curtis)</strong></td>
           <td><span class="tag">Wangechi</span></td>
+          <td><span class="code-pill">Pe5DkLbP</span></td>
           <td><input type="text" class="phone" id="phone-muthoni-mama-curtis" placeholder="2547..." onchange="updateLink('muthoni-mama-curtis')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=muthoni-mama-curtis" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=Pe5DkLbP" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-muthoni-mama-curtis" onclick="dispatch('muthoni-mama-curtis', 'Muthoni (Mama Curtis)', event)">
+            <a href="#" class="send-btn" id="btn-muthoni-mama-curtis" onclick="dispatch('Pe5DkLbP', 'muthoni-mama-curtis', 'Muthoni (Mama Curtis)', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -328,10 +350,11 @@
           <td style="color:var(--muted);">21</td>
           <td><strong>Wahito</strong></td>
           <td><span class="tag">Wangechi</span></td>
+          <td><span class="code-pill">NBsKABzy</span></td>
           <td><input type="text" class="phone" id="phone-wahito" placeholder="2547..." onchange="updateLink('wahito')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=wahito" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=NBsKABzy" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-wahito" onclick="dispatch('wahito', 'Wahito', event)">
+            <a href="#" class="send-btn" id="btn-wahito" onclick="dispatch('NBsKABzy', 'wahito', 'Wahito', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -341,10 +364,11 @@
           <td style="color:var(--muted);">22</td>
           <td><strong>Sam</strong></td>
           <td><span class="tag">Wangechi</span></td>
+          <td><span class="code-pill">kiRpEkrt</span></td>
           <td><input type="text" class="phone" id="phone-sam" placeholder="2547..." onchange="updateLink('sam')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=sam" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=kiRpEkrt" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-sam" onclick="dispatch('sam', 'Sam', event)">
+            <a href="#" class="send-btn" id="btn-sam" onclick="dispatch('kiRpEkrt', 'sam', 'Sam', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -354,10 +378,11 @@
           <td style="color:var(--muted);">23</td>
           <td><strong>Maurice Kaguongo</strong></td>
           <td><span class="tag">Wangechi</span></td>
+          <td><span class="code-pill">wY2Byyo6</span></td>
           <td><input type="text" class="phone" id="phone-kaguongo" placeholder="2547..." onchange="updateLink('kaguongo')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=kaguongo" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=wY2Byyo6" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-kaguongo" onclick="dispatch('kaguongo', 'Maurice Kaguongo', event)">
+            <a href="#" class="send-btn" id="btn-kaguongo" onclick="dispatch('wY2Byyo6', 'kaguongo', 'Maurice Kaguongo', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -367,10 +392,11 @@
           <td style="color:var(--muted);">24</td>
           <td><strong>Njithi</strong></td>
           <td><span class="tag">Wangechi</span></td>
+          <td><span class="code-pill">FQZPHT85</span></td>
           <td><input type="text" class="phone" id="phone-njithi" placeholder="2547..." onchange="updateLink('njithi')"></td>
-          <td><a href="https://secret-santa-project-five.vercel.app/?c=njithi" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Preview Card</a></td>
+          <td><a href="https://secret-santa-project-five.vercel.app/?k=FQZPHT85" target="_blank" style="color:#ff7a4d;text-decoration:none;font-size:0.85rem;">Open Link &rarr;</a></td>
           <td>
-            <a href="#" class="send-btn" id="btn-njithi" onclick="dispatch('njithi', 'Njithi', event)">
+            <a href="#" class="send-btn" id="btn-njithi" onclick="dispatch('FQZPHT85', 'njithi', 'Njithi', event)">
               &#128242; Send on WhatsApp
             </a>
           </td>
@@ -388,7 +414,7 @@
     localStorage.setItem('phone_' + id, val);
   }
 
-  function dispatch(id, name, ev) {
+  function dispatch(token, id, name, ev) {
     ev.preventDefault();
     let phone = document.getElementById('phone-' + id).value.trim().replace(/^\+/, '');
     if (!phone) {
@@ -397,8 +423,8 @@
       document.getElementById('phone-' + id).value = phone;
       updateLink(id);
     }
-    const inviteUrl = baseUrl + '?c=' + id;
-    const msg = encodeURIComponent("Hi " + name + "! \uD83C\uDF84 Your Njithi Cousins Secret Santa card is waiting for you! Open your private link to spin the wheel and reveal your recipient: " + inviteUrl);
+    const inviteUrl = baseUrl + '?k=' + token;
+    const msg = encodeURIComponent("Hi " + name + "! \uD83C\uDF84 Top secret: Your Njithi Cousins Secret Santa card has arrived. Spin the wheel to reveal your recipient: " + inviteUrl + " \uD83E\uDD2B Please keep this link to yourself — don't show anyone! Santa is watching, and leaking your secret means you're buying the family goat for Christmas dinner! \uD83D\uDC10\uD83C\uDF81");
     const waUrl = "https://wa.me/" + phone + "?text=" + msg;
     
     // Mark as sent

@@ -224,8 +224,13 @@
     .curtains{position:fixed;inset:0;width:100%;height:100%;pointer-events:auto;z-index:30}
 
 
-    /* Recipient card */
-    .tilt{perspective:1100px;width:min(100%, 440px);margin-inline:auto}
+    /* Recipient card - 3D Mastercard Tactile Tilt */
+    .tilt{
+      perspective:1100px;
+      width:min(100%, 440px);
+      margin-inline:auto;
+      touch-action:none;
+    }
     .card{
       --rx:0deg;--ry:0deg;--g:-30%;--go:0;
       position:relative;
@@ -243,16 +248,22 @@
         var(--surface-card);
       box-shadow:0 22px 48px -24px rgba(0,0,0,.65), inset 0 1px rgba(255,255,255,.16);
       transform:rotateX(var(--rx)) rotateY(var(--ry));
-      transition:transform .3s ease-out;
+      transition:transform .22s cubic-bezier(0.2, 0.8, 0.3, 1);
       text-align:center;
+      touch-action:none;
+      will-change:transform;
+      user-select:none;
+      -webkit-user-select:none;
     }
-    .card.live{transition:transform .08s ease-out}
+    .card.live{transition:none}
     .card::before{
-      content:"";position:absolute;inset:7px;pointer-events:none;border:1px solid var(--line);border-radius:17px;z-index:-1;
+      content:"";position:absolute;inset:0;pointer-events:none;opacity:0.38;
+      background:repeating-linear-gradient(118deg, rgba(255,255,255,0) 0 14px, rgba(255,255,255,0.22) 14px 15px);
+      z-index:1;
     }
     .card::after{
       content:"";position:absolute;inset:-20%;pointer-events:none;opacity:var(--go);mix-blend-mode:soft-light;z-index:2;
-      background:linear-gradient(112deg, transparent calc(var(--g) - 20%), #fff1d0 var(--g), transparent calc(var(--g) + 20%));
+      background:linear-gradient(112deg, rgba(255,255,255,0) calc(var(--g) - 22%), rgba(255,255,255,0.85) calc(var(--g) - 4%), #ffffff var(--g), rgba(255,255,255,0.85) calc(var(--g) + 4%), rgba(255,255,255,0) calc(var(--g) + 22%));
     }
     .card.deal{animation:deal .75s cubic-bezier(.2,.85,.3,1) both}
     @keyframes deal{
@@ -284,20 +295,23 @@
       font-size:clamp(15px, 2.2vmin, 19px);
     }
     .photo-card-wrap{
-      width:clamp(96px, 23dvh, 170px);
+      width:clamp(160px, 34vmin, 230px);
       aspect-ratio:1;
       border-radius:50%;
       padding:4px;
       background:linear-gradient(145deg,#f5ddaf,#b58544);
-      box-shadow:0 12px 30px -12px rgba(0,0,0,.65);
+      box-shadow:0 14px 36px -8px rgba(0,0,0,.7);
+      overflow:hidden;
     }
     .cousin-face-img{
       width:100%;
       height:100%;
       object-fit:cover;
-      object-position:center;
+      object-position:center 20%;
       border-radius:50%;
       display:block;
+      transform:scale(1.24);
+      transform-origin:center center;
     }
 
     .card .foot{
@@ -630,7 +644,7 @@
       .recipient-copy{grid-area:copy}
       #s-card .card-quip{margin-inline:0}
       .card .foot{grid-area:foot}
-      .photo-card-wrap{width:clamp(90px, 32dvh, 245px)}
+      .photo-card-wrap{width:clamp(180px, 36dvh, 280px)}
     }
     @media(min-width:1000px) and (min-height:481px){
       .landing,.wheel-stage{
@@ -684,7 +698,7 @@
         column-gap:clamp(32px, 6vw, 100px);
         grid-template-columns:minmax(0, .9fr) minmax(0, 1.1fr);
       }
-      .photo-card-wrap{width:min(100%, clamp(145px, 38dvh, 340px));margin-inline:0}
+      .photo-card-wrap{width:min(100%, clamp(190px, 40dvh, 320px));margin-inline:0}
       #s-card .card-name{font-size:clamp(62px, min(7.2vw, 13dvh), 116px)}
       #s-card .card-quip{font-size:clamp(18px, 1.5vw, 24px)}
     }
@@ -961,15 +975,11 @@
             <h2 class="card-name" id="who" tabindex="-1">Ishmael</h2>
             <p class="card-quip" id="quip"></p>
           </div>
-          <div class="foot">
-            <span id="giftday">Gift day · 25 Dec</span>
-            <span>Shh ✦ Secret Santa</span>
-          </div>
-        </article>
+          </article>
       </div>
-      <p class="gift-note">Reviewing tethered photos & names. Keep gifts under wraps!</p>
+      
       <div class="actions">
-        <div style="display:flex;gap:10px;width:100%;justify-content:center;margin-bottom:8px;">
+        <div id="nav-buttons" style="display:flex;gap:10px;width:100%;justify-content:center;margin-bottom:8px;">
           <button class="btn" type="button" id="prev-cousin" style="flex:1;background:rgba(255,244,220,0.12);color:var(--ink);padding:10px 14px;font-size:0.9rem;">← Prev</button>
           <button class="btn" type="button" id="next-cousin" style="flex:1;background:var(--accent);color:var(--on-accent);padding:10px 14px;font-size:0.9rem;font-weight:700;">Next Cousin →</button>
         </div>
@@ -1010,6 +1020,10 @@ const store = {
 
 /* ---------- 24 Cousins & Verified Assignments ---------- */
 const C = (slug, name, branch, toName, quip, photo) => ({ slug, name, branch, toName, quip, photo });
+
+
+const SECURE_BY_TOKEN = {"6tqQLDun":{"giverName":"Charles Wambugu","giverSlug":"charles-wambugu","recipient":{"slug":"muthoni-mama-esther","name":"Muthoni (Mama Esther)","branch":"Mwangi Branch","photo":"cousin_portraits/muriithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"v5Xtn2Ep":{"giverName":"Muthoni (Mama Esther)","giverSlug":"muthoni-mama-esther","recipient":{"slug":"wahito","name":"Wahito","branch":"Wangechi Branch","photo":"cousin_portraits/wahito.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"NBsKABzy":{"giverName":"Wahito","giverSlug":"wahito","recipient":{"slug":"bettie","name":"Bettie","branch":"Mwangi Branch","photo":"cousin_portraits/bettie.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"Waz5PYRQ":{"giverName":"Bettie","giverSlug":"bettie","recipient":{"slug":"alvin","name":"Alvin","branch":"Mathenge Branch","photo":"cousin_portraits/alvin.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"Kjyr7kwA":{"giverName":"Alvin","giverSlug":"alvin","recipient":{"slug":"charles-mwangi","name":"Charles Mwangi","branch":"Mwangi Branch","photo":"cousin_portraits/charles_mwangi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"qMcZuxNN":{"giverName":"Charles Mwangi","giverSlug":"charles-mwangi","recipient":{"slug":"njithi","name":"Njithi","branch":"Wangechi Branch","photo":"cousin_portraits/njithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"FQZPHT85":{"giverName":"Njithi","giverSlug":"njithi","recipient":{"slug":"karen","name":"Karen","branch":"Wambugu Branch","photo":"cousin_portraits/karen.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"XVVV6VHf":{"giverName":"Karen","giverSlug":"karen","recipient":{"slug":"sam","name":"Sam","branch":"Wangechi Branch","photo":"cousin_portraits/sam.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"kiRpEkrt":{"giverName":"Sam","giverSlug":"sam","recipient":{"slug":"jem","name":"Jem","branch":"Mwangi Branch","photo":"cousin_portraits/muriithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"Tf75By7j":{"giverName":"Jem","giverSlug":"jem","recipient":{"slug":"caro","name":"Caro","branch":"Mathenge Branch","photo":"cousin_portraits/caro.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"JGrRbB9R":{"giverName":"Caro","giverSlug":"caro","recipient":{"slug":"mama-liam","name":"Mama Liam","branch":"Mwangi Branch","photo":"cousin_portraits/mama_liam.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"BoKUMNTK":{"giverName":"Mama Liam","giverSlug":"mama-liam","recipient":{"slug":"emmanuel","name":"Emmanuel","branch":"Njeri Branch","photo":"cousin_portraits/emmanuel.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"TwuXSSWg":{"giverName":"Emmanuel","giverSlug":"emmanuel","recipient":{"slug":"muli","name":"Muli","branch":"Wambugu Branch","photo":"cousin_portraits/muriithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"4Nwwxyna":{"giverName":"Muli","giverSlug":"muli","recipient":{"slug":"kaguongo","name":"Maurice Kaguongo","branch":"Wangechi Branch","photo":"cousin_portraits/kaguongo.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"wY2Byyo6":{"giverName":"Maurice Kaguongo","giverSlug":"kaguongo","recipient":{"slug":"lyon","name":"Lyon","branch":"Nginga Branch","photo":"cousin_portraits/lyon.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"DWMUWdsd":{"giverName":"Lyon","giverSlug":"lyon","recipient":{"slug":"peter","name":"Peter","branch":"Munyiri Branch","photo":"cousin_portraits/muriithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"RFBLwk6W":{"giverName":"Peter","giverSlug":"peter","recipient":{"slug":"jeff","name":"Jeff","branch":"Nyambura Branch","photo":"cousin_portraits/jeff.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"2U49QPAr":{"giverName":"Jeff","giverSlug":"jeff","recipient":{"slug":"millcah","name":"Millcah","branch":"Wambugu Branch","photo":"cousin_portraits/milcah.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"tdnMDsY8":{"giverName":"Millcah","giverSlug":"millcah","recipient":{"slug":"shiku","name":"Shiku","branch":"Mathenge Branch","photo":"cousin_portraits/shiku.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"Nr8bzBNn":{"giverName":"Shiku","giverSlug":"shiku","recipient":{"slug":"muthoni-mama-curtis","name":"Muthoni (Mama Curtis)","branch":"Wangechi Branch","photo":"cousin_portraits/muriithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"Pe5DkLbP":{"giverName":"Muthoni (Mama Curtis)","giverSlug":"muthoni-mama-curtis","recipient":{"slug":"ian","name":"Ian","branch":"Nginga Branch","photo":"cousin_portraits/ian.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"wRhjFqHq":{"giverName":"Ian","giverSlug":"ian","recipient":{"slug":"dani","name":"Dani","branch":"Mwangi Branch","photo":"cousin_portraits/dani.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"YUJ3UUny":{"giverName":"Dani","giverSlug":"dani","recipient":{"slug":"ishmael","name":"Ishmael","branch":"Njeri Branch","photo":"cousin_portraits/ishmael.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"mYJUYea2":{"giverName":"Ishmael","giverSlug":"ishmael","recipient":{"slug":"charles-wambugu","name":"Charles Wambugu","branch":"Wambugu Branch","photo":"cousin_portraits/charles_wambugu.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}}};
+let isPrivateMode = false;
 
 /* ---------- 18 Tethered Cousins Loop for Interactive Review ---------- */
 const CANDIDATE_RECIPIENTS = [
@@ -1294,32 +1308,59 @@ $('#logo-home').onclick = e => {
 /* ---------- Device Retention & Entry Logic ---------- */
 function initDeviceAndUrl(){
   const params = new URLSearchParams(window.location.search);
-  const q = params.get('c') || params.get('code') || params.get('name');
+  const token = params.get('k') || params.get('code') || params.get('t');
   
-  let slug = q ? q.toLowerCase().replace(/[^a-z0-9]/g, '') : (store.get('nj_device_user') || 'cousins');
-  
-  const cousin = (slug === 'cousins' || !COUSIN_MAP[slug]) ? { slug: 'cousins', name: 'cousins' } : COUSIN_MAP[slug];
-  
-  // Set session for preview
-  store.set('nj_device_user', cousin.slug);
+  if (token && typeof SECURE_BY_TOKEN !== 'undefined' && SECURE_BY_TOKEN[token]) {
+    const data = SECURE_BY_TOKEN[token];
+    isPrivateMode = true;
+    selectedRecipient = data.recipient;
+    
+    // Hide navigation buttons in private draw mode
+    const navGroup = document.getElementById('nav-buttons');
+    if (navGroup) navGroup.style.display = 'none';
+    const badge = document.getElementById('preview-badge');
+    if (badge) badge.textContent = '🔒 Confidential Draw';
+    
+    session = {
+      slug: data.giverSlug,
+      me: data.giverName,
+      to: data.recipient
+    };
+    
+    const hasSeen = store.get('nj-seen-tok-' + token);
+    if (hasSeen) {
+      $('#ret-hi').textContent = `Welcome back, ${data.giverName}!`;
+      $('#pers-returning').hidden = false;
+      $('#pers-view').hidden = true;
+      $('#picker-view').hidden = true;
+    } else {
+      $('#pers-hi').textContent = `Hi ${data.giverName},`;
+      $('#pers-returning').hidden = true;
+      $('#pers-view').hidden = false;
+      $('#picker-view').hidden = true;
+    }
+    show('s-entry');
+    return;
+  }
+
+  // Otherwise: Interactive Review Carousel Mode
+  isPrivateMode = false;
+  selectedRecipient = CANDIDATE_RECIPIENTS[candidateIndex];
+  const navGroup = document.getElementById('nav-buttons');
+  if (navGroup) navGroup.style.display = 'flex';
+  const badge = document.getElementById('preview-badge');
+  if (badge) badge.textContent = `${(candidateIndex % CANDIDATE_RECIPIENTS.length) + 1} of ${CANDIDATE_RECIPIENTS.length}`;
+
   session = {
-    slug: cousin.slug,
-    me: cousin.name,
-    to: ISHMAEL_RECIPIENT
+    slug: 'reviewer',
+    me: 'Ishmael',
+    to: selectedRecipient
   };
 
-  const hasSeen = store.get('nj-seen-' + cousin.slug);
-  if (hasSeen && cousin.slug !== 'cousins'){
-    $('#ret-hi').textContent = `Welcome back, ${cousin.name}!`;
-    $('#pers-returning').hidden = false;
-    $('#pers-view').hidden = true;
-    $('#picker-view').hidden = true;
-  } else {
-    $('#pers-hi').textContent = cousin.slug === 'cousins' ? 'Hi cousins,' : `Hi ${cousin.name},`;
-    $('#pers-returning').hidden = true;
-    $('#pers-view').hidden = false;
-    $('#picker-view').hidden = true;
-  }
+  $('#pers-hi').textContent = 'Hi Ishmael,';
+  $('#pers-returning').hidden = true;
+  $('#pers-view').hidden = false;
+  $('#picker-view').hidden = true;
   show('s-entry');
 }
 
@@ -1939,7 +1980,11 @@ function reveal(returning, behindCurtain = false){
   $('#quip').textContent = recipient.quip;
   const countBadge = $('#preview-badge');
   if (countBadge) {
-    countBadge.textContent = `${(candidateIndex % CANDIDATE_RECIPIENTS.length) + 1} of ${CANDIDATE_RECIPIENTS.length}`;
+    if (isPrivateMode) {
+      countBadge.textContent = '🔒 Confidential Draw';
+    } else {
+      countBadge.textContent = `${(candidateIndex % CANDIDATE_RECIPIENTS.length) + 1} of ${CANDIDATE_RECIPIENTS.length}`;
+    }
   }
   holder.innerHTML = `
     <div class="photo-card-wrap">
@@ -1975,7 +2020,7 @@ function glareSweep(){
   })(t0);
 }
 
-/* 3D Card Tilt on touch / drag */
+/* 3D Card Tilt on touch / drag - Mastercard Holographic Feel */
 function onTilt(e){
   if (reducedMotion.matches) return;
   const b = tilt.getBoundingClientRect();
@@ -1985,23 +2030,49 @@ function onTilt(e){
   cancelAnimationFrame(sweep);
   card.classList.remove('deal');
   card.classList.add('live');
-  card.style.setProperty('--rx', (0.5 - y) * 18 + 'deg');
-  card.style.setProperty('--ry', (x - 0.5) * 20 + 'deg');
+  card.style.setProperty('--rx', (0.5 - y) * 26 + 'deg');
+  card.style.setProperty('--ry', (x - 0.5) * 30 + 'deg');
   card.style.setProperty('--g', 10 + x * 55 + y * 30 + '%');
-  card.style.setProperty('--go', 0.65);
+  card.style.setProperty('--go', 0.95);
 }
 function offTilt(){
   cancelAnimationFrame(sweep);
   card.classList.remove('live');
   for (const p of ['--rx', '--ry', '--go']) card.style.removeProperty(p);
 }
-tilt.addEventListener('pointerdown', event => { if (event.isPrimary) onTilt(event); });
-tilt.addEventListener('pointermove', event => {
-  if (event.isPrimary && (event.pointerType === 'mouse' || event.buttons)) onTilt(event);
+tilt.addEventListener('pointerdown', event => {
+  if (event.isPrimary) {
+    try { tilt.setPointerCapture(event.pointerId); } catch(err){}
+    onTilt(event);
+  }
 });
-for (const event of ['pointerup', 'pointerleave', 'pointercancel']){
-  tilt.addEventListener(event, offTilt);
+tilt.addEventListener('pointermove', event => {
+  if (event.isPrimary && (event.pointerType === 'mouse' || event.buttons > 0 || event.pointerType === 'touch' || event.pointerType === 'pen')) {
+    onTilt(event);
+  }
+});
+for (const event of ['pointerup', 'pointercancel']){
+  tilt.addEventListener(event, ev => {
+    try { tilt.releasePointerCapture(ev.pointerId); } catch(err){}
+    offTilt();
+  });
 }
+tilt.addEventListener('pointerleave', event => {
+  if (event.pointerType === 'mouse') offTilt();
+});
+tilt.addEventListener('touchstart', e => {
+  if (e.touches.length > 0) {
+    const t = e.touches[0];
+    onTilt({ clientX: t.clientX, clientY: t.clientY });
+  }
+}, { passive: true });
+tilt.addEventListener('touchmove', e => {
+  if (e.touches.length > 0) {
+    const t = e.touches[0];
+    onTilt({ clientX: t.clientX, clientY: t.clientY });
+  }
+}, { passive: true });
+tilt.addEventListener('touchend', offTilt, { passive: true });
 
 function home(){
   if (fxc && fx) fxc.clearRect(0, 0, fx.width, fx.height);
