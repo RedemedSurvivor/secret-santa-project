@@ -1408,6 +1408,9 @@ async function initDeviceAndUrl(){
   }
 
   store.set('nj-my-token', token);
+  // Photos are public, so take the current one by slug: new portraits show up without a redraw.
+  const current = CANDIDATE_RECIPIENTS.find(c => c.slug === data.recipient.slug);
+  if (current?.photo) data.recipient.photo = current.photo;
   selectedRecipient = data.recipient;
   if (data.recipient.photo) { const warm = new Image(); warm.src = data.recipient.photo; }
   if (badge) badge.textContent = '🔒 Private';
