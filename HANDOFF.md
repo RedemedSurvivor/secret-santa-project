@@ -44,3 +44,18 @@ Use calm background music and distinct sounds for typing, clicks, spinning, the 
 - Get the direct link or upload for the previous exchange video. Get Ishmael’s photo and the other cousin portrait references through a private channel.
 - Confirm quip on the recipient card.
 - how each cousin will receive their code privately, thinking sending each individually on whatsapp because email so wont have.
+
+## Running the draw (2026 build)
+
+1. Keep the roster private in `private/roster.json` (git-ignored). Format: `draw/roster.example.json`. It lists each cousin's slug, name, branch, framed photo and quip, plus every past giver -> recipient pair from the sheet.
+2. `node draw/check-roster.cjs private/roster.json` confirms a valid draw exists.
+3. `node draw/build-invites.cjs private/roster.json` draws once and writes:
+   - `envelopes.js` (deploy this): one AES-GCM envelope per cousin, unlocked only by that cousin's link token. No readable names or pairs.
+   - `private/invites.csv` (never commit): each cousin's private link.
+   Running it again makes a new draw and kills every old link, so run it once, before links go out.
+4. Open `whatsapp_dispatcher.html`, load `private/invites.csv`, type each number (07..., +254... and 254... all work) and press Send.
+5. `index.html?preview=1` steps through every cousin's card so you can check photos and quips. The bare site tells cousins to use their WhatsApp link.
+
+Draw rules enforced in `draw/secret-santa.cjs`: no self, no same branch, no past pair in either direction. The draw shuffles with a cryptographic RNG and keeps the first shuffle that passes (rejection sampling), so every valid draw is equally likely.
+
+Portraits: `cousin_portraits/faces/*.jpg` are 560px square crops centred on each face. Muli, Jem, Peter and both Muthonis have no photo yet and show a monogram.

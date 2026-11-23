@@ -10,7 +10,13 @@ if (!rosterFile) {
 } else {
   try {
     const roster = JSON.parse(readFileSync(rosterFile, 'utf8').replace(/^\uFEFF/, ''));
-    const matches = drawAssignments(roster);
+    // Accepts the build-invites roster ({cousins, pastPairs}) or the raw draw options.
+    const options = roster.cousins ? {
+      participantIds: roster.cousins.map(c => c.slug),
+      pastPairs: roster.pastPairs,
+      branchOf: Object.fromEntries(roster.cousins.map(c => [c.slug, c.branch]))
+    } : roster;
+    const matches = drawAssignments(options);
     process.stdout.write(`Feasible draw for ${matches.size} participants. Check only.\n`);
   } catch (error) {
     process.stderr.write(`Roster check failed: ${error.message}\n`);

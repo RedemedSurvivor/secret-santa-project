@@ -8,8 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=MonteCarlo&family=Source+Sans+3:wght@400..800&family=Yellowtail&display=swap">
-  <link rel="preload" as="image" href="cousin_portraits/muriithi.jpg">
-  <link rel="preload" as="image" href="cousin_portraits/emmanuel.jpg">
   <script src="assets/three.min.js"></script>
   <style>
     /* Design Knowledge Base - 2+1 Color Hierarchy & Color Palettes */
@@ -294,24 +292,38 @@
       margin:8px auto 0;
       font-size:clamp(15px, 2.2vmin, 19px);
     }
+    /* Portraits are pre-cropped per cousin (cousin_portraits/faces) with the face centred,
+       so the circle shows the whole image with no extra zoom. */
     .photo-card-wrap{
-      width:clamp(160px, 34vmin, 230px);
+      position:relative;
+      width:clamp(170px, min(56vw, 28dvh), 300px);
       aspect-ratio:1;
       border-radius:50%;
-      padding:4px;
+      padding:5px;
       background:linear-gradient(145deg,#f5ddaf,#b58544);
       box-shadow:0 14px 36px -8px rgba(0,0,0,.7);
       overflow:hidden;
     }
-    .cousin-face-img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      object-position:center 20%;
+    .cousin-face-img,.cousin-face-mono{
+      position:absolute;
+      inset:5px;
+      width:calc(100% - 10px);
+      height:calc(100% - 10px);
       border-radius:50%;
+    }
+    .cousin-face-img{
+      object-fit:cover;
+      object-position:center;
       display:block;
-      transform:scale(1.24);
-      transform-origin:center center;
+      background:var(--surface);
+    }
+    .cousin-face-mono{
+      display:grid;
+      place-items:center;
+      font:400 clamp(64px, 14vmin, 120px)/1 var(--serif);
+      letter-spacing:-.02em;
+      color:#fff4dc;
+      background:radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--accent) 70%, #fff 0%), #5b1f52 78%);
     }
 
     .card .foot{
@@ -644,7 +656,7 @@
       .recipient-copy{grid-area:copy}
       #s-card .card-quip{margin-inline:0}
       .card .foot{grid-area:foot}
-      .photo-card-wrap{width:clamp(180px, 36dvh, 280px)}
+      .photo-card-wrap{width:clamp(220px, 42dvh, 320px)}
     }
     @media(min-width:1000px) and (min-height:481px){
       .landing,.wheel-stage{
@@ -698,7 +710,7 @@
         column-gap:clamp(32px, 6vw, 100px);
         grid-template-columns:minmax(0, .9fr) minmax(0, 1.1fr);
       }
-      .photo-card-wrap{width:min(100%, clamp(190px, 40dvh, 320px));margin-inline:0}
+      .photo-card-wrap{width:min(100%, clamp(240px, 50dvh, 420px));margin-inline:0}
       #s-card .card-name{font-size:clamp(62px, min(7.2vw, 13dvh), 116px)}
       #s-card .card-quip{font-size:clamp(18px, 1.5vw, 24px)}
     }
@@ -801,7 +813,7 @@
     @media(min-width:1000px) and (481px <= height <= 580px){
       .card-stage{gap:8px}
       .card{padding-block:16px}
-      .photo-card-wrap{width:32dvh}
+      .photo-card-wrap{width:38dvh}
     }
     @media(max-width:699px){
       .landing{margin-block:clamp(6px, 8dvh, 64px) auto}
@@ -968,7 +980,7 @@
         <article class="card" id="card">
           <div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:6px;">
             <span class="eyebrow" style="margin:0;">You’re buying for</span>
-            <span id="preview-badge" style="font-size:0.75rem;padding:2px 10px;border-radius:999px;background:rgba(255,244,220,0.14);color:var(--gold);font-weight:700;letter-spacing:0.02em;">1 of 18</span>
+            <span id="preview-badge" style="font-size:0.75rem;padding:2px 10px;border-radius:999px;background:rgba(255,244,220,0.14);color:var(--gold);font-weight:700;letter-spacing:0.02em;">🔒 Only you can see this</span>
           </div>
           <div id="portrait"></div>
           <div class="recipient-copy">
@@ -1005,6 +1017,7 @@
   <canvas id="fx" aria-hidden="true"></canvas>
 </div>
 
+<script src="envelopes.js"></script>
 <script src="storyboard/film/assets/spin-wheel.js">
 </script>
 <script src="storyboard/film/assets/curtain-scene.js">
@@ -1022,29 +1035,60 @@ const store = {
 const C = (slug, name, branch, toName, quip, photo) => ({ slug, name, branch, toName, quip, photo });
 
 
-const SECURE_BY_TOKEN = {"6tqQLDun":{"giverName":"Charles Wambugu","giverSlug":"charles-wambugu","recipient":{"slug":"muthoni-mama-esther","name":"Muthoni (Mama Esther)","branch":"Mwangi Branch","photo":"cousin_portraits/muriithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"v5Xtn2Ep":{"giverName":"Muthoni (Mama Esther)","giverSlug":"muthoni-mama-esther","recipient":{"slug":"wahito","name":"Wahito","branch":"Wangechi Branch","photo":"cousin_portraits/wahito.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"NBsKABzy":{"giverName":"Wahito","giverSlug":"wahito","recipient":{"slug":"bettie","name":"Bettie","branch":"Mwangi Branch","photo":"cousin_portraits/bettie.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"Waz5PYRQ":{"giverName":"Bettie","giverSlug":"bettie","recipient":{"slug":"alvin","name":"Alvin","branch":"Mathenge Branch","photo":"cousin_portraits/alvin.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"Kjyr7kwA":{"giverName":"Alvin","giverSlug":"alvin","recipient":{"slug":"charles-mwangi","name":"Charles Mwangi","branch":"Mwangi Branch","photo":"cousin_portraits/charles_mwangi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"qMcZuxNN":{"giverName":"Charles Mwangi","giverSlug":"charles-mwangi","recipient":{"slug":"njithi","name":"Njithi","branch":"Wangechi Branch","photo":"cousin_portraits/njithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"FQZPHT85":{"giverName":"Njithi","giverSlug":"njithi","recipient":{"slug":"karen","name":"Karen","branch":"Wambugu Branch","photo":"cousin_portraits/karen.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"XVVV6VHf":{"giverName":"Karen","giverSlug":"karen","recipient":{"slug":"sam","name":"Sam","branch":"Wangechi Branch","photo":"cousin_portraits/sam.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"kiRpEkrt":{"giverName":"Sam","giverSlug":"sam","recipient":{"slug":"jem","name":"Jem","branch":"Mwangi Branch","photo":"cousin_portraits/muriithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"Tf75By7j":{"giverName":"Jem","giverSlug":"jem","recipient":{"slug":"caro","name":"Caro","branch":"Mathenge Branch","photo":"cousin_portraits/caro.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"JGrRbB9R":{"giverName":"Caro","giverSlug":"caro","recipient":{"slug":"mama-liam","name":"Mama Liam","branch":"Mwangi Branch","photo":"cousin_portraits/mama_liam.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"BoKUMNTK":{"giverName":"Mama Liam","giverSlug":"mama-liam","recipient":{"slug":"emmanuel","name":"Emmanuel","branch":"Njeri Branch","photo":"cousin_portraits/emmanuel.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"TwuXSSWg":{"giverName":"Emmanuel","giverSlug":"emmanuel","recipient":{"slug":"muli","name":"Muli","branch":"Wambugu Branch","photo":"cousin_portraits/muriithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"4Nwwxyna":{"giverName":"Muli","giverSlug":"muli","recipient":{"slug":"kaguongo","name":"Maurice Kaguongo","branch":"Wangechi Branch","photo":"cousin_portraits/kaguongo.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"wY2Byyo6":{"giverName":"Maurice Kaguongo","giverSlug":"kaguongo","recipient":{"slug":"lyon","name":"Lyon","branch":"Nginga Branch","photo":"cousin_portraits/lyon.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"DWMUWdsd":{"giverName":"Lyon","giverSlug":"lyon","recipient":{"slug":"peter","name":"Peter","branch":"Munyiri Branch","photo":"cousin_portraits/muriithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"RFBLwk6W":{"giverName":"Peter","giverSlug":"peter","recipient":{"slug":"jeff","name":"Jeff","branch":"Nyambura Branch","photo":"cousin_portraits/jeff.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"2U49QPAr":{"giverName":"Jeff","giverSlug":"jeff","recipient":{"slug":"millcah","name":"Millcah","branch":"Wambugu Branch","photo":"cousin_portraits/milcah.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"tdnMDsY8":{"giverName":"Millcah","giverSlug":"millcah","recipient":{"slug":"shiku","name":"Shiku","branch":"Mathenge Branch","photo":"cousin_portraits/shiku.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"Nr8bzBNn":{"giverName":"Shiku","giverSlug":"shiku","recipient":{"slug":"muthoni-mama-curtis","name":"Muthoni (Mama Curtis)","branch":"Wangechi Branch","photo":"cousin_portraits/muriithi.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"Pe5DkLbP":{"giverName":"Muthoni (Mama Curtis)","giverSlug":"muthoni-mama-curtis","recipient":{"slug":"ian","name":"Ian","branch":"Nginga Branch","photo":"cousin_portraits/ian.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"wRhjFqHq":{"giverName":"Ian","giverSlug":"ian","recipient":{"slug":"dani","name":"Dani","branch":"Mwangi Branch","photo":"cousin_portraits/dani.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"YUJ3UUny":{"giverName":"Dani","giverSlug":"dani","recipient":{"slug":"ishmael","name":"Ishmael","branch":"Njeri Branch","photo":"cousin_portraits/ishmael.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}},"mYJUYea2":{"giverName":"Ishmael","giverSlug":"ishmael","recipient":{"slug":"charles-wambugu","name":"Charles Wambugu","branch":"Wambugu Branch","photo":"cousin_portraits/charles_wambugu.jpg","quip":"“Secret Santa mode activated! Ready for something special.”"}}};
+/* Each private link (?k=TOKEN) opens exactly one AES-GCM envelope in envelopes.js.
+   The page holds no readable assignments: without the token the envelope is noise. */
+const TOKEN_RE = /^[A-Za-z0-9]{6,32}$/;
+async function sha256Hex(text){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+async function openEnvelope(token){
+  const box = window.NJ_ENVELOPES;
+  if (!box || !TOKEN_RE.test(token) || !window.crypto?.subtle) return null;
+  const id = (await sha256Hex('nj-id|' + token)).slice(0, 20);
+  const env = box.items[id];
+  if (!env) return null;
+  const enc = new TextEncoder();
+  const base = await crypto.subtle.importKey('raw', enc.encode(token), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt: enc.encode('nj-salt|' + id), iterations: box.iter, hash: 'SHA-256' },
+    base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+  const bytes = s64 => Uint8Array.from(atob(s64), c => c.charCodeAt(0));
+  try {
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes(env.iv) }, key, bytes(env.ct));
+    return JSON.parse(new TextDecoder().decode(plain));
+  } catch { return null; }
+}
 let isPrivateMode = false;
 
 /* ---------- 18 Tethered Cousins Loop for Interactive Review ---------- */
+const F = n => `cousin_portraits/faces/${n}.jpg`;
 const CANDIDATE_RECIPIENTS = [
-  { slug: 'lyon', name: 'Lyon', branch: 'Nginga Branch', photo: 'cousin_portraits/lyon.jpg', quip: '“Secret Santa mode activated! Ready for something special.”' },
-  { slug: 'wahito', name: 'Wahito', branch: 'Wangechi Branch', photo: 'cousin_portraits/wahito.jpg', quip: '“Christmas season is here — get ready to be spoiled!”' },
-  { slug: 'jeff', name: 'Jeff', branch: 'Nyambura Branch', photo: 'cousin_portraits/jeff.jpg', quip: '“May your gifts be merry, memorable, and right on budget!”' },
-  { slug: 'dani', name: 'Dani', branch: 'Mwangi Branch', photo: 'cousin_portraits/dani.jpg', quip: '“Wishing you laughs, joy, and the best gift under the tree!”' },
-  { slug: 'shiku', name: 'Shiku', branch: 'Mathenge Branch', photo: 'cousin_portraits/shiku.jpg', quip: '“All I want for Christmas is good vibes, good family, and great gifts.”' },
-  { slug: 'caro', name: 'Caro', branch: 'Mathenge Branch', photo: 'cousin_portraits/caro.jpg', quip: '“Happy Holidays! Hope you’re ready for a delightful surprise.”' },
-  { slug: 'ishmael', name: 'Ishmael', branch: 'Njeri Branch', photo: 'cousin_portraits/ishmael.jpg', quip: '“Honestly, the best Christmas gift you could get me is a wife.”' },
-  { slug: 'ian', name: 'Ian', branch: 'Nginga Branch', photo: 'cousin_portraits/ian.jpg', quip: '“Festive greetings! Let the Christmas celebrations begin.”' },
-  { slug: 'milcah', name: 'Milcah', branch: 'Wambugu Branch', photo: 'cousin_portraits/milcah.jpg', quip: '“Bringing pure holiday warmth and cheer to the cousin squad!”' },
-  { slug: 'sam', name: 'Sam', branch: 'Wangechi Branch', photo: 'cousin_portraits/sam.jpg', quip: '“Ready for Christmas cheer and good holiday memories!”' },
-  { slug: 'bettie', name: 'Bettie', branch: 'Mwangi Branch', photo: 'cousin_portraits/bettie.jpg', quip: '“Making spirits bright! Can’t wait to see your Christmas smile.”' },
-  { slug: 'emmanuel', name: 'Emmanuel', branch: 'Njeri Branch', photo: 'cousin_portraits/emmanuel.jpg', quip: '“Kikombe itanitosha tu”' },
-  { slug: 'karen', name: 'Karen', branch: 'Wambugu Branch', photo: 'cousin_portraits/karen.jpg', quip: '“Here’s to peace, joy, and the most thoughtful gift ever!”' },
-  { slug: 'kaguongo', name: 'Maurice Kaguongo', branch: 'Wangechi Branch', photo: 'cousin_portraits/kaguongo.jpg', quip: '“Wishing you laughter, great food, and a wonderful Christmas!”' },
-  { slug: 'charles-wambugu', name: 'Charles Wambugu', branch: 'Wambugu Branch', photo: 'cousin_portraits/charles_wambugu.jpg', quip: '“Shadow in the building — sending festive greetings your way!”' },
-  { slug: 'njithi', name: 'Njithi', branch: 'Wangechi Branch', photo: 'cousin_portraits/njithi.jpg', quip: '“Holiday magic and family love! Make this Christmas unforgettable.”' },
-  { slug: 'charles-mwangi', name: 'Charles Mwangi', branch: 'Mwangi Branch', photo: 'cousin_portraits/charles_mwangi.jpg', quip: '“Warm Christmas wishes from the Mwangi branch to you!”' },
-  { slug: 'mama-liam', name: 'Mama Liam', branch: 'Mwangi Branch', photo: 'cousin_portraits/mama_liam.jpg', quip: '“Blessings, joy, and happy holidays to all the cousins!”' }
+  { slug: 'lyon', name: 'Lyon', branch: 'Nginga Branch', photo: F('lyon'), quip: '“Secret Santa mode activated! Ready for something special.”' },
+  { slug: 'wahito', name: 'Wahito', branch: 'Wangechi Branch', photo: F('wahito'), quip: '“Christmas season is here — get ready to be spoiled!”' },
+  { slug: 'jeff', name: 'Jeff', branch: 'Nyambura Branch', photo: F('jeff'), quip: '“In your 20s some people party till 5am and others wake up at 5am — make sure you do both.”' },
+  { slug: 'dani', name: 'Dani', branch: 'Mwangi Branch', photo: F('dani'), quip: '“Wishing you laughs, joy, and the best gift under the tree!”' },
+  { slug: 'shiku', name: 'Shiku', branch: 'Mathenge Branch', photo: F('shiku'), quip: '“All I want for Christmas is good vibes, good family, and great gifts.”' },
+  { slug: 'caro', name: 'Caro', branch: 'Mathenge Branch', photo: F('caro'), quip: '“Happy Holidays! Hope you’re ready for a delightful surprise.”' },
+  { slug: 'ishmael', name: 'Ishmael', branch: 'Njeri Branch', photo: F('ishmael'), quip: '“Honestly, the best Christmas gift you could get me is a wife.”' },
+  { slug: 'ian', name: 'Ian', branch: 'Nginga Branch', photo: F('ian'), quip: '“Festive greetings! Let the Christmas celebrations begin.”' },
+  { slug: 'millcah', name: 'Millcah', branch: 'Wambugu Branch', photo: F('milcah'), quip: '“Bringing pure holiday warmth and cheer to the cousin squad!”' },
+  { slug: 'sam', name: 'Sam', branch: 'Wangechi Branch', photo: F('sam'), quip: '“Ready for Christmas cheer and good holiday memories!”' },
+  { slug: 'bettie', name: 'Bettie', branch: 'Mwangi Branch', photo: F('bettie'), quip: '“Making spirits bright! Can’t wait to see your Christmas smile.”' },
+  { slug: 'emmanuel', name: 'Emmanuel', branch: 'Njeri Branch', photo: F('emmanuel'), quip: '“Kikombe itanitosha tu”' },
+  { slug: 'karen', name: 'Karen', branch: 'Wambugu Branch', photo: F('karen'), quip: '“Here’s to peace, joy, and the most thoughtful gift ever!”' },
+  { slug: 'kaguongo', name: 'Maurice Kaguongo', branch: 'Wangechi Branch', photo: F('kaguongo'), quip: '“Wishing you laughter, great food, and a wonderful Christmas!”' },
+  { slug: 'charles-wambugu', name: 'Charles Wambugu', branch: 'Wambugu Branch', photo: F('charles_wambugu'), quip: '“Shadow in the building — sending festive greetings your way!”' },
+  { slug: 'njithi', name: 'Njithi', branch: 'Wangechi Branch', photo: F('njithi'), quip: '“Holiday magic and family love! Make this Christmas unforgettable.”' },
+  { slug: 'charles-mwangi', name: 'Charles Mwangi', branch: 'Mwangi Branch', photo: F('charles_mwangi'), quip: '“Warm Christmas wishes from the Mwangi branch to you!”' },
+  { slug: 'mama-liam', name: 'Mama Liam', branch: 'Mwangi Branch', photo: F('mama_liam'), quip: '“Blessings, joy, and happy holidays to all the cousins!”' },
+  { slug: 'alvin', name: 'Alvin', branch: 'Mathenge Branch', photo: F('alvin'), quip: '“Holiday joy, delivered with a smile!”' },
+  /* No photo yet: these show a monogram instead of borrowing someone else's face. */
+  { slug: 'muli', name: 'Muli', branch: 'Wambugu Branch', photo: null, quip: '“Merry Christmas — surprise me!”' },
+  { slug: 'jem', name: 'Jem', branch: 'Mwangi Branch', photo: null, quip: '“It’s the most wonderful time of the year!”' },
+  { slug: 'peter', name: 'Peter', branch: 'Munyiri Branch', photo: null, quip: '“Holiday warmth from the Munyiri branch!”' },
+  { slug: 'muthoni-mama-esther', name: 'Muthoni (Mama Esther)', branch: 'Mwangi Branch', photo: null, quip: '“Merry Christmas, cousins — spread the love!”' },
+  { slug: 'muthoni-mama-curtis', name: 'Muthoni (Mama Curtis)', branch: 'Wangechi Branch', photo: null, quip: '“Christmas joy for the whole cousin squad!”' }
 ];
 
 let candidateIndex = 0;
@@ -1063,33 +1107,33 @@ function randomizeRecipient(){
   return selectedRecipient;
 }
 
-const ISHMAEL_RECIPIENT = CANDIDATE_RECIPIENTS[6];
+const ISHMAEL_RECIPIENT = CANDIDATE_RECIPIENTS.find(c => c.slug === 'ishmael');
 
 const COUSIN_DATA = [
-  C('charles-wambugu', 'Charles Wambugu', 'Wambugu Branch', 'Charles Wambugu', 'Shadow in the building', 'cousin_portraits/charles_wambugu.jpg'),
-  C('millcah', 'Millcah', 'Wambugu Branch', 'Millcah', 'Holiday warmth', 'cousin_portraits/milcah.jpg'),
-  C('karen', 'Karen', 'Wambugu Branch', 'Karen', 'Thoughtful gift', 'cousin_portraits/karen.jpg'),
-  C('muli', 'Muli', 'Wambugu Branch', 'Muli', 'Merry Christmas', 'cousin_portraits/muriithi.jpg'),
-  C('shiku', 'Shiku', 'Mathenge Branch', 'Shiku', 'Good vibes', 'cousin_portraits/shiku.jpg'),
-  C('caro', 'Caro', 'Mathenge Branch', 'Caro', 'Delightful surprise', 'cousin_portraits/caro.jpg'),
-  C('alvin', 'Alvin', 'Mathenge Branch', 'Alvin', 'Holiday joy', 'cousin_portraits/alvin.jpg'),
-  C('dani', 'Dani', 'Mwangi Branch', 'Dani', 'Laughter and cheer', 'cousin_portraits/dani.jpg'),
-  C('charles-mwangi', 'Charles Mwangi', 'Mwangi Branch', 'Charles Mwangi', 'Mwangi branch greetings', 'cousin_portraits/charles_mwangi.jpg'),
-  C('bettie', 'Bettie', 'Mwangi Branch', 'Bettie', 'Making spirits bright', 'cousin_portraits/bettie.jpg'),
-  C('muthonimamaesther', 'Muthoni (Mama Esther)', 'Mwangi Branch', 'Muthoni', 'Merry Christmas', 'cousin_portraits/muriithi.jpg'),
-  C('mamaliam', 'Mama Liam', 'Mwangi Branch', 'Mama Liam', 'Blessings and joy', 'cousin_portraits/mama_liam.jpg'),
-  C('jem', 'Jem', 'Mwangi Branch', 'Jem', 'Festive season', 'cousin_portraits/muriithi.jpg'),
-  C('jeff', 'Jeff', 'Nyambura Branch', 'Jeff', 'Merry and memorable', 'cousin_portraits/jeff.jpg'),
-  C('lyon', 'Lyon', 'Nginga Branch', 'Lyon', 'Secret Santa mode', 'cousin_portraits/lyon.jpg'),
-  C('ian', 'Ian', 'Nginga Branch', 'Ian', 'Festive greetings', 'cousin_portraits/ian.jpg'),
-  C('peter', 'Peter', 'Munyiri Branch', 'Peter', 'Holiday warmth', 'cousin_portraits/muriithi.jpg'),
-  C('ishmael', 'Ishmael', 'Njeri Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, 'cousin_portraits/ishmael.jpg'),
-  C('emmanuel', 'Emmanuel', 'Njeri Branch', 'Emmanuel', 'Kikombe itanitosha tu', 'cousin_portraits/emmanuel.jpg'),
-  C('muthonimamacurtis', 'Muthoni (Mama Curtis)', 'Wangechi Branch', 'Muthoni', 'Christmas joy', 'cousin_portraits/muriithi.jpg'),
-  C('wahito', 'Wahito', 'Wangechi Branch', 'Wahito', 'Get ready to be spoiled', 'cousin_portraits/wahito.jpg'),
-  C('sam', 'Sam', 'Wangechi Branch', 'Sam', 'Good holiday memories', 'cousin_portraits/sam.jpg'),
-  C('kaguongo', 'Maurice Kaguongo', 'Wangechi Branch', 'Kaguongo', 'Laughter and great food', 'cousin_portraits/kaguongo.jpg'),
-  C('njithi', 'Njithi', 'Wangechi Branch', 'Njithi', 'Holiday magic', 'cousin_portraits/njithi.jpg')
+  C('charles-wambugu', 'Charles Wambugu', 'Wambugu Branch', 'Charles Wambugu', 'Shadow in the building', F('charles_wambugu')),
+  C('millcah', 'Millcah', 'Wambugu Branch', 'Millcah', 'Holiday warmth', F('milcah')),
+  C('karen', 'Karen', 'Wambugu Branch', 'Karen', 'Thoughtful gift', F('karen')),
+  C('muli', 'Muli', 'Wambugu Branch', 'Muli', 'Merry Christmas', null),
+  C('shiku', 'Shiku', 'Mathenge Branch', 'Shiku', 'Good vibes', F('shiku')),
+  C('caro', 'Caro', 'Mathenge Branch', 'Caro', 'Delightful surprise', F('caro')),
+  C('alvin', 'Alvin', 'Mathenge Branch', 'Alvin', 'Holiday joy', F('alvin')),
+  C('dani', 'Dani', 'Mwangi Branch', 'Dani', 'Laughter and cheer', F('dani')),
+  C('charles-mwangi', 'Charles Mwangi', 'Mwangi Branch', 'Charles Mwangi', 'Mwangi branch greetings', F('charles_mwangi')),
+  C('bettie', 'Bettie', 'Mwangi Branch', 'Bettie', 'Making spirits bright', F('bettie')),
+  C('muthonimamaesther', 'Muthoni (Mama Esther)', 'Mwangi Branch', 'Muthoni', 'Merry Christmas', null),
+  C('mamaliam', 'Mama Liam', 'Mwangi Branch', 'Mama Liam', 'Blessings and joy', F('mama_liam')),
+  C('jem', 'Jem', 'Mwangi Branch', 'Jem', 'Festive season', null),
+  C('jeff', 'Jeff', 'Nyambura Branch', 'Jeff', 'Merry and memorable', F('jeff')),
+  C('lyon', 'Lyon', 'Nginga Branch', 'Lyon', 'Secret Santa mode', F('lyon')),
+  C('ian', 'Ian', 'Nginga Branch', 'Ian', 'Festive greetings', F('ian')),
+  C('peter', 'Peter', 'Munyiri Branch', 'Peter', 'Holiday warmth', null),
+  C('ishmael', 'Ishmael', 'Njeri Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, F('ishmael')),
+  C('emmanuel', 'Emmanuel', 'Njeri Branch', 'Emmanuel', 'Kikombe itanitosha tu', F('emmanuel')),
+  C('muthonimamacurtis', 'Muthoni (Mama Curtis)', 'Wangechi Branch', 'Muthoni', 'Christmas joy', null),
+  C('wahito', 'Wahito', 'Wangechi Branch', 'Wahito', 'Get ready to be spoiled', F('wahito')),
+  C('sam', 'Sam', 'Wangechi Branch', 'Sam', 'Good holiday memories', F('sam')),
+  C('kaguongo', 'Maurice Kaguongo', 'Wangechi Branch', 'Kaguongo', 'Laughter and great food', F('kaguongo')),
+  C('njithi', 'Njithi', 'Wangechi Branch', 'Njithi', 'Holiday magic', F('njithi'))
 ];
 
 const COUSIN_MAP = {};
@@ -1306,62 +1350,76 @@ $('#logo-home').onclick = e => {
 };
 
 /* ---------- Device Retention & Entry Logic ---------- */
-function initDeviceAndUrl(){
+function setEntryView(view){
+  $('#pers-returning').hidden = view !== 'returning';
+  $('#pers-view').hidden = view !== 'first';
+  $('#picker-view').hidden = true;
+}
+function setFirstView(hi, sub, canStart){
+  $('#pers-hi').textContent = hi;
+  $('#pers-sub').textContent = sub;
+  $('#start-draw-btn').hidden = !canStart;
+  setEntryView('first');
+}
+
+let unlockSeq = 0;
+async function initDeviceAndUrl(){
+  const seq = ++unlockSeq;
   const params = new URLSearchParams(window.location.search);
-  const token = params.get('k') || params.get('code') || params.get('t');
-  
-  if (token && typeof SECURE_BY_TOKEN !== 'undefined' && SECURE_BY_TOKEN[token]) {
-    const data = SECURE_BY_TOKEN[token];
-    isPrivateMode = true;
-    selectedRecipient = data.recipient;
-    
-    // Hide navigation buttons in private draw mode
-    const navGroup = document.getElementById('nav-buttons');
-    if (navGroup) navGroup.style.display = 'none';
-    const badge = document.getElementById('preview-badge');
-    if (badge) badge.textContent = '🔒 Confidential Draw';
-    
-    session = {
-      slug: data.giverSlug,
-      me: data.giverName,
-      to: data.recipient
-    };
-    
-    const hasSeen = store.get('nj-seen-tok-' + token);
-    if (hasSeen) {
-      $('#ret-hi').textContent = `Welcome back, ${data.giverName}!`;
-      $('#pers-returning').hidden = false;
-      $('#pers-view').hidden = true;
-      $('#picker-view').hidden = true;
-    } else {
-      $('#pers-hi').textContent = `Hi ${data.giverName},`;
-      $('#pers-returning').hidden = true;
-      $('#pers-view').hidden = false;
-      $('#picker-view').hidden = true;
-    }
+  const urlToken = (params.get('k') || params.get('code') || params.get('t') || '').trim();
+  const savedToken = store.get('nj-my-token');
+  const token = urlToken || savedToken || '';
+  const navGroup = document.getElementById('nav-buttons');
+  const badge = document.getElementById('preview-badge');
+
+  // Organiser preview: ?preview=1 cycles through every cousin's card to check photos and quips.
+  if (!urlToken && params.has('preview')){
+    isPrivateMode = false;
+    selectedRecipient = CANDIDATE_RECIPIENTS[candidateIndex];
+    if (navGroup) navGroup.style.display = 'flex';
+    if (badge) badge.textContent = `Preview ${candidateIndex + 1} of ${CANDIDATE_RECIPIENTS.length}`;
+    session = { slug: 'reviewer', me: 'Ishmael', to: selectedRecipient, token: null };
+    setFirstView('Hi Ishmael,', 'Preview mode: spin to step through every cousin’s card.', true);
     show('s-entry');
     return;
   }
 
-  // Otherwise: Interactive Review Carousel Mode
-  isPrivateMode = false;
-  selectedRecipient = CANDIDATE_RECIPIENTS[candidateIndex];
-  const navGroup = document.getElementById('nav-buttons');
-  if (navGroup) navGroup.style.display = 'flex';
-  const badge = document.getElementById('preview-badge');
-  if (badge) badge.textContent = `${(candidateIndex % CANDIDATE_RECIPIENTS.length) + 1} of ${CANDIDATE_RECIPIENTS.length}`;
+  if (navGroup) navGroup.style.display = 'none';
+  isPrivateMode = true;
+  session = null;
 
-  session = {
-    slug: 'reviewer',
-    me: 'Ishmael',
-    to: selectedRecipient
-  };
+  if (!token){
+    setFirstView('Hi cousin,', 'Open the private link we sent you on WhatsApp to start your draw.', false);
+    show('s-entry');
+    return;
+  }
 
-  $('#pers-hi').textContent = 'Hi Ishmael,';
-  $('#pers-returning').hidden = true;
-  $('#pers-view').hidden = false;
-  $('#picker-view').hidden = true;
+  setFirstView('Unlocking your card…', 'One moment.', false);
   show('s-entry');
+  const data = await openEnvelope(token);
+  if (seq !== unlockSeq) return;
+
+  if (!data){
+    if (!urlToken) store.remove('nj-my-token');
+    const why = window.crypto?.subtle
+      ? 'This link doesn’t match this year’s draw. Ask Ishmael or Jeff for your private link.'
+      : 'Your browser can’t open private links here. Try Chrome or Safari.';
+    setFirstView('Hmm, that link didn’t work', why, false);
+    return;
+  }
+
+  store.set('nj-my-token', token);
+  selectedRecipient = data.recipient;
+  if (data.recipient.photo) { const warm = new Image(); warm.src = data.recipient.photo; }
+  if (badge) badge.textContent = '🔒 Only you can see this';
+  session = { slug: data.giverSlug, me: data.giverName, to: data.recipient, token };
+
+  if (store.get('nj-seen-tok-' + token)){
+    $('#ret-hi').textContent = `Welcome back, ${data.giverName}!`;
+    setEntryView('returning');
+  } else {
+    setFirstView(`Hi ${data.giverName},`, 'Ready to see who you’re buying for this Christmas?', true);
+  }
 }
 
 function showPicker(){
@@ -1380,20 +1438,16 @@ $('#re-spin-btn').onclick = () => {
 };
 
 $('#start-draw-btn').onclick = () => {
+  if (!session) return;
   getAudioCtx();
-  if (session) openWheel();
+  openWheel();
 };
 
 $('#pick-go-btn').onclick = () => {
   const sel = $('#cousin-select').value;
   if (!sel) return;
   const c = COUSIN_MAP[sel];
-  if (c) {
-    store.set('nj_device_user', c.slug);
-    session = { slug: c.slug, me: c.name, to: CANDIDATE_RECIPIENTS[0] };
-    getAudioCtx();
-    openWheel();
-  }
+  if (c) { $('#err').textContent = 'Please open the private link sent to you on WhatsApp.'; $('#err').hidden = false; }
 };
 
 $('#code-go').onclick = () => enter($('#code').value);
@@ -1407,11 +1461,8 @@ function enter(raw){
     $('#err').hidden = false;
     return;
   }
-  $('#err').hidden = true;
-  store.set('nj_device_user', hit.slug);
-  session = { slug: hit.slug, me: hit.name, to: CANDIDATE_RECIPIENTS[0] };
-  getAudioCtx();
-  openWheel();
+  $('#err').textContent = 'Please open the private link sent to you on WhatsApp.';
+  $('#err').hidden = false;
 }
 
 /* ---------- Realistic 3D Three.js Wheel Engine ---------- */
@@ -1778,6 +1829,7 @@ window.addEventListener('deviceorientation', handleOrientation, { passive: true 
 
 function openWheel(){
   show('s-wheel');
+  $('#hello').textContent = isPrivateMode && session?.me ? `Hi ${session.me.split(/[\s(]/)[0]}` : 'Hi cousin';
   clearTimeout(fadeTimer);
   backgroundMusic.currentTime = 0;
   wheelMusicActive = true;
@@ -1953,7 +2005,8 @@ async function finishSpin(){
   if (revealing || $('#s-wheel').hidden) return;
   revealing = true;
   angularVelocity = 0;
-  randomizeRecipient();
+  // Only the organiser preview cycles through cousins. A private link always lands on its own recipient.
+  if (!isPrivateMode) randomizeRecipient();
   statusEl.textContent = 'Hold tight…';
   if (reducedMotion.matches || !fabric){ reveal(false); return; }
   const sequence = ++curtainSequence;
@@ -1974,6 +2027,30 @@ async function finishSpin(){
 const card = $('#card'), tilt = $('#tilt'), holder = $('#portrait');
 let sweep = 0;
 
+function initialsOf(name){
+  const words = name.replace(/\(.*?\)/g, ' ').split(/\s+/).filter(Boolean);
+  return ((words[0]?.[0] || '') + (words.length > 1 ? words[words.length - 1][0] : '')).toUpperCase();
+}
+function portraitFor(recipient){
+  const wrap = document.createElement('div');
+  wrap.className = 'photo-card-wrap';
+  const mono = document.createElement('div');
+  mono.className = 'cousin-face-mono';
+  mono.textContent = initialsOf(recipient.name);
+  mono.setAttribute('aria-hidden', 'true');
+  wrap.append(mono);
+  if (recipient.photo){
+    const img = new Image();
+    img.className = 'cousin-face-img';
+    img.alt = recipient.name;
+    img.decoding = 'async';
+    img.src = recipient.photo;
+    img.onerror = () => img.remove();   // fall back to the monogram underneath
+    wrap.append(img);
+  }
+  return wrap;
+}
+
 function reveal(returning, behindCurtain = false){
   const recipient = selectedRecipient;
   $('#who').textContent = recipient.name;
@@ -1981,16 +2058,13 @@ function reveal(returning, behindCurtain = false){
   const countBadge = $('#preview-badge');
   if (countBadge) {
     if (isPrivateMode) {
-      countBadge.textContent = '🔒 Confidential Draw';
+      countBadge.textContent = '🔒 Only you can see this';
     } else {
-      countBadge.textContent = `${(candidateIndex % CANDIDATE_RECIPIENTS.length) + 1} of ${CANDIDATE_RECIPIENTS.length}`;
+      countBadge.textContent = `Preview ${candidateIndex + 1} of ${CANDIDATE_RECIPIENTS.length}`;
     }
   }
-  holder.innerHTML = `
-    <div class="photo-card-wrap">
-      <img src="${recipient.photo}" alt="${recipient.name}" class="cousin-face-img" loading="eager">
-    </div>
-  `;
+  holder.replaceChildren(portraitFor(recipient));
+  if (isPrivateMode && session?.token) store.set('nj-seen-tok-' + session.token, '1');
 
   show('s-card', behindCurtain);
   offTilt();
@@ -2146,7 +2220,6 @@ $('#tohost').onclick = () => {
       <span>${c.name} (${c.branch.replace(' Branch', '')})</span>
       <span style="display:flex;align-items:center;gap:8px;">
         <b style="color:${isOpened ? 'var(--gold)' : 'var(--muted)'};">${isOpened ? 'Opened ✓' : 'Pending'}</b>
-        <button class="chip" type="button" data-copy="${c.slug}" data-name="${c.name}">Copy invite link</button>
       </span>
     </li>`;
   }).join('');

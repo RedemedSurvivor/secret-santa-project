@@ -1,0 +1,33 @@
+{
+ "year": 2026,
+ "baseUrl": "https://example.vercel.app/",
+ "cousins": [
+  {
+   "slug": "cousin-a",
+   "name": "Cousin A",
+   "branch": "Branch 1",
+   "photo": null,
+   "quip": "“…”"
+  },
+  {
+   "slug": "cousin-b",
+   "name": "Cousin B",
+   "branch": "Branch 2",
+   "photo": null,
+   "quip": "“…”"
+  },
+  {
+   "slug": "cousin-c",
+   "name": "Cousin C",
+   "branch": "Branch 3",
+   "photo": null,
+   "quip": "“…”"
+  }
+ ],
+ "pastPairs": [
+  [
+   "cousin-a",
+   "cousin-b"
+  ]
+ ]
+}

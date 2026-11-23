@@ -6,3 +6,6 @@ tiktok_frames_2/
 __pycache__/
 
 assignments.json
+
+# Private draw material: never commit
+private/
