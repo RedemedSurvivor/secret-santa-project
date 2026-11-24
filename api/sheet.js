@@ -18,16 +18,38 @@ export default async function handler(req, res) {
 
     const phoneMap = {};
     for (const line of lines) {
-      // Find rows that have a phone number (e.g. 254... or 07...)
-      const match = line.match(/(254\d{9}|07\d{8}|01\d{8})/);
-      if (match) {
-        const phone = match[1];
-        // match name before the phone number
-        const cols = line.split(',');
-        for (const col of cols) {
-          const clean = col.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-          if (clean && clean.length > 2 && !clean.includes('branch') && !clean.includes('cousin')) {
-            phoneMap[clean] = phone;
+      if (!line.trim()) continue;
+      const parts = line.split(',');
+      if (parts.length >= 6) {
+        const rawName = (parts[1] || '').trim();
+        const branch = (parts[2] || '').trim();
+        const rawPhone = (parts[5] || '').trim().replace(/[^\d+]/g, '');
+
+        if (rawName && rawPhone && (rawPhone.startsWith('254') || rawPhone.startsWith('07') || rawPhone.startsWith('01') || rawPhone.startsWith('+254'))) {
+          // Normalize phone
+          let p = rawPhone;
+          if (p.startsWith('+')) p = p.slice(1);
+          if (p.startsWith('07') || p.startsWith('01')) p = '254' + p.slice(1);
+
+          const cleanName = rawName.toLowerCase().replace(/[^a-z0-9]/g, '');
+          phoneMap[cleanName] = p;
+
+          // Also map specific common aliases
+          if (rawName.toLowerCase().includes('charles') && branch.toLowerCase().includes('wambugu')) {
+            phoneMap['charleswambugu'] = p;
+          }
+          if (rawName.toLowerCase().includes('charles') && branch.toLowerCase().includes('mwangi')) {
+            phoneMap['charlesmwangi'] = p;
+          }
+          if (rawName.toLowerCase().includes('liam') || rawName.toLowerCase().includes('mumbi')) {
+            phoneMap['mamaliam'] = p;
+            phoneMap['mumbi'] = p;
+          }
+          if (rawName.toLowerCase().includes('esther')) {
+            phoneMap['muthonimamaesther'] = p;
+          }
+          if (rawName.toLowerCase().includes('curtis')) {
+            phoneMap['muthonimamacurtis'] = p;
           }
         }
       }
