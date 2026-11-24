@@ -70,6 +70,7 @@
     <div class="badge total">👥 Total: <span id="total">24</span></div>
     <div class="badge sent">✅ Sent: <span id="sent">0</span></div>
     <div class="badge pending">⏳ Pending: <span id="pending">24</span></div>
+    <button class="btn" id="sync-sheet-btn" type="button" style="background:#10b981;color:#fff;font-size:0.85rem;padding:6px 14px;">🔄 Sync Sheet</button>
   </div>
 
   <input type="text" id="search" class="search-box" placeholder="🔍 Search cousin name or branch...">
@@ -214,7 +215,8 @@
     "slug": "charles-wambugu",
     "branch": "Wambugu Branch",
     "token": "RxMJUpbsgb",
-    "link": "https://secret-santa-project-five.vercel.app/?k=RxMJUpbsgb"
+    "link": "https://secret-santa-project-five.vercel.app/?k=RxMJUpbsgb",
+    "phone": "254700834076"
   },
   {
     "name": "Njithi",
@@ -434,6 +436,39 @@
     }
     render();
   });
+
+  async function syncGoogleSheet(){
+    const btn = $('#sync-sheet-btn');
+    if (!btn) return;
+    const oldText = btn.textContent;
+    btn.textContent = '⏳ Checking…';
+    btn.disabled = true;
+    try {
+      const res = await fetch('/api/sheet?t=' + Date.now());
+      if (!res.ok) throw new Error('Status ' + res.status);
+      const data = await res.json();
+      if (!data.numbers || !Object.keys(data.numbers).length) throw new Error('No phone numbers found in sheet.');
+      let found = 0;
+      invites.forEach(inv => {
+        const slugClean = inv.slug.replace(/[^a-z0-9]/g, '');
+        const nameClean = inv.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const phone = data.numbers[slugClean] || data.numbers[nameClean] || data.numbers[inv.slug];
+        if (phone){
+          store.set('nj-phone-' + inv.slug, phone);
+          found++;
+        }
+      });
+      render();
+      alert(`Sync successful! Found ${found} number(s) from Google Sheet.`);
+    } catch(err){
+      alert('Could not sync from Google Sheet: ' + err.message);
+    } finally {
+      btn.textContent = oldText;
+      btn.disabled = false;
+    }
+  }
+
+  $('#sync-sheet-btn')?.addEventListener('click', syncGoogleSheet);
 
   render();
 })();

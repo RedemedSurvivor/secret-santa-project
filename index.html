@@ -1167,6 +1167,31 @@ COUSIN_DATA.forEach(c => {
 
 /* Start on the wheel and carry the same track through the reveal. */
 let soundOn = store.get('nj-sound') !== 'off';
+
+const SOUNDTRACKS = [
+  { id: 'water', title: 'Water (Tyla Sax)', src: 'audio/water-background.m4a' },
+  { id: 'commas', title: 'Commas (Ayra Starr Sax)', src: 'audio/track_commas.m4a' },
+  { id: 'tshwala', title: 'Tshwala Bam (Amapiano Sax)', src: 'audio/track_tshwala.m4a' },
+  { id: 'ndisize', title: 'Ndisize (Caiiro ft. Ami Faku Sax)', src: 'audio/track_ndisize.m4a' },
+  { id: 'suzanna', title: 'Suzanna (Sauti Sol Sax)', src: 'audio/track_suzanna.m4a' }
+];
+
+let lastPlayedIdx = -1;
+function pickWheelTrack(slug){
+  // For Jeff, prioritize Ndisize on the initial spin
+  if (slug === 'jeff' && lastPlayedIdx === -1){
+    const jIdx = SOUNDTRACKS.findIndex(s => s.id === 'ndisize');
+    lastPlayedIdx = jIdx;
+    return SOUNDTRACKS[jIdx];
+  }
+  // Randomly select among the tracks, avoiding immediate repetition
+  let candidates = SOUNDTRACKS.map((_, i) => i).filter(i => i !== lastPlayedIdx);
+  if (!candidates.length) candidates = [0];
+  const chosenIdx = candidates[Math.floor(Math.random() * candidates.length)];
+  lastPlayedIdx = chosenIdx;
+  return SOUNDTRACKS[chosenIdx];
+}
+
 const backgroundMusic = new Audio('audio/water-background.m4a');
 backgroundMusic.preload = 'none';
 backgroundMusic.loop = true;
@@ -1849,6 +1874,11 @@ window.addEventListener('deviceorientation', handleOrientation, { passive: true 
 function openWheel(){
   show('s-wheel');
   $('#hello').textContent = isPrivateMode && session?.me ? `Hi ${session.me.split(/[\s(]/)[0]}` : 'Hi cousin';
+  
+  const track = pickWheelTrack(session?.slug);
+  if (!backgroundMusic.src.endsWith(track.src)){
+    backgroundMusic.src = track.src;
+  }
   clearTimeout(fadeTimer);
   backgroundMusic.currentTime = 0;
   wheelMusicActive = true;
