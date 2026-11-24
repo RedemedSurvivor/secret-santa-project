@@ -2173,7 +2173,7 @@ function reveal(returning, behindCurtain = false){
   holder.replaceChildren(portraitFor(recipient));
   const eyebrow = card.querySelector('.eyebrow');
   if (eyebrow) eyebrow.textContent = isPrivateMode ? 'You’re buying for' : 'Preview · not a real draw';
-  if (isPrivateMode && session?.token) store.set('nj-seen-tok-' + session.token, '1');
+  if (isPrivateMode && session?.token) { store.set('nj-seen-tok-' + session.token, '1'); fetch('/api/spin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: session.token }) }).catch(() => {}); }
 
   show('s-card', behindCurtain);
   offTilt();
