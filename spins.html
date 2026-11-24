@@ -107,10 +107,14 @@ function render() {
   let spunCount = 0;
 
   COUSINS.forEach((c, i) => {
-    const isSpun = !!spunMap[c.token];
+    const rawVal = spunMap[c.token];
+    const count = typeof rawVal === 'number' ? rawVal : (rawVal ? 1 : 0);
+    const isSpun = count > 0;
     if (isSpun) spunCount++;
     const row = document.createElement('div');
     row.className = 'row' + (isSpun ? ' done' : '');
+    const badgeText = isSpun ? `✓ Spun (${count}×)` : '⏳ Pending';
+    const warnStyle = count > 1 ? ' style="background:rgba(255,122,77,0.22);color:#ff9e7d;" title="Opened/spun multiple times"' : '';
     row.innerHTML = `
       <div class="left">
         <span class="num">${i + 1}</span>
@@ -119,7 +123,7 @@ function render() {
           <div class="branch">${c.branch}</div>
         </div>
       </div>
-      <span class="status ${isSpun ? 'yes' : 'no'}">${isSpun ? '✓ Spun' : '⏳ Pending'}</span>
+      <span class="status ${isSpun ? 'yes' : 'no'}"${warnStyle}>${badgeText}</span>
     `;
     list.append(row);
   });
@@ -137,7 +141,9 @@ async function refreshSpins(manual = false) {
     const data = await res.json();
     if (data.spun) {
       for (const [k, v] of Object.entries(data.spun)) {
-        if (v) spunMap[k] = true;
+        const count = typeof v === 'number' ? v : (v ? 1 : 0);
+        const prev = typeof spunMap[k] === 'number' ? spunMap[k] : (spunMap[k] ? 1 : 0);
+        if (count > prev) spunMap[k] = count;
       }
       try { localStorage.setItem('nj-spins-cache', JSON.stringify(spunMap)); } catch {}
       render();

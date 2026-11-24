@@ -16,7 +16,7 @@ async function checkToken(token) {
       const r = await fetch(`https://abacus.jasoncameron.dev/get/${NAMESPACE}/${token}`);
       if (r.ok) {
         const data = await r.json();
-        return (data.value || 0) > 0;
+        return data.value || 0;
       }
     } catch {}
     await new Promise(res => setTimeout(res, 150));
