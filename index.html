@@ -255,9 +255,13 @@
     }
     .card.live{transition:none}
     .card::before{
-      content:"";position:absolute;inset:0;pointer-events:none;opacity:0.38;
-      background:repeating-linear-gradient(118deg, rgba(255,255,255,0) 0 14px, rgba(255,255,255,0.22) 14px 15px);
+      content:"";position:absolute;inset:0;pointer-events:none;opacity:0.18;
+      background:radial-gradient(circle at 50% 30%, rgba(255,255,255,0.2) 0%, transparent 70%);
       z-index:1;
+    }
+    #portrait, .recipient-copy{
+      position:relative;
+      z-index:3;
     }
     .card::after{
       content:"";position:absolute;inset:-20%;pointer-events:none;opacity:var(--go);mix-blend-mode:soft-light;z-index:2;
@@ -930,7 +934,7 @@
             <option value="dani">Dani</option>
             <option value="charles-mwangi">Charles Mwangi</option>
             <option value="bettie">Bettie</option>
-            <option value="muthonimamaesther">Muthoni (Mama Esther)</option>
+            <option value="muthonimamaesther">Muthoni Mama Esther</option>
             <option value="mamaliam">Mama Liam</option>
             <option value="jem">Jem</option>
           </optgroup>
@@ -942,7 +946,7 @@
             <option value="peter">Peter</option>
           </optgroup>
           <optgroup label="Wangechi Branch">
-            <option value="muthonimamacurtis">Muthoni (Mama Curtis)</option>
+            <option value="muthonimamacurtis">Muthoni Mama Curtis</option>
             <option value="wahito">Wahito</option>
             <option value="sam">Sam</option>
             <option value="kaguongo">Kaguongo</option>
@@ -1086,8 +1090,8 @@ const CANDIDATE_RECIPIENTS = [
   { slug: 'muli', name: 'Muli', branch: 'Wambugu Branch', photo: F('muli'), quip: '“Merry Christmas — surprise me!”' },
   { slug: 'jem', name: 'Jem', branch: 'Mwangi Branch', photo: F('jem'), quip: '“It’s the most wonderful time of the year!”' },
   { slug: 'peter', name: 'Peter', branch: 'Munyiri Branch', photo: F('peter'), quip: '“Holiday warmth from the Munyiri branch!”' },
-  { slug: 'muthoni-mama-esther', name: 'Muthoni (Mama Esther)', branch: 'Mwangi Branch', photo: F('muthoni_mama_esther'), quip: '“Merry Christmas, cousins — spread the love!”' },
-  { slug: 'muthoni-mama-curtis', name: 'Muthoni (Mama Curtis)', branch: 'Wangechi Branch', photo: F('muthoni_mama_curtis'), quip: '“Christmas joy for the whole cousin squad!”' }
+  { slug: 'muthoni-mama-esther', name: 'Muthoni Mama Esther', branch: 'Mwangi Branch', photo: F('muthoni_mama_esther'), quip: '“Merry Christmas, cousins — spread the love!”' },
+  { slug: 'muthoni-mama-curtis', name: 'Muthoni Mama Curtis', branch: 'Wangechi Branch', photo: F('muthoni_mama_curtis'), quip: '“Christmas joy for the whole cousin squad!”' }
 ];
 
 let candidateIndex = 0;
@@ -1119,7 +1123,7 @@ const COUSIN_DATA = [
   C('dani', 'Dani', 'Mwangi Branch', 'Dani', 'Laughter and cheer', F('dani')),
   C('charles-mwangi', 'Charles Mwangi', 'Mwangi Branch', 'Charles Mwangi', 'Mwangi branch greetings', F('charles_mwangi')),
   C('bettie', 'Bettie', 'Mwangi Branch', 'Bettie', 'Making spirits bright', F('bettie')),
-  C('muthonimamaesther', 'Muthoni (Mama Esther)', 'Mwangi Branch', 'Muthoni', 'Merry Christmas', null),
+  C('muthonimamaesther', 'Muthoni Mama Esther', 'Mwangi Branch', 'Muthoni', 'Merry Christmas', null),
   C('mamaliam', 'Mama Liam', 'Mwangi Branch', 'Mama Liam', 'Blessings and joy', F('mama_liam')),
   C('jem', 'Jem', 'Mwangi Branch', 'Jem', 'Festive season', null),
   C('jeff', 'Jeff', 'Nyambura Branch', 'Jeff', 'Merry and memorable', F('jeff')),
@@ -1128,7 +1132,7 @@ const COUSIN_DATA = [
   C('peter', 'Peter', 'Munyiri Branch', 'Peter', 'Holiday warmth', null),
   C('ishmael', 'Ishmael', 'Njeri Branch', 'Ishmael', ISHMAEL_RECIPIENT.quip, F('ishmael')),
   C('emmanuel', 'Emmanuel', 'Njeri Branch', 'Emmanuel', 'Kikombe itanitosha tu', F('emmanuel')),
-  C('muthonimamacurtis', 'Muthoni (Mama Curtis)', 'Wangechi Branch', 'Muthoni', 'Christmas joy', null),
+  C('muthonimamacurtis', 'Muthoni Mama Curtis', 'Wangechi Branch', 'Muthoni', 'Christmas joy', null),
   C('wahito', 'Wahito', 'Wangechi Branch', 'Wahito', 'Get ready to be spoiled', F('wahito')),
   C('sam', 'Sam', 'Wangechi Branch', 'Sam', 'Good holiday memories', F('sam')),
   C('kaguongo', 'Maurice Kaguongo', 'Wangechi Branch', 'Kaguongo', 'Laughter and great food', F('kaguongo')),
@@ -1146,6 +1150,18 @@ COUSIN_DATA.forEach(c => {
   if (c.slug === 'charles-mwangi') {
     COUSIN_MAP['paps'] = c;
     COUSIN_MAP['charlesm'] = c;
+  }
+  if (c.slug === 'mamaliam') {
+    COUSIN_MAP['mumbi'] = c;
+    COUSIN_MAP['mama-liam'] = c;
+  }
+  if (c.slug === 'muthonimamaesther') {
+    COUSIN_MAP['muthoni-mama-esther'] = c;
+    COUSIN_MAP['mamaesther'] = c;
+  }
+  if (c.slug === 'muthonimamacurtis') {
+    COUSIN_MAP['muthoni-mama-curtis'] = c;
+    COUSIN_MAP['mamacurtis'] = c;
   }
 });
 

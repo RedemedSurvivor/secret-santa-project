@@ -1,0 +1,7 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/send", "destination": "/whatsapp_dispatcher.html" },
+    { "source": "/dispatcher", "destination": "/whatsapp_dispatcher.html" }
+  ]
+}
