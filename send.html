@@ -377,7 +377,7 @@
         <span class="hint"></span>`;
 
       const input = row.querySelector('input');
-      input.value = store.get('nj-phone-' + inv.slug) || '';
+      input.value = store.get('nj-phone-' + inv.slug) || inv.phone || '';
       const send = row.querySelector('.send');
       const hint = row.querySelector('.hint');
 
