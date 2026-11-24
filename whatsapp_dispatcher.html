@@ -408,7 +408,8 @@
           return;
         }
         const text = messageFor(inv);
-        const url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(text);
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const url = (isMobile ? 'https://wa.me/' + phone + '?text=' : 'https://web.whatsapp.com/send?phone=' + phone + '&text=') + encodeURIComponent(text);
         store.set('nj-sent-' + inv.slug, inv.link);
         markSent();
         tally();
