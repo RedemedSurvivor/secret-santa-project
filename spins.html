@@ -99,6 +99,7 @@ const COUSINS = [
 ];
 
 let spunMap = {};
+try { spunMap = JSON.parse(localStorage.getItem('nj-spins-cache') || '{}'); } catch {}
 
 function render() {
   const list = document.getElementById('list');
@@ -135,9 +136,12 @@ async function refreshSpins(manual = false) {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (data.spun) {
-      spunMap = data.spun;
+      for (const [k, v] of Object.entries(data.spun)) {
+        if (v) spunMap[k] = true;
+      }
+      try { localStorage.setItem('nj-spins-cache', JSON.stringify(spunMap)); } catch {}
       render();
-      document.getElementById('last-updated').textContent = 'Last checked: ' + new Date().toLocaleTimeString() + ' (auto-refreshes every 15s)';
+      document.getElementById('last-updated').textContent = 'Last checked: ' + new Date().toLocaleTimeString() + ' (auto-refreshes every 30s)';
     }
   } catch (err) {
     document.getElementById('last-updated').textContent = 'Error checking live spins: ' + err.message;
@@ -149,7 +153,7 @@ async function refreshSpins(manual = false) {
 document.getElementById('refresh-btn').addEventListener('click', () => refreshSpins(true));
 render();
 refreshSpins(false);
-setInterval(() => refreshSpins(false), 15000);
+setInterval(() => refreshSpins(false), 30000);
 </script>
 </body>
 </html>

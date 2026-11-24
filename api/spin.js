@@ -10,6 +10,20 @@ const TOKENS = [
 
 const NAMESPACE = 'njithi-santa-2026';
 
+async function checkToken(token) {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const r = await fetch(`https://abacus.jasoncameron.dev/get/${NAMESPACE}/${token}`);
+      if (r.ok) {
+        const data = await r.json();
+        return (data.value || 0) > 0;
+      }
+    } catch {}
+    await new Promise(res => setTimeout(res, 150));
+  }
+  return null;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -34,21 +48,13 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const spun = {};
-      await Promise.all(
-        TOKENS.map(async (token) => {
-          try {
-            const r = await fetch(`https://abacus.jasoncameron.dev/get/${NAMESPACE}/${token}`);
-            if (r.ok) {
-              const data = await r.json();
-              spun[token] = (data.value || 0) > 0;
-            } else {
-              spun[token] = false;
-            }
-          } catch {
-            spun[token] = false;
-          }
-        })
-      );
+      for (let i = 0; i < TOKENS.length; i += 6) {
+        const batch = TOKENS.slice(i, i + 6);
+        const results = await Promise.all(batch.map(t => checkToken(t)));
+        batch.forEach((t, idx) => {
+          if (results[idx] !== null) spun[t] = results[idx];
+        });
+      }
       return res.status(200).json({ spun });
     } catch (err) {
       return res.status(500).json({ error: err.message });
