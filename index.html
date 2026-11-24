@@ -220,6 +220,12 @@
 
     /* THEATRICAL RED VELVET CURTAINS */
     .curtains{position:fixed;inset:0;width:100%;height:100%;pointer-events:auto;z-index:30}
+    .silk-print{position:absolute;left:0;top:0;color:#f3cf86;pointer-events:none}
+    .silk-print p{position:absolute;margin:0;text-align:center;transform:translate(-50%,-50%);white-space:nowrap}
+    .silk-print .sp-l{left:27%}
+    .silk-print .sp-r{left:73%}
+    .silk-print .sp-script{top:38%;font:400 clamp(44px, 10vmin, 104px)/1 'MonteCarlo', cursive}
+    .silk-print .sp-caps{top:47%;font:700 clamp(12px, 2.2vmin, 18px)/1 'Source Sans 3', sans-serif;letter-spacing:.42em;text-transform:uppercase;opacity:.85}
 
 
     /* Recipient card - 3D Mastercard Tactile Tilt */
@@ -857,6 +863,15 @@
     <span class="signature" id="sig"></span>
   </button>
   <canvas class="curtains" id="curtains" aria-hidden="true" hidden></canvas>
+  <!-- Silk curtains (WebGL). The HTML inside is printed on the cloth via HTML-in-Canvas where supported. -->
+  <canvas class="curtains" id="silk" content="drawable" layoutsubtree aria-hidden="true" hidden>
+    <div id="silk-print" class="silk-print" drawable>
+      <p data-print data-x=".27" data-y=".38" class="sp-script sp-l">Njithi</p>
+      <p data-print data-x=".73" data-y=".38" class="sp-script sp-r">Cousins</p>
+      <p data-print data-x=".27" data-y=".47" class="sp-caps sp-l">Secret Santa</p>
+      <p data-print data-x=".73" data-y=".47" class="sp-caps sp-r">2026</p>
+    </div>
+  </canvas>
 
   <!-- Header Bar: Cursive Logo clicks to Home -->
   <header class="bar">
@@ -1024,6 +1039,7 @@
 <script src="envelopes.js"></script>
 <script src="storyboard/film/assets/spin-wheel.js">
 </script>
+<script src="assets/silk-curtain.js"></script>
 <script src="storyboard/film/assets/curtain-scene.js">
 </script>
 <script>
@@ -1365,12 +1381,15 @@ paintTheme();
 
 /* ---------- Screen Navigation ---------- */
 let session = null, raf = 0, timers = [];
+let silk;   // silk curtain controller, see getSilk()
 let curtainSequence = 0;
 function show(id, keepCurtain = false){
   if (id !== 's-wheel' && id !== 's-card') stopWheelMusic();
   if (!keepCurtain){
     curtainSequence += 1;
     $('#curtains').hidden = true;
+    silk?.hide();
+    $('#silk').hidden = true;
   }
   cancelAnimationFrame(raf);
   timers.forEach(clearTimeout);
@@ -2052,6 +2071,38 @@ function moveCurtains(from, to, duration, sequence){
   });
 }
 
+/* Silk curtains: created on first use; null means WebGL is missing and the canvas velvet is used. */
+function getSilk(){
+  if (silk !== undefined) return silk;
+  const styles = () => getComputedStyle(document.documentElement);
+  silk = window.SilkCurtain?.create($('#silk'), $('#silk-print'), {
+    lowPower: LOW_POWER,
+    palette: () => ({
+      dark: styles().getPropertyValue('--curtain-dark'),
+      bright: styles().getPropertyValue('--curtain-bright'),
+      gold: styles().getPropertyValue('--gold')
+    })
+  }) || null;
+  return silk;
+}
+
+async function silkReveal(sequence){
+  const cloth = $('#silk');
+  cloth.hidden = false;
+  if (!silk.show(0)){ cloth.hidden = true; return false; }
+  await silk.to(1, 900);                       // rings run along the rod; the hem lags and swings in
+  if (sequence !== curtainSequence) return true;
+  reveal(false, true);
+  await new Promise(resolve => setTimeout(resolve, 450));   // let the cloth settle before it parts
+  if (sequence !== curtainSequence) return true;
+  await silk.to(0, 1150);
+  if (sequence !== curtainSequence) return true;
+  silk.hide();
+  cloth.hidden = true;
+  celebrateReveal(false);
+  return true;
+}
+
 async function finishSpin(){
   if (revealing || $('#s-wheel').hidden) return;
   revealing = true;
@@ -2059,8 +2110,9 @@ async function finishSpin(){
   // Only the organiser preview cycles through cousins. A private link always lands on its own recipient.
   if (!isPrivateMode) randomizeRecipient();
   statusEl.textContent = 'Hold tight…';
-  if (reducedMotion.matches || !fabric){ reveal(false); return; }
+  if (reducedMotion.matches || (!fabric && !getSilk())){ reveal(false); return; }
   const sequence = ++curtainSequence;
+  if (getSilk() && await silkReveal(sequence)) return;
   curtain.hidden = false;
   paintCurtains(0);
   await moveCurtains(0, 1, 620, sequence);
