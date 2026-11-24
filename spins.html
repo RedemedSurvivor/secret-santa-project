@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Njithi Cousins • Live Spin Tracker</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&family=Instrument+Serif:ital@1&display=swap">
+  <style>
+    :root {
+      --bg: #1c0b1f;
+      --card: rgba(43, 18, 48, 0.92);
+      --border: rgba(255, 244, 220, 0.14);
+      --ink: #fff4dc;
+      --muted: #cfb2cb;
+      --accent: #ff7a4d;
+      --green: #25d366;
+      --warn: #ffd166;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at top, #2e1431 0%, var(--bg) 70%);
+      color: var(--ink);
+      font-family: 'Figtree', system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 20px; }
+    h1 { font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 800; }
+    h1 span { font-family: 'Instrument Serif', serif; font-style: italic; color: var(--accent); }
+    .sub { color: var(--muted); font-size: .92rem; margin-top: 6px; }
+    .stats { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 16px 0; }
+    .badge { background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 7px 16px; font-weight: 700; font-size: .9rem; }
+    .badge.spun { border-color: var(--green); color: var(--green); }
+    .badge.pending { border-color: var(--warn); color: var(--warn); }
+    .btn { border: 0; cursor: pointer; font: 700 .88rem 'Figtree', sans-serif; padding: 7px 15px; border-radius: 999px; background: var(--accent); color: #1c0b1f; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .list { display: grid; gap: 8px; margin-top: 14px; }
+    .row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px;
+    }
+    .row.done { border-color: rgba(37, 211, 102, 0.45); }
+    .left { display: flex; align-items: center; gap: 12px; }
+    .num { color: var(--muted); font-weight: 700; font-size: .85rem; width: 22px; text-align: center; }
+    .name { font-weight: 700; font-size: 1rem; }
+    .branch { color: var(--muted); font-size: .8rem; margin-top: 2px; }
+    .status { font-weight: 700; font-size: .85rem; padding: 5px 12px; border-radius: 999px; }
+    .status.yes { background: rgba(37, 211, 102, 0.18); color: var(--green); }
+    .status.no { background: rgba(255, 209, 102, 0.12); color: var(--warn); }
+    .meta { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 14px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Njithi Cousins <span>Spin Tracker</span></h1>
+    <p class="sub">Live list of who has spun their Secret Santa card (pairings remain 100% secret).</p>
+  </header>
+
+  <div class="stats">
+    <div class="badge">👥 Total: 24</div>
+    <div class="badge spun">✅ Spun: <span id="spun-count">0</span></div>
+    <div class="badge pending">⏳ Not Yet: <span id="pending-count">24</span></div>
+    <button class="btn" id="refresh-btn" type="button">🔄 Refresh Now</button>
+  </div>
+
+  <div class="list" id="list"></div>
+  <p class="meta" id="last-updated">Checking live status…</p>
+</div>
+
+<script>
+const COUSINS = [
+  { name: 'Charles Wambugu', branch: 'Wambugu Branch', token: '5bQ598oW8T' },
+  { name: 'Millcah', branch: 'Wambugu Branch', token: 'FxYvZTtX54' },
+  { name: 'Karen', branch: 'Wambugu Branch', token: 'B7a3vE53kM' },
+  { name: 'Muli', branch: 'Wambugu Branch', token: '3mZ8wP2c6V' },
+  { name: 'Shiku', branch: 'Mathenge Branch', token: '9aywW8gyz4' },
+  { name: 'Caro', branch: 'Mathenge Branch', token: 'NTtLoawQTq' },
+  { name: 'Alvin', branch: 'Mathenge Branch', token: '2fT7xQ9v4K' },
+  { name: 'Dani', branch: 'Mwangi Branch', token: 'Q2K3PipgbJ' },
+  { name: 'Charles Mwangi', branch: 'Mwangi Branch', token: '8bN2vK5w3Q' },
+  { name: 'Bettie', branch: 'Mwangi Branch', token: 'R78a2sQ44V' },
+  { name: 'Muthoni (Mama Esther)', branch: 'Mwangi Branch', token: '5obR5FBUjx' },
+  { name: 'Susan (Mama Liam)', branch: 'Mwangi Branch', token: 'QK58oLaUbd' },
+  { name: 'Jem', branch: 'Mwangi Branch', token: '5vR4nL7y9X' },
+  { name: 'Jeff', branch: 'Nyambura Branch', token: 'sSLTZvKrFN' },
+  { name: 'Lyon', branch: 'Nginga Branch', token: 'niJkMuPx5R' },
+  { name: 'Ian', branch: 'Nginga Branch', token: 'M2APYHUTyE' },
+  { name: 'Peter', branch: 'Munyiri Branch', token: 'pjFhqi9t4f' },
+  { name: 'Ishmael', branch: 'Njeri Branch', token: 'Lydmg5qspz' },
+  { name: 'Emmanuel', branch: 'Njeri Branch', token: '68e63gjNgE' },
+  { name: 'Muthoni (Mama Curtis)', branch: 'Wangechi Branch', token: 'nNnaCHS9XJ' },
+  { name: 'Wahito', branch: 'Wangechi Branch', token: 'ZkCefEMGcx' },
+  { name: 'Sam', branch: 'Wangechi Branch', token: 'pX238b3uK6' },
+  { name: 'Maurice Kaguongo', branch: 'Wangechi Branch', token: '2524cP6a3S' },
+  { name: 'Njithi', branch: 'Wangechi Branch', token: '2zX3jM8s4P' }
+];
+
+let spunMap = {};
+
+function render() {
+  const list = document.getElementById('list');
+  list.replaceChildren();
+  let spunCount = 0;
+
+  COUSINS.forEach((c, i) => {
+    const isSpun = !!spunMap[c.token];
+    if (isSpun) spunCount++;
+    const row = document.createElement('div');
+    row.className = 'row' + (isSpun ? ' done' : '');
+    row.innerHTML = `
+      <div class="left">
+        <span class="num">${i + 1}</span>
+        <div>
+          <div class="name">${c.name}</div>
+          <div class="branch">${c.branch}</div>
+        </div>
+      </div>
+      <span class="status ${isSpun ? 'yes' : 'no'}">${isSpun ? '✓ Spun' : '⏳ Pending'}</span>
+    `;
+    list.append(row);
+  });
+
+  document.getElementById('spun-count').textContent = spunCount;
+  document.getElementById('pending-count').textContent = COUSINS.length - spunCount;
+}
+
+async function refreshSpins(manual = false) {
+  const btn = document.getElementById('refresh-btn');
+  if (manual) { btn.textContent = '⏳ Checking…'; btn.disabled = true; }
+  try {
+    const res = await fetch('/api/spin?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.spun) {
+      spunMap = data.spun;
+      render();
+      document.getElementById('last-updated').textContent = 'Last checked: ' + new Date().toLocaleTimeString() + ' (auto-refreshes every 15s)';
+    }
+  } catch (err) {
+    document.getElementById('last-updated').textContent = 'Error checking live spins: ' + err.message;
+  } finally {
+    if (manual) { btn.textContent = '🔄 Refresh Now'; btn.disabled = false; }
+  }
+}
+
+document.getElementById('refresh-btn').addEventListener('click', () => refreshSpins(true));
+render();
+refreshSpins(false);
+setInterval(() => refreshSpins(false), 15000);
+</script>
+</body>
+</html>
