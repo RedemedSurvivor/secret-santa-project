@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Njithi Cousins • WhatsApp Dispatcher</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&family=Instrument+Serif:ital@1&display=swap">
+  <style>
+    :root {
+      --bg: #1c0b1f; --card: #2b1230; --card-hover: #37173e; --border: rgba(255, 244, 220, 0.14);
+      --ink: #fff4dc; --muted: #cfb2cb; --accent: #ff7a4d; --green: #25d366; --warn: #ffd166;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--ink); font-family: 'Figtree', system-ui, sans-serif; padding: 20px 14px; min-height: 100vh; }
+    .wrap { max-width: 960px; margin: 0 auto; }
+    header { margin-bottom: 20px; text-align: center; }
+    h1 { font-size: clamp(1.6rem, 5vw, 2.3rem); font-weight: 800; }
+    h1 span { font-family: 'Instrument Serif', serif; font-style: italic; color: var(--accent); }
+    p.sub { color: var(--muted); margin-top: 6px; font-size: 0.95rem; }
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 16px; }
+    .panel h2 { font-size: 1rem; margin-bottom: 8px; color: var(--accent); }
+    .stats { display: flex; gap: 12px; margin: 16px 0; justify-content: center; flex-wrap: wrap; }
+    .badge { background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 7px 16px; font-weight: 700; font-size: .92rem; }
+    .badge.total { border-color: rgba(255,244,220,0.3); }
+    .badge.sent { border-color: var(--green); color: var(--green); }
+    .badge.pending { border-color: var(--warn); color: var(--warn); }
+    .search-box { width: 100%; background: rgba(0,0,0,.35); border: 1px solid var(--border); border-radius: 12px; color: #fff; padding: 12px 14px; font: 600 1rem 'Figtree', sans-serif; margin-bottom: 16px; }
+    .search-box:focus { border-color: var(--accent); outline: none; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; cursor: pointer; font: 700 .9rem 'Figtree', sans-serif; padding: 9px 15px; border-radius: 10px; background: var(--accent); color: #1c0b1f; text-decoration: none; transition: transform .1s, background .15s; }
+    .btn:active { transform: scale(0.97); }
+    .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--border); }
+    .btn.ghost:hover { background: rgba(255,255,255,0.06); }
+    .btn.wa { background: var(--green); color: #04210f; }
+    .btn.wa:hover { background: #20ba5a; }
+    .btn.wa.sent { background: #374151; color: #9ca3af; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    textarea { width: 100%; min-height: 84px; background: rgba(0,0,0,.35); color: var(--ink); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font: .92rem/1.45 'Figtree', sans-serif; resize: vertical; }
+    .list { display: grid; gap: 10px; }
+    .cousin { display: grid; grid-template-columns: 28px minmax(0, 1.3fr) minmax(140px, 190px) auto; gap: 12px; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; transition: background .15s; }
+    .cousin:hover { background: var(--card-hover); }
+    .cousin .n { color: var(--muted); font-size: .85rem; font-weight: 700; text-align: center; }
+    .cousin .name strong { display: block; font-size: 1.02rem; }
+    .cousin .name .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 3px; font-size: .8rem; }
+    .cousin .name .branch { color: var(--muted); }
+    .cousin .name .greet-pill { background: rgba(255,122,77,0.18); color: var(--accent); padding: 1px 6px; border-radius: 4px; font-weight: 600; }
+    .cousin input { width: 100%; background: rgba(0,0,0,.35); border: 1px solid var(--border); border-radius: 8px; color: #fff; padding: 9px 11px; font: 600 .95rem ui-monospace, monospace; }
+    .cousin input.bad { border-color: var(--warn); }
+    .cousin input.good { border-color: var(--green); }
+    .cousin .acts { display: flex; gap: 6px; flex-wrap: wrap; }
+    .hint { font-size: .78rem; color: var(--warn); min-height: 1.1em; grid-column: 3 / 5; }
+    .direct-link { font-size: 0.78rem; color: var(--accent); text-decoration: none; margin-left: 4px; }
+    .direct-link:hover { text-decoration: underline; }
+    @media (max-width: 720px) {
+      .cousin { grid-template-columns: 24px minmax(0, 1fr); padding: 12px; }
+      .cousin input, .cousin .acts, .hint { grid-column: 1 / -1; }
+      .cousin .acts .btn { flex: 1; min-width: 90px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Njithi Cousins <span>Secret Santa</span> Dispatcher</h1>
+    <p class="sub">Tap <b>Send</b> on WhatsApp for each cousin. Phone numbers save automatically on this device.</p>
+  </header>
+
+  <div class="stats">
+    <div class="badge total">👥 Total: <span id="total">24</span></div>
+    <div class="badge sent">✅ Sent: <span id="sent">0</span></div>
+    <div class="badge pending">⏳ Pending: <span id="pending">24</span></div>
+  </div>
+
+  <input type="text" id="search" class="search-box" placeholder="🔍 Search cousin name or branch...">
+
+  <section class="panel">
+    <details>
+      <summary style="cursor:pointer;font-weight:700;color:var(--accent);">⚙️ Message Template & Options (tap to customize)</summary>
+      <div style="margin-top:12px;">
+        <textarea id="template" aria-label="Message template"></textarea>
+        <p class="sub" style="font-size:.82rem;margin-top:4px;"><b>{name}</b> replaces with cousin's greeting name (e.g. Mumbi for Mama Liam, Muthoni for Mama Esther/Mama Curtis) and <b>{link}</b> is their private link.</p>
+        <div class="row" style="margin-top:10px;">
+          <button class="btn ghost" id="reset-template" type="button">Reset template</button>
+          <button class="btn ghost" id="clear-sent" type="button">Reset 'Sent' status</button>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <div class="list" id="list"></div>
+</div>
+
+<script>
+(() => {
+  const DEFAULT_MESSAGE = "Hi {name}! 🎄 Your Njithi Cousins Secret Santa card has arrived. Tap your private link, then spin the wheel to see who you’re buying for: {link}\n\n🤫 Keep this secret! Leak it and you’re buying the family goat for Christmas dinner! 🐐🎁";
+  
+  const PRELOADED_INVITES = [
+  {
+    "name": "Lyon",
+    "greet": "Lyon",
+    "slug": "lyon",
+    "branch": "Nginga Branch",
+    "token": "niJkMuPx5R",
+    "link": "https://secret-santa-project-five.vercel.app/?k=niJkMuPx5R"
+  },
+  {
+    "name": "Wahito",
+    "greet": "Wahito",
+    "slug": "wahito",
+    "branch": "Wangechi Branch",
+    "token": "ZkCefEMGcx",
+    "link": "https://secret-santa-project-five.vercel.app/?k=ZkCefEMGcx"
+  },
+  {
+    "name": "Jeff",
+    "greet": "Jeff",
+    "slug": "jeff",
+    "branch": "Nyambura Branch",
+    "token": "sSLTZvKrFN",
+    "link": "https://secret-santa-project-five.vercel.app/?k=sSLTZvKrFN"
+  },
+  {
+    "name": "Dani",
+    "greet": "Dani",
+    "slug": "dani",
+    "branch": "Mwangi Branch",
+    "token": "Q2K3PipgbJ",
+    "link": "https://secret-santa-project-five.vercel.app/?k=Q2K3PipgbJ"
+  },
+  {
+    "name": "Shiku",
+    "greet": "Shiku",
+    "slug": "shiku",
+    "branch": "Mathenge Branch",
+    "token": "9aywW8gyz4",
+    "link": "https://secret-santa-project-five.vercel.app/?k=9aywW8gyz4"
+  },
+  {
+    "name": "Caro",
+    "greet": "Caro",
+    "slug": "caro",
+    "branch": "Mathenge Branch",
+    "token": "NTtLoawQTq",
+    "link": "https://secret-santa-project-five.vercel.app/?k=NTtLoawQTq"
+  },
+  {
+    "name": "Ishmael",
+    "greet": "Ishmael",
+    "slug": "ishmael",
+    "branch": "Njeri Branch",
+    "token": "Lydmg5qspz",
+    "link": "https://secret-santa-project-five.vercel.app/?k=Lydmg5qspz"
+  },
+  {
+    "name": "Ian",
+    "greet": "Ian",
+    "slug": "ian",
+    "branch": "Nginga Branch",
+    "token": "M2APYHUTyE",
+    "link": "https://secret-santa-project-five.vercel.app/?k=M2APYHUTyE"
+  },
+  {
+    "name": "Millcah",
+    "greet": "Millcah",
+    "slug": "millcah",
+    "branch": "Wambugu Branch",
+    "token": "FxYvZTtX54",
+    "link": "https://secret-santa-project-five.vercel.app/?k=FxYvZTtX54"
+  },
+  {
+    "name": "Sam",
+    "greet": "Sam",
+    "slug": "sam",
+    "branch": "Wangechi Branch",
+    "token": "iUouXYJiwk",
+    "link": "https://secret-santa-project-five.vercel.app/?k=iUouXYJiwk"
+  },
+  {
+    "name": "Bettie",
+    "greet": "Bettie",
+    "slug": "bettie",
+    "branch": "Mwangi Branch",
+    "token": "SNnJGyNY4u",
+    "link": "https://secret-santa-project-five.vercel.app/?k=SNnJGyNY4u"
+  },
+  {
+    "name": "Emmanuel",
+    "greet": "Emmanuel",
+    "slug": "emmanuel",
+    "branch": "Njeri Branch",
+    "token": "68e63gjNgE",
+    "link": "https://secret-santa-project-five.vercel.app/?k=68e63gjNgE"
+  },
+  {
+    "name": "Karen",
+    "greet": "Karen",
+    "slug": "karen",
+    "branch": "Wambugu Branch",
+    "token": "F5wQPd6JK7",
+    "link": "https://secret-santa-project-five.vercel.app/?k=F5wQPd6JK7"
+  },
+  {
+    "name": "Maurice Kaguongo",
+    "greet": "Maurice",
+    "slug": "kaguongo",
+    "branch": "Wangechi Branch",
+    "token": "mcX5t4UGTq",
+    "link": "https://secret-santa-project-five.vercel.app/?k=mcX5t4UGTq"
+  },
+  {
+    "name": "Charles Wambugu",
+    "greet": "Charles",
+    "slug": "charles-wambugu",
+    "branch": "Wambugu Branch",
+    "token": "RxMJUpbsgb",
+    "link": "https://secret-santa-project-five.vercel.app/?k=RxMJUpbsgb"
+  },
+  {
+    "name": "Njithi",
+    "greet": "Njithi",
+    "slug": "njithi",
+    "branch": "Wangechi Branch",
+    "token": "YHXqxZYYFi",
+    "link": "https://secret-santa-project-five.vercel.app/?k=YHXqxZYYFi"
+  },
+  {
+    "name": "Charles Mwangi",
+    "greet": "Charles",
+    "slug": "charles-mwangi",
+    "branch": "Mwangi Branch",
+    "token": "wafTADzEkQ",
+    "link": "https://secret-santa-project-five.vercel.app/?k=wafTADzEkQ"
+  },
+  {
+    "name": "Mama Liam",
+    "greet": "Mumbi",
+    "slug": "mama-liam",
+    "branch": "Mwangi Branch",
+    "token": "QK58oLaUbd",
+    "link": "https://secret-santa-project-five.vercel.app/?k=QK58oLaUbd"
+  },
+  {
+    "name": "Alvin",
+    "greet": "Alvin",
+    "slug": "alvin",
+    "branch": "Mathenge Branch",
+    "token": "EWiuDqAC28",
+    "link": "https://secret-santa-project-five.vercel.app/?k=EWiuDqAC28"
+  },
+  {
+    "name": "Muli",
+    "greet": "Muli",
+    "slug": "muli",
+    "branch": "Wambugu Branch",
+    "token": "u8UTDWLHFw",
+    "link": "https://secret-santa-project-five.vercel.app/?k=u8UTDWLHFw"
+  },
+  {
+    "name": "Jem",
+    "greet": "Jem",
+    "slug": "jem",
+    "branch": "Mwangi Branch",
+    "token": "EJcswHbjhF",
+    "link": "https://secret-santa-project-five.vercel.app/?k=EJcswHbjhF"
+  },
+  {
+    "name": "Peter",
+    "greet": "Peter",
+    "slug": "peter",
+    "branch": "Munyiri Branch",
+    "token": "pjFhqi9t4f",
+    "link": "https://secret-santa-project-five.vercel.app/?k=pjFhqi9t4f"
+  },
+  {
+    "name": "Muthoni (Mama Esther)",
+    "greet": "Muthoni",
+    "slug": "muthoni-mama-esther",
+    "branch": "Mwangi Branch",
+    "token": "5obR5FBUjx",
+    "link": "https://secret-santa-project-five.vercel.app/?k=5obR5FBUjx"
+  },
+  {
+    "name": "Muthoni (Mama Curtis)",
+    "greet": "Muthoni",
+    "slug": "muthoni-mama-curtis",
+    "branch": "Wangechi Branch",
+    "token": "nNnaCHS9XJ",
+    "link": "https://secret-santa-project-five.vercel.app/?k=nNnaCHS9XJ"
+  }
+];
+
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v){ try { localStorage.setItem(k, v); } catch {} },
+    del(k){ try { localStorage.removeItem(k); } catch {} }
+  };
+  const $ = s => document.querySelector(s);
+  let invites = PRELOADED_INVITES;
+
+  function normalisePhone(phone){
+    let d = String(phone || '').replace(/[^\d+]/g, '');
+    if (d.startsWith('+')) d = d.slice(1);
+    else if (d.startsWith('00')) d = d.slice(2);
+    else if (/^0[17]\d{8}$/.test(d)) d = '254' + d.slice(1);
+    else if (/^[17]\d{8}$/.test(d)) d = '254' + d;
+    return /^[1-9]\d{7,14}$/.test(d) ? d : '';
+  }
+
+  const messageFor = inv => {
+    const greet = inv.greet || inv.name.split(/[\s(]/)[0];
+    const tpl = $('#template').value || DEFAULT_MESSAGE;
+    return tpl.replaceAll('{name}', greet).replaceAll('{link}', inv.link);
+  };
+
+  function render(){
+    const list = $('#list');
+    list.replaceChildren();
+    const query = ($('#search').value || '').toLowerCase().trim();
+
+    const filtered = invites.filter(inv => {
+      if (!query) return true;
+      return inv.name.toLowerCase().includes(query) ||
+             (inv.greet && inv.greet.toLowerCase().includes(query)) ||
+             (inv.branch && inv.branch.toLowerCase().includes(query));
+    });
+
+    if (!filtered.length){
+      list.innerHTML = '<p style="text-align:center;padding:30px;color:var(--muted);">No cousins match your search.</p>';
+      tally();
+      return;
+    }
+
+    filtered.forEach((inv, i) => {
+      const row = document.createElement('div');
+      row.className = 'cousin';
+      const isSent = store.get('nj-sent-' + inv.slug) === inv.link;
+      const greet = inv.greet || inv.name.split(/[\s(]/)[0];
+
+      row.innerHTML = `
+        <span class="n">${i + 1}</span>
+        <span class="name">
+          <strong>${inv.name}</strong>
+          <span class="meta">
+            <span class="branch">${inv.branch || ''}</span>
+            <span class="greet-pill" title="Greeting name used in WhatsApp text">Greeting: Hi ${greet}!</span>
+            <a href="${inv.link}" target="_blank" class="direct-link" title="Open private link">Open link ↗</a>
+          </span>
+        </span>
+        <input inputmode="tel" autocomplete="off" placeholder="07… or +254…" aria-label="WhatsApp number for ${inv.name}">
+        <span class="acts">
+          <button class="btn ghost copy" type="button" title="Copy text message">Copy</button>
+          <button class="btn wa send ${isSent ? 'sent' : ''}" type="button">${isSent ? '✓ Sent · resend' : '📲 Send'}</button>
+        </span>
+        <span class="hint"></span>`;
+
+      const input = row.querySelector('input');
+      input.value = store.get('nj-phone-' + inv.slug) || '';
+      const send = row.querySelector('.send');
+      const hint = row.querySelector('.hint');
+
+      const check = () => {
+        const ok = normalisePhone(input.value);
+        input.classList.toggle('good', !!ok);
+        input.classList.toggle('bad', !!input.value.trim() && !ok);
+        hint.textContent = input.value.trim() && !ok ? 'Check this phone number' : (ok ? '+' + ok : '');
+        return ok;
+      };
+
+      input.addEventListener('input', () => {
+        store.set('nj-phone-' + inv.slug, input.value.trim());
+        check();
+      });
+      check();
+
+      const markSent = () => {
+        send.classList.add('sent');
+        send.textContent = '✓ Sent · resend';
+      };
+
+      send.addEventListener('click', () => {
+        const phone = check();
+        if (!phone) {
+          alert('Please enter a valid phone number (e.g. 0712345678 or +254...) for ' + inv.name);
+          input.focus();
+          return;
+        }
+        const text = messageFor(inv);
+        const url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(text);
+        store.set('nj-sent-' + inv.slug, inv.link);
+        markSent();
+        tally();
+        window.open(url, '_blank', 'noopener');
+      });
+
+      row.querySelector('.copy').addEventListener('click', async e => {
+        try {
+          await navigator.clipboard.writeText(messageFor(inv));
+          e.target.textContent = 'Copied!';
+        } catch {
+          e.target.textContent = 'Failed';
+        }
+        setTimeout(() => { e.target.textContent = 'Copy'; }, 1500);
+      });
+
+      list.append(row);
+    });
+
+    tally();
+  }
+
+  function tally(){
+    const sent = invites.filter(inv => store.get('nj-sent-' + inv.slug) === inv.link).length;
+    $('#total').textContent = invites.length;
+    $('#sent').textContent = sent;
+    $('#pending').textContent = invites.length - sent;
+  }
+
+  $('#template').value = store.get('nj-template') || DEFAULT_MESSAGE;
+  $('#template').addEventListener('input', () => store.set('nj-template', $('#template').value));
+
+  $('#search').addEventListener('input', render);
+
+  $('#reset-template').addEventListener('click', () => {
+    $('#template').value = DEFAULT_MESSAGE;
+    store.del('nj-template');
+    render();
+  });
+
+  $('#clear-sent').addEventListener('click', () => {
+    if (!confirm('Reset all Sent marks back to Pending? (Phone numbers will be kept)')) return;
+    for (const inv of invites){
+      store.del('nj-sent-' + inv.slug);
+    }
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
